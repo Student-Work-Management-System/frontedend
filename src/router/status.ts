@@ -3,7 +3,7 @@ export default {
   name: 'status',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-school',
     itemShow: false,
     title: '学生学籍变动'
   },
@@ -13,7 +13,7 @@ export default {
       name: 'status-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '学籍信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'status-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-chart-bell-curve',
         title: '学籍信息统计',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'status-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '学籍信息管理',
         itemShow: true
       }

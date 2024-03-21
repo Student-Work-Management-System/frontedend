@@ -3,7 +3,7 @@ export default {
   name: 'base',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-camera-account',
     title: '学生基本信息',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'base-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '基本信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'base-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '基本信息管理',
         itemShow: true
       }

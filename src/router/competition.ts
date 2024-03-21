@@ -3,7 +3,7 @@ export default {
   name: 'competition',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-horse-variant',
     title: '学科竞赛记录',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'competition-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-cloud-upload',
         title: '学生获奖上报',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'competition-review',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'competition-list',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-chart-bell-curve',
         title: '获奖情况统计',
         itemShow: true
       }
@@ -43,7 +43,7 @@ export default {
       name: 'competition-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-cog',
         title: '竞赛类别管理',
         itemShow: true
       }

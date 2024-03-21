@@ -3,7 +3,7 @@ export default {
   name: 'precaution',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-shield-alert-outline',
     itemShow: false,
     title: '学业预警信息'
   },
@@ -13,7 +13,7 @@ export default {
       name: 'precaution-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '预警信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'precaution-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-chart-bell-curve',
         title: '预警信息统计',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'precaution-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '预警信息管理',
         itemShow: true
       }

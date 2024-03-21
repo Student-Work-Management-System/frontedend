@@ -14,6 +14,7 @@ import cet from './cet'
 import precaution from './precaution'
 import status from './status'
 import system from './system'
+import enrollment from './enrollment'
 
 export const routes = [
   base,
@@ -26,6 +27,7 @@ export const routes = [
   punishment,
   cet,
   precaution,
+  enrollment,
   status,
   system
 ]

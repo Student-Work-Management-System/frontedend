@@ -3,7 +3,7 @@ export default {
   name: 'scholarship',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-medal',
     title: '奖学金记录',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'scholarship-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '奖学金信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'scholarship-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-chart-bell-curve',
         title: '奖学金信息统计',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'scholarship-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '奖学金信息管理',
         itemShow: true
       }

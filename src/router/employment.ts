@@ -3,7 +3,7 @@ export default {
   name: 'employment',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-briefcase',
     title: '学生就业统计',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'employment-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '就业信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'employment-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-chart-bell-curve',
         title: '就业信息统计',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'employment-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '就业信息管理',
         itemShow: true
       }

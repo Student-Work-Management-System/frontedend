@@ -1,40 +1,40 @@
 export default {
-  path: '/poverty',
-  name: 'poverty',
+  path: '/enrollment',
+  name: 'enrollment',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-sprout',
-    title: '学生贫困资助',
-    itemShow: false
+    icon: 'mdi-bus-school',
+    itemShow: false,
+    title: '学生招生信息'
   },
   children: [
     {
-      path: '/poverty/import',
-      name: 'poverty-import',
+      path: '/enrollment/import',
+      name: 'enrollment-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-upload-outline',
-        title: '贫困信息录入',
+        title: '招生信息录入',
         itemShow: true
       }
     },
     {
-      path: '/poverty/list',
-      name: 'poverty-list',
+      path: '/enrollment/list',
+      name: 'enrollment-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-chart-bell-curve',
-        title: '贫困信息统计',
+        title: '招生信息统计',
         itemShow: true
       }
     },
     {
-      path: '/poverty/manage',
-      name: 'poverty-manage',
+      path: '/enrollment/manage',
+      name: 'enrollment-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-cog',
-        title: '贫困信息管理',
+        title: '招生信息管理',
         itemShow: true
       }
     }

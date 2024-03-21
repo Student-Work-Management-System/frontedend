@@ -3,7 +3,7 @@ export default {
   name: 'cet',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-web',
     title: 'CET等级成绩统计',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'cet-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '考试成绩录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'cet-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '考试成绩统计',
         itemShow: true
       }

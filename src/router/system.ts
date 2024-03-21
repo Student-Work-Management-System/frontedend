@@ -3,7 +3,7 @@ export default {
   name: 'system',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-cogs',
     itemShow: false,
     title: '系统管理'
   },

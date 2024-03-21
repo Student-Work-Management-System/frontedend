@@ -3,7 +3,7 @@ export default {
   name: 'punishment',
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
-    icon: 'mdi-clipboard-text-multiple',
+    icon: 'mdi-cancel',
     title: '学生处分情况',
     itemShow: false
   },
@@ -13,7 +13,7 @@ export default {
       name: 'punishment-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-upload-outline',
         title: '处分信息录入',
         itemShow: true
       }
@@ -23,7 +23,7 @@ export default {
       name: 'punishment-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-chart-bell-curve',
         title: '处分信息统计',
         itemShow: true
       }
@@ -33,7 +33,7 @@ export default {
       name: 'punishment-manage',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-credit-card-edit',
+        icon: 'mdi-cog',
         title: '处分信息管理',
         itemShow: true
       }
