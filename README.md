@@ -40,6 +40,5 @@ pnpm lint
 
 
 ## Reference
-- [UI]( https://www.antdv.com/components/overview )
+- [UI](https://vuetifyjs.com/zh-Hans)
 - [vchart](https://visactor.io/vchart)
-- [vtable](https://visactor.io/vtable)
