@@ -1,0 +1,52 @@
+export default {
+  path: '/academic',
+  name: 'academic',
+  component: () => import('@/components/basic/RouterContainer.vue'),
+  meta: {
+    icon: 'mdi-clipboard-text-multiple',
+    title: '学生学术成果',
+    itemShow: false
+  },
+  children: [
+    {
+      path: '/academic/import',
+      name: 'academic-import',
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      meta: {
+        icon: 'mdi-import',
+        title: '学生成果上报',
+        itemShow: true
+      }
+    },
+    {
+      path: '/academic/review',
+      name: 'academic-review',
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      meta: {
+        icon: 'mdi-import',
+        title: '上报情况审核',
+        itemShow: true
+      }
+    },
+    {
+      path: '/academic/list',
+      name: 'academic-list',
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      meta: {
+        icon: 'mdi-import',
+        title: '学术成果统计',
+        itemShow: true
+      }
+    },
+    {
+      path: '/academic/manage',
+      name: 'academic-manage',
+      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      meta: {
+        icon: 'mdi-import',
+        title: '学术成果管理',
+        itemShow: true
+      }
+    }
+  ]
+}
