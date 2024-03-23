@@ -1,9 +1,21 @@
 <script lang="ts" setup>
 import { routes } from '@/router/index'
+import { useUserStore } from '@/stores/user'
+import { useCookies } from 'vue3-cookies'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const store = useUserStore()
+const { cookies } = useCookies()
+const router = useRouter()
 
 const drawer = ref(true)
 const rail = ref(false)
+const logoutHandle = () => {
+  store.updateUser({ user: null, token: '', authorities: [] })
+  cookies.remove('user-cache')
+  router.push({ name: 'login' })
+}
 </script>
 
 <template>
@@ -35,8 +47,14 @@ const rail = ref(false)
     </v-list>
     <template v-if="!rail" v-slot:append>
       <div class="pa-2">
-        <v-btn block prepend-icon="mdi-login-variant"> 登 出 </v-btn>
+        <v-btn block prepend-icon="mdi-login-variant" @click="logoutHandle"> 登 出 </v-btn>
       </div>
     </template>
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+.v-list-group__items .v-list-item {
+  padding-inline-start: 2rem !important;
+}
+</style>
