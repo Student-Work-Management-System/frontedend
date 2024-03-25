@@ -58,13 +58,13 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const store = useUserStore()
   // 检查用户是否已登录
-  if (store.getUserData.user === null) {
+  if (store.getUserData.uid === '') {
     if (to.name === 'login') return // ❗️ 避免无限重定向
     return { name: 'login' }
   }
 
   // 已登录，不允许直接访问登录页面
-  if (store.getUserData.user !== null && to.name === 'login') return { name: 'home' }
+  if (store.getUserData.uid !== '' && to.name === 'login') return { name: 'home' }
 
   // 检测用户是否用对应的页面权限
   // store.getUserData.authorities?.find(() => {})

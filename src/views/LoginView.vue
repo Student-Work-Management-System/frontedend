@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import { Vue3Spline } from 'vue3-spline'
+import { setAuthorizationToken } from '@/api'
 import { apiLogin, userDataCheck } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import { useCookies } from 'vue3-cookies'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import { watch } from 'vue'
+import { notify } from '@kyvg/vue3-notification'
 
 interface UserLoginData {
   username: string
@@ -22,21 +24,23 @@ const userForm = reactive<UserLoginData>({ username: '', password: '' })
 const visible = ref(false)
 const loading3D = ref(true)
 const loadingForm = ref(true)
-const remember = ref(false)
+const remember = ref(true)
 
 const loginHandler = async () => {
   loadingForm.value = true
   const { data: result } = await apiLogin(userForm.username, userForm.password)
   if (result.code != 200) {
-    // todo login error
-
+    notify({ title: '错误', text: result.message, type: 'error' })
+    loadingForm.value = false
     return
   }
   store.updateUser(result.data)
+  setAuthorizationToken(result.data.token)
   if (remember.value) {
     cookies.set('user-cache', JSON.stringify(result.data), '1d')
   }
   loadingForm.value = false
+  notify({ title: '提示', text: '登录成功！', type: 'success' })
   router.push({ name: 'home' })
 }
 
@@ -50,12 +54,14 @@ const checkLoginCacheHandler = () => {
     try {
       const userData = userDataCheck(cacheJson)
       store.updateUser(userData)
+      setAuthorizationToken(userData.token)
+      notify({ title: '提示', text: '登录成功！', type: 'success' })
       const to = route.redirectedFrom
       if (to === undefined) router.push({ name: 'home' })
       else router.push(to)
     } catch (error) {
       console.log(error)
-      // todo error message
+      notify({ title: '错误', text: '未知的登录数据', type: 'error' })
       cookies.remove('user-cache')
     }
   }
@@ -95,6 +101,7 @@ onMounted(checkLoginCacheHandler)
 
         <div class="text-subtitle-1 text-medium-emphasis">账户</div>
         <v-text-field
+          :loading="loadingForm"
           clearable
           density="compact"
           placeholder="输入账户"
@@ -110,6 +117,7 @@ onMounted(checkLoginCacheHandler)
         </div>
 
         <v-text-field
+          :loading="loadingForm"
           clearable
           class="password"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -135,6 +143,7 @@ onMounted(checkLoginCacheHandler)
         ></v-checkbox>
 
         <v-btn
+          :loading="loadingForm"
           prepend-icon="mdi-login-variant"
           class="mb-4"
           color="blue"

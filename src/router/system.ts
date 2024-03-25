@@ -11,9 +11,9 @@ export default {
     {
       path: '/system/user/manage',
       name: 'user-manage',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/system/UserManage.vue'),
       meta: {
-        icon: 'mdi-import',
+        icon: 'mdi-account-cog',
         title: '用户账号管理',
         itemShow: true
       }
@@ -21,10 +21,10 @@ export default {
     {
       path: '/system/user/role/manage',
       name: 'user-role-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/system/RoleManage.vue'),
       meta: {
         icon: 'mdi-credit-card-edit',
-        title: '用户角色管理',
+        title: '角色权限管理',
         itemShow: true
       }
     }
