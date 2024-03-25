@@ -43,7 +43,7 @@ onMounted(finishLoading)
     <v-card
       max-width="400"
       prepend-icon="mdi-account-question"
-      text="你确定要登出当前账号吗？"
+      text="确定要登出当前账号吗？"
       title="登出当前账号"
     >
       <template v-slot:actions>
