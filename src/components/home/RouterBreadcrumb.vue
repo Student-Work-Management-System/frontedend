@@ -18,30 +18,28 @@ const updateCrumbs = () => {
   }))
 }
 
-watch(route, updateCrumbs)
+watch(route, updateCrumbs, { immediate: true })
 </script>
 
 <template>
-  <main class="pa-2 px-3">
-    <span v-for="(item, index) in crumbs" :key="index">
-      <router-link :class="['link', index == crumbs.length - 1 ? 'last' : '']" :to="item.href">{{
-        item.title
-      }}</router-link>
-      <span class="divider" v-if="index < crumbs.length - 1">/</span>
-    </span>
-  </main>
+  <span v-for="(item, index) in crumbs" :key="index">
+    <router-link :class="['link', index == crumbs.length - 1 ? 'last' : '']" :to="item.href">{{
+      item.title
+    }}</router-link>
+    <span class="divider" v-if="index < crumbs.length - 1">/</span>
+  </span>
 </template>
 
 <style scoped>
 .link {
-  font-size: medium;
+  font-size: 15px;
   font-weight: 500;
   padding: 0.15rem;
   text-decoration: none;
   color: #a5a5a5;
 }
 .link:hover {
-  color: rgba(0, 0, 0, 0.88);
+  color: #3f51b5;
   background-color: rgba(0, 0, 0, 0.06);
 }
 .divider {
@@ -50,7 +48,7 @@ watch(route, updateCrumbs)
   color: rgba(0, 0, 0, 0.45);
 }
 .last {
-  color: rgba(0, 0, 0, 0.88);
-  border-bottom: rgba(0, 0, 0, 0.88) 1px solid;
+  color: #3f51b5;
+  border-bottom: #3f51b5 1px solid;
 }
 </style>

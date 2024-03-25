@@ -1,24 +1,26 @@
 <script lang="ts" setup>
 import { routes } from '@/router/index'
-import { useUserStore } from '@/stores/user'
-import { useCookies } from 'vue3-cookies'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const store = useUserStore()
-const { cookies } = useCookies()
-const router = useRouter()
 
 const drawer = ref(true)
 const rail = ref(false)
-const logoutHandle = () => {
-  store.updateUser({ user: null, token: '', authorities: [] })
-  cookies.remove('user-cache')
-  router.push({ name: 'login' })
-}
+const dialog = ref(false)
 </script>
 
 <template>
+  <v-dialog v-model="dialog" width="auto">
+    <v-card
+      max-width="400"
+      prepend-icon="mdi-update"
+      text="Your application will relaunch automatically after the update is complete."
+      title="Update in progress"
+    >
+      <template v-slot:actions>
+        <v-btn class="ms-auto" text="Ok" @click="dialog = false"></v-btn>
+      </template>
+    </v-card>
+  </v-dialog>
+
   <v-navigation-drawer theme="dark" v-model="drawer" :rail="rail" permanent @click="rail = false">
     <v-list-item class="logo">
       <template v-slot:append>
@@ -45,11 +47,6 @@ const logoutHandle = () => {
         ></v-list-item>
       </v-list-group>
     </v-list>
-    <template v-if="!rail" v-slot:append>
-      <div class="pa-2">
-        <v-btn block prepend-icon="mdi-login-variant" @click="logoutHandle"> 登 出 </v-btn>
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
