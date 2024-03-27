@@ -9,6 +9,8 @@ import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/user'
 import { useCookies } from 'vue3-cookies'
 import { apiLogout } from '@/api/user'
+import { computed } from 'vue'
+import { setAuthorizationToken } from '@/api'
 
 const loading = ref(true)
 const dialog = ref(false)
@@ -20,6 +22,7 @@ const finishLoading = () => {
 const store = useUserStore()
 const { cookies } = useCookies()
 const router = useRouter()
+const realName = computed(() => store.getUserData.realName)
 
 const logoutBtnHandler = () => {
   dialog.value = false
@@ -30,6 +33,7 @@ const logoutHandler = async () => {
   loading.value = true
   await apiLogout()
   store.updateUser({ uid: '', username: '', phone: '', realName: '', token: '', authorities: [] })
+  setAuthorizationToken('')
   cookies.remove('user-cache')
   loading.value = false
   notify({ title: '提示', text: '登出成功！', type: 'success' })
@@ -44,7 +48,7 @@ onMounted(finishLoading)
       max-width="400"
       prepend-icon="mdi-account-question"
       text="确定要登出当前账号吗？"
-      title="登出当前账号"
+      title="登出账号"
     >
       <template v-slot:actions>
         <section class="w-100 d-flex justify-space-evenly">
@@ -65,9 +69,19 @@ onMounted(finishLoading)
               <span>
                 <RouterBreadcrumb />
               </span>
-              <v-btn :loading="loading" prepend-icon="mdi-login-variant" @click="dialog = true">
-                登出
-              </v-btn>
+              <span>
+                <v-btn variant="text" :loading="loading" prepend-icon="mdi-account">
+                  {{ realName }}
+                </v-btn>
+                <v-btn
+                  variant="text"
+                  :loading="loading"
+                  prepend-icon="mdi-login-variant"
+                  @click="dialog = true"
+                >
+                  登出
+                </v-btn>
+              </span>
             </v-card-title>
           </v-card>
         </div>

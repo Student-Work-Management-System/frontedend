@@ -15,4 +15,12 @@ export interface Result<T> {
   data: T
 }
 
+export interface RecordsPage<T> {
+  records: T[]
+  pageNumber: number
+  pageSize: number
+  totalPage: number
+  totalRow: number
+}
+
 export default http

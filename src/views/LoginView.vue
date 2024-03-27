@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import { Vue3Spline } from 'vue3-spline'
 import { setAuthorizationToken } from '@/api'
 import { apiLogin, userDataCheck } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 import { useCookies } from 'vue3-cookies'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
-import { watch } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 
 interface UserLoginData {
@@ -22,9 +20,9 @@ const { cookies } = useCookies()
 
 const userForm = reactive<UserLoginData>({ username: '', password: '' })
 const visible = ref(false)
-const loading3D = ref(true)
 const loadingForm = ref(true)
 const remember = ref(true)
+const form = ref(false)
 
 const loginHandler = async () => {
   loadingForm.value = true
@@ -44,10 +42,6 @@ const loginHandler = async () => {
   router.push({ name: 'home' })
 }
 
-const updateLoading3D = () => {
-  loading3D.value = false
-}
-
 const checkLoginCacheHandler = () => {
   const cacheJson = cookies.get('user-cache') as Object
   if (cacheJson !== null) {
@@ -63,63 +57,60 @@ const checkLoginCacheHandler = () => {
       console.log(error)
       notify({ title: '错误', text: '未知的登录数据', type: 'error' })
       cookies.remove('user-cache')
+      setAuthorizationToken('')
     }
   }
-  if (!loading3D.value) {
-    loadingForm.value = false
-    return
-  }
-  // 异步等待 3d 加载
-  watch(
-    loading3D,
-    (val) => {
-      if (!val) loadingForm.value = false
-    },
-    { once: true }
-  )
+  loadingForm.value = false
 }
 onMounted(checkLoginCacheHandler)
 </script>
 
 <template>
-  <main>
-    <span class="form-box">
-      <v-card
-        :loading="loadingForm"
-        :disabled="loadingForm"
-        class="mx-auto py-12 px-16 pb-8"
-        elevation="8"
-        rounded="xl"
-        min-height="100%"
-      >
-        <div class="text-center text-deep-purple-darken-4 mb-4">
-          <v-icon icon="mdi-cube" :size="64" />
-        </div>
-        <h1 class="text-h4 font-weight-bold text-center mb-8 text-deep-purple-darken-4">
-          学生画像管理系统
-        </h1>
-
-        <div class="text-subtitle-1 text-medium-emphasis">账户</div>
+  <main class="d-flex justify-center align-center">
+    <v-card
+      class="py-8 px-16 d-flex flex-column justify-center align-center"
+      elevation="8"
+      height="70%"
+      width="32%"
+    >
+      <div class="text-center text-deep-purple-darken-4 mb-2">
+        <v-icon icon="mdi-cube" :size="110" />
+      </div>
+      <h1 class="text-h4 font-weight-bold text-center mb-1 text-deep-purple-darken-4">
+        学生信息画像
+      </h1>
+      <h1 class="text-h4 font-weight-bold text-center text-deep-purple-darken-4">管理系统</h1>
+    </v-card>
+    <v-card
+      :loading="loadingForm"
+      :disabled="loadingForm"
+      style="padding: 6rem 5rem"
+      elevation="8"
+      height="70%"
+      width="32%"
+    >
+      <h1 class="text-h4 text-center text-deep-purple-darken-4 mb-10">用户登录</h1>
+      <v-form v-model="form">
         <v-text-field
           :loading="loadingForm"
+          :counter="15"
           clearable
           density="compact"
           placeholder="输入账户"
           prepend-inner-icon="mdi-account-box"
           variant="outlined"
           v-model="userForm.username"
+          required
+          :rules="[() => !!userForm.username || '该选项必填！']"
         >
           <v-tooltip activator="parent" location="top">账户名一般为 教师工号 或 学生学号</v-tooltip>
         </v-text-field>
 
-        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          密码
-        </div>
-
         <v-text-field
           :loading="loadingForm"
+          :counter="18"
           clearable
-          class="password"
+          class="password mt-1"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
           density="compact"
@@ -128,22 +119,28 @@ onMounted(checkLoginCacheHandler)
           variant="outlined"
           @click:append-inner="visible = !visible"
           v-model="userForm.password"
+          required
+          :rules="[() => !!userForm.password || '该选项必填！']"
         >
           <v-tooltip activator="parent" location="top"
             >密码为 6-18 位任意数字、字母与常见字符的组合</v-tooltip
           >
         </v-text-field>
 
-        <v-checkbox
-          v-model="remember"
-          class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-          color="indigo"
-          label="记住账号"
-          hide-details
-        ></v-checkbox>
+        <div class="d-flex align-center justify-space-between">
+          <v-checkbox
+            v-model="remember"
+            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
+            color="indigo"
+            label="记住账号"
+            hide-details
+          ></v-checkbox>
+          <v-btn variant="text" color="indigo">忘记密码</v-btn>
+        </div>
 
         <v-btn
           :loading="loadingForm"
+          :disabled="!form"
           prepend-icon="mdi-login-variant"
           class="mb-4"
           color="blue"
@@ -153,34 +150,8 @@ onMounted(checkLoginCacheHandler)
           @click="loginHandler"
           >登 录</v-btn
         >
-
-        <v-card class="mb-12" color="surface-variant" variant="tonal">
-          <v-card-text class="text-medium-emphasis text-caption">
-            提示：忘记密码请联系管理员更改。
-          </v-card-text>
-        </v-card>
-
-        <section class="foot">
-          <v-tooltip class="btn" location="start">
-            <template v-slot:activator="{ props }">
-              <v-btn icon v-bind="props" href="#">
-                <v-icon>mdi-account-question</v-icon>
-              </v-btn>
-            </template>
-            <span>管理员联系方式：QQxxxxx</span>
-          </v-tooltip>
-        </section>
-      </v-card>
-    </span>
-
-    <span class="threed">
-      <Vue3Spline
-        :onLoaded="updateLoading3D"
-        :scene="{
-          url: 'scene.splinecode'
-        }"
-      />
-    </span>
+      </v-form>
+    </v-card>
   </main>
 </template>
 
@@ -191,16 +162,6 @@ onMounted(checkLoginCacheHandler)
 </style>
 
 <style scoped>
-.form-box {
-  height: 100%;
-  width: 40%;
-  padding: 3rem 0 3rem 3rem;
-}
-.threed {
-  height: 100%;
-  width: 60%;
-  padding: 3rem;
-}
 .threed #spline-canvas {
   border-radius: 2%;
   box-shadow:
@@ -218,13 +179,8 @@ main {
   background: -webkit-linear-gradient(-160deg, #8eb2e6, #8f6afb, #3e4add);
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background: linear-gradient(-160deg, #8eb2e6, #8f6afb, #3e4add);
-  display: flex;
 }
-.foot {
-  position: absolute;
-  bottom: 2.5rem;
-  right: 4rem;
-  display: flex;
-  justify-content: end;
+.v-card {
+  border-radius: 0;
 }
 </style>

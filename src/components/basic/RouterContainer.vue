@@ -22,7 +22,7 @@ main {
   align-items: center;
 }
 main div {
-  color: #a5a5a5;
+  color: #9da2c4;
   display: flex;
   flex-direction: column;
   align-items: center;

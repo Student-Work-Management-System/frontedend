@@ -2,7 +2,7 @@ import http from '.'
 import { type Result } from '.'
 import { type AxiosResponse } from 'axios'
 
-interface Role {
+export interface Role {
   rid: string
   roleName: string
   roleDesc: string

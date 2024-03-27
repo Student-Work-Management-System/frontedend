@@ -4,32 +4,37 @@ import { ref } from 'vue'
 
 const drawer = ref(true)
 const rail = ref(false)
-const dialog = ref(false)
 </script>
 
 <template>
-  <v-dialog v-model="dialog" width="auto">
-    <v-card
-      max-width="400"
-      prepend-icon="mdi-update"
-      text="Your application will relaunch automatically after the update is complete."
-      title="Update in progress"
-    >
-      <template v-slot:actions>
-        <v-btn class="ms-auto" text="Ok" @click="dialog = false"></v-btn>
-      </template>
-    </v-card>
-  </v-dialog>
-
-  <v-navigation-drawer theme="dark" v-model="drawer" :rail="rail" permanent @click="rail = false">
+  <v-navigation-drawer
+    color="#001529"
+    theme="dark"
+    v-model="drawer"
+    :rail="rail"
+    permanent
+    @click="rail = false"
+  >
     <v-list-item class="logo">
       <template v-slot:append>
-        <v-img :width="200" src="logo2.png"></v-img>
-        <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
+        <v-img v-if="!rail" :width="200" src="logo2.png"></v-img>
+        <v-img v-else style="left: -2px; top: 6px" :width="35" src="logo-mini.png"></v-img>
+        <v-btn
+          v-if="!rail"
+          icon="mdi-chevron-left"
+          variant="text"
+          @click.stop="rail = !rail"
+        ></v-btn>
       </template>
     </v-list-item>
     <v-list density="compact" nav>
-      <v-list-group v-for="(item, index) in routes" :key="index" :value="item.name">
+      <v-list-group
+        v-for="(item, index) in routes"
+        base-color="#147ddf"
+        color="#fff"
+        :key="index"
+        :value="item.name"
+      >
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -38,6 +43,7 @@ const dialog = ref(false)
           ></v-list-item>
         </template>
         <v-list-item
+          class="back"
           v-for="(chitem, chindex) in item.children"
           :key="index + '-' + chindex"
           :prepend-icon="chitem.meta.icon"
@@ -53,5 +59,11 @@ const dialog = ref(false)
 <style scoped>
 .v-list-group__items .v-list-item {
   padding-inline-start: 2rem !important;
+}
+.v-list-item__spacer {
+  display: none !important;
+}
+.back {
+  background-color: #000c17;
 }
 </style>
