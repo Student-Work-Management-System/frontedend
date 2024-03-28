@@ -14,7 +14,7 @@ const form = ref(false)
 const newUser = reactive({ username: '', password: '', email: '', realName: '' })
 const loading = ref(false)
 const step = ref(1)
-const items = ref<{ text: string }[]>([])
+const items = ref<{ rid: string; text: string }[]>([])
 const search = ref('')
 const allSelected = ref(false)
 const selected = ref<{ rid: string; text: string }[]>([])
@@ -62,6 +62,7 @@ const AddUserLogic = async () => {
   }
   notify({ type: 'success', title: '成功', text: '添加成功！' })
   loading.value = false
+  step.value = 1
   emit('onClosed')
 }
 
@@ -131,7 +132,7 @@ onMounted(fetchRoleList)
                 :counter="11"
                 clearable
                 required
-                :rules="[() => !!newUser.realName || '该选项必填！']"
+                :rules="[() => !!newUser.email || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
@@ -146,7 +147,7 @@ onMounted(fetchRoleList)
               :disabled="!form"
               text="下一步"
               :loading="loading"
-              color="purple"
+              color="indigo"
               variant="plain"
               @click="AddBtnHandler"
             ></v-btn>
@@ -155,7 +156,7 @@ onMounted(fetchRoleList)
         </v-card>
       </v-window-item>
       <v-window-item :value="2">
-        <v-card :loading="loading" width="auto" prepend-icon="mdi-script" title="选择角色">
+        <v-card :loading="loading" prepend-icon="mdi-script" title="选择角色">
           <v-container class="w-100">
             <v-row align="center" justify="start">
               <v-col
@@ -207,7 +208,7 @@ onMounted(fetchRoleList)
               <v-btn
                 :disabled="!selected.length"
                 :loading="loading"
-                color="purple"
+                color="indigo"
                 variant="text"
                 @click="AddUserLogic"
               >

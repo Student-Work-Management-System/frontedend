@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { apiGetUserList, type UserRecord } from '@/api/user'
+import { apiDeleteUser, apiGetUserList, type UserRecord } from '@/api/user'
 import { notify } from '@kyvg/vue3-notification'
 import { reactive } from 'vue'
 import { onMounted } from 'vue'
 import AddUserForm from '@/components/home/system/AddUserForm.vue'
 import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
+import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import { computed } from 'vue'
 
 const headers: readonly {
@@ -56,8 +57,17 @@ const selected = ref<UserRecord[]>([])
 const data = ref<any>([])
 const loading = ref(true)
 const search = ref('')
+const editInfo = ref<UserRecord>({
+  uid: '',
+  username: '',
+  realName: '',
+  email: '',
+  createdAt: '',
+  roles: []
+})
 const addUserFormDialog = ref(false)
 const editUserRoleFormDialog = ref(false)
+const editUserInfoFormDialog = ref(false)
 const deleteDialog = ref(false)
 const selectedUids = computed(() => selected.value.map((u) => u.uid))
 
@@ -87,9 +97,37 @@ const fetchUserLogic = async () => {
 }
 onMounted(fetchUserLogic)
 
+const editUserRoleBtnHandler = () => {
+  if (selected.value.length == 0) {
+    notify({ type: 'warn', title: '提示', text: '请至少选择一条记录！' })
+    return
+  }
+  editUserRoleFormDialog.value = true
+}
+
+const deleteUserLogic = () => {
+  loading.value = true
+  selected.value.forEach(async (u) => {
+    const uid = u.uid
+    const { data: result } = await apiDeleteUser(uid)
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      return
+    }
+    notify({ type: 'success', title: '成功', text: `用户:${uid} 角色删除成功！` })
+  })
+  setTimeout(() => {
+    afterUser()
+    loading.value = false
+  }, 500)
+}
+
 const afterUser = () => {
   addUserFormDialog.value = false
   editUserRoleFormDialog.value = false
+  editUserInfoFormDialog.value = false
+  deleteDialog.value = false
   fetchUserLogic()
 }
 </script>
@@ -101,14 +139,22 @@ const afterUser = () => {
       :selected-users="selectedUids"
       @on-closed="afterUser"
     />
+    <EditUserInfoForm v-model="editUserInfoFormDialog" :info="editInfo" @on-closed="afterUser" />
+
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
-        title="选择删除"
+        title="删除选择"
         :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
       >
         <v-card-actions class="mx-auto">
-          <v-btn :disabled="selected.length === 0" color="error">删除</v-btn>
+          <v-btn
+            :loading="loading"
+            :disabled="selected.length === 0"
+            color="error"
+            @click="deleteUserLogic"
+            >删除</v-btn
+          >
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
@@ -119,13 +165,10 @@ const afterUser = () => {
         <v-btn prepend-icon="mdi-plus-circle" color="primary" @click="addUserFormDialog = true"
           >添加</v-btn
         >
-        <v-btn
-          prepend-icon="mdi-card-multiple"
-          color="indigo"
-          @click="editUserRoleFormDialog = true"
-          >选择设置角色</v-btn
+        <v-btn prepend-icon="mdi-card-multiple" color="indigo" @click="editUserRoleBtnHandler"
+          >设置角色</v-btn
         >
-        <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除选择</v-btn>
+        <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
       </span>
       <span class="w-25">
         <v-text-field
@@ -168,7 +211,17 @@ const afterUser = () => {
 
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" click="">编辑</v-btn>
+              <v-btn
+                prepend-icon="mdi-pencil"
+                color="indigo"
+                @click="
+                  () => {
+                    editInfo = item as UserRecord
+                    editUserInfoFormDialog = true
+                  }
+                "
+                >编辑</v-btn
+              >
             </div>
           </template>
         </v-data-table>

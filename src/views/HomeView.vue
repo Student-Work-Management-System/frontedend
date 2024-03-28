@@ -29,10 +29,10 @@ const logoutBtnHandler = () => {
   logoutHandler()
 }
 
-const logoutHandler = async () => {
+const logoutHandler = () => {
   loading.value = true
-  await apiLogout()
-  store.updateUser({ uid: '', username: '', phone: '', realName: '', token: '', authorities: [] })
+  apiLogout()
+  store.updateUser({ uid: '', username: '', email: '', realName: '', token: '', authorities: [] })
   setAuthorizationToken('')
   cookies.remove('user-cache')
   loading.value = false

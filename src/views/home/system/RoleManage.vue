@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { apiGetRoleList } from '@/api/role'
 import { notify } from '@kyvg/vue3-notification'
-import AddRoleForm from '@/components/home/system/AddRoleForm.vue'
+import EditRoleForm from '@/components/home/system/EditRoleForm.vue'
 
 const headers = [
   {
@@ -51,15 +51,15 @@ const fetchRoleLogic = async () => {
 onMounted(fetchRoleLogic)
 </script>
 <template>
-  <v-card elevation="10" height="100%" min-height="100%" min-width="100%">
+  <v-card elevation="10" height="100%" width="100%">
     <AddRoleForm v-model="addRoleFormDialog" />
     <section class="menu">
       <v-btn prepend-icon="mdi-refresh" @click="fetchRoleLogic">刷新</v-btn>
       <v-btn prepend-icon="mdi-plus-circle" color="primary" @click="addRoleFormDialog = true"
         >添加</v-btn
       >
-      <v-btn prepend-icon="mdi-card-multiple" color="indigo">同步权限</v-btn>
-      <v-btn prepend-icon="mdi-delete" color="error">删除选择</v-btn>
+      <v-btn prepend-icon="mdi-card-multiple" color="indigo">设置权限</v-btn>
+      <v-btn prepend-icon="mdi-delete" color="error">删除</v-btn>
     </section>
     <section class="pa-4 d-inline-block h-100 w-100">
       <v-card width="100%" height="100%">

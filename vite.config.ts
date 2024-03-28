@@ -14,7 +14,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://121.41.115.29:8080',
+        // target: 'http://121.41.115.29:8080', 可能远程服务器的不是最新的
+        target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

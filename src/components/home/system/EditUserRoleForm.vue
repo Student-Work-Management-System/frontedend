@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { apiGetRoleList } from '@/api/role'
-import { apiUpdateUser } from '@/api/user'
+import { apiUpdateUserRole } from '@/api/user'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { watch } from 'vue'
-import { computed, type ComputedRef } from 'vue'
+import { computed } from 'vue'
 import { ref } from 'vue'
-import SelectPermissions from './SelectPermissions.vue'
 
 const model = defineModel<boolean>()
 const props = defineProps<{ selectedUsers: string[] }>()
@@ -42,7 +41,7 @@ const EditUserLogic = async () => {
   loading.value = true
   console.log(props.selectedUsers)
   props.selectedUsers.forEach((uid) => {
-    apiUpdateUser({
+    apiUpdateUserRole({
       uid,
       roles: selected.value.map((r) => r.rid)
     }).then(({ data: result }) => {
@@ -52,7 +51,7 @@ const EditUserLogic = async () => {
         loading.value = false
         return
       }
-      notify({ type: 'success', title: '成功', text: `用户:${uid} 角色同步成功！` })
+      notify({ type: 'success', title: '成功', text: `用户:${uid} 角色设置成功！` })
     })
   })
   setTimeout(() => {
@@ -77,7 +76,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-dialog width="500" v-model="model">
+  <v-dialog width="400" v-model="model">
     <v-card :loading="loading" width="auto" prepend-icon="mdi-script" title="选择角色">
       <v-container class="w-100">
         <v-row align="center" justify="start">
@@ -130,7 +129,7 @@ onMounted(() => {
           <v-btn
             :disabled="!selected.length"
             :loading="loading"
-            color="purple"
+            color="indigo"
             variant="text"
             @click="EditUserLogic"
           >

@@ -73,9 +73,22 @@ export async function apiAddUser(user: {
   return http.post('/user/add', user)
 }
 
-export async function apiUpdateUser(userRole: {
+export async function apiUpdateUserRole(userRole: {
   uid: string
   roles: string[]
 }): Promise<AxiosResponse<Result<null>>> {
   return http.put('/user/update/role', userRole)
+}
+
+export async function apiDeleteUser(uid: string): Promise<AxiosResponse<Result<null>>> {
+  return http.delete(`/user/delete/${uid}`)
+}
+
+export async function apiUpdateUserInfo(userInfo: {
+  uid: string
+  realName: string
+  email: string
+  password: string | null
+}) {
+  return http.put('/user/update', userInfo)
 }
