@@ -90,8 +90,6 @@ const fetchUserLogic = async () => {
     return
   }
   // success
-  data.value = []
-  selected.value = []
   data.value = result.data.records
   loading.value = false
 }
@@ -128,6 +126,7 @@ const afterUser = () => {
   editUserRoleFormDialog.value = false
   editUserInfoFormDialog.value = false
   deleteDialog.value = false
+  selected.value = []
   fetchUserLogic()
 }
 </script>

@@ -5,7 +5,6 @@ import App from './App.vue'
 import router from './router'
 import Vue3Spline from 'vue3-spline'
 import VueCookies from 'vue3-cookies'
-
 // Vuetify
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
