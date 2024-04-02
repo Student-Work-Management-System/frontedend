@@ -7,7 +7,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/user'
-import { useCookies } from 'vue3-cookies'
 import { apiLogout } from '@/api/user'
 import { computed } from 'vue'
 import { setAuthorizationToken } from '@/api'
@@ -20,7 +19,6 @@ const finishLoading = () => {
   loading.value = false
 }
 const store = useUserStore()
-const { cookies } = useCookies()
 const router = useRouter()
 const realName = computed(() => store.getUserData.realName)
 
@@ -34,7 +32,7 @@ const logoutHandler = () => {
   apiLogout()
   store.updateUser({ uid: '', username: '', email: '', realName: '', token: '', authorities: [] })
   setAuthorizationToken('')
-  cookies.remove('user-cache')
+  localStorage.clear()
   loading.value = false
   notify({ title: '提示', text: '登出成功！', type: 'success' })
   router.push({ name: 'login' })

@@ -3,7 +3,6 @@ import { ref, reactive } from 'vue'
 import { setAuthorizationToken } from '@/api'
 import { apiLogin, userDataCheck } from '@/api/user'
 import { useUserStore } from '@/stores/user'
-import { useCookies } from 'vue3-cookies'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
@@ -16,7 +15,6 @@ interface UserLoginData {
 const store = useUserStore()
 const router = useRouter()
 const route = useRoute()
-const { cookies } = useCookies()
 
 const userForm = reactive<UserLoginData>({ username: '', password: '' })
 const visible = ref(false)
@@ -35,7 +33,8 @@ const loginHandler = async () => {
   store.updateUser(result.data)
   setAuthorizationToken(result.data.token)
   if (remember.value) {
-    cookies.set('user-cache', JSON.stringify(result.data), '1d')
+    localStorage.setItem('user-cache', JSON.stringify(result.data))
+    localStorage.setItem('user-cache-expired-at', (Date.now() + 7 * 24 * 60 * 60).toString())
   }
   loadingForm.value = false
   notify({ title: '提示', text: '登录成功！', type: 'success' })
@@ -43,22 +42,27 @@ const loginHandler = async () => {
 }
 
 const checkLoginCacheHandler = () => {
-  const cacheJson = cookies.get('user-cache') as Object
-  if (cacheJson !== null) {
-    try {
-      const userData = userDataCheck(cacheJson)
-      store.updateUser(userData)
-      setAuthorizationToken(userData.token)
-      notify({ title: '提示', text: '登录成功！', type: 'success' })
-      const to = route.redirectedFrom
-      if (to === undefined) router.push({ name: 'home' })
-      else router.push(to)
-    } catch (error) {
-      console.log(error)
-      notify({ title: '错误', text: '未知的登录数据', type: 'error' })
-      cookies.remove('user-cache')
-      setAuthorizationToken('')
-    }
+  const cacheJson = JSON.parse(localStorage.getItem('user-cache') as string)
+  const expiredAt = parseInt(localStorage.getItem('user-cache-expired-at') as string)
+  if (cacheJson === null || Date.now() > expiredAt) {
+    localStorage.clear()
+    setAuthorizationToken('')
+    loadingForm.value = false
+    return
+  }
+  try {
+    const userData = userDataCheck(cacheJson)
+    store.updateUser(userData)
+    setAuthorizationToken(userData.token)
+    notify({ title: '提示', text: '登录成功！', type: 'success' })
+    const to = route.redirectedFrom
+    if (to === undefined) router.push({ name: 'home' })
+    else router.push(to)
+  } catch (error) {
+    console.log(error)
+    notify({ title: '错误', text: '未知的登录数据', type: 'error' })
+    localStorage.clear()
+    setAuthorizationToken('')
   }
   loadingForm.value = false
 }

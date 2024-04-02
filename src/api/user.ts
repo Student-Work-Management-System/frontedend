@@ -56,7 +56,7 @@ export async function apiLogout(): Promise<AxiosResponse<Result<null>>> {
 }
 
 export async function apiGetUserList(params: {
-  keyword: string
+  keyword?: string
   pageNo: number
   pageSize: number
 }): Promise<AxiosResponse<Result<RecordsPage<UserRecord>>>> {

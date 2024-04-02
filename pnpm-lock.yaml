@@ -26,9 +26,6 @@ dependencies:
   vue-router:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.4.21)
-  vue3-cookies:
-    specifier: ^1.0.6
-    version: 1.0.6(typescript@5.4.2)
   vue3-spline:
     specifier: ^1.0.0
     version: 1.0.0(vue@3.4.21)
@@ -3650,14 +3647,6 @@ packages:
       semver: 7.6.0
       typescript: 5.4.2
     dev: true
-
-  /vue3-cookies@1.0.6(typescript@5.4.2):
-    resolution: {integrity: sha512-a1UvVD0qIgxyOqjlSOwnLnqAnz8ASltugEv8yX+96i/WGZAN9fEDci7xO4HIWZE1uToUnRq9JnFhvfDCSo45OA==}
-    dependencies:
-      vue: 3.4.21(typescript@5.4.2)
-    transitivePeerDependencies:
-      - typescript
-    dev: false
 
   /vue3-spline@1.0.0(vue@3.4.21):
     resolution: {integrity: sha512-p3HQjUXTIa+nDwB7zoSRykhf4hepP/IQLq69G282XjZTg5eyJXbOLVxefcMHKAfHoFMFFcxMM90Rbzq/6nNq+g==}

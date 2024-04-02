@@ -4,7 +4,6 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import Vue3Spline from 'vue3-spline'
-import VueCookies from 'vue3-cookies'
 // Vuetify
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css'
@@ -34,6 +33,5 @@ app.use(router)
 app.use(vuetify)
 app.use(Vue3Spline)
 app.use(Notifications)
-app.use(VueCookies)
 
 app.mount('#app')
