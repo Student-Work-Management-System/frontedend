@@ -30,6 +30,7 @@ export async function apiGetPermissionTree(): Promise<AxiosResponse<Result<Permi
 export async function apiAddRole(role: {
   roleName: string
   roleDesc: string
+  permissions: Permission[]
 }): Promise<AxiosResponse<Result<null>>> {
   return http.post('/auth/add/role', role)
 }

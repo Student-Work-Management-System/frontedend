@@ -41,21 +41,6 @@ const data = ref<ITreeNode[]>([])
 const treeRef = ref<any>(null)
 const loading = ref(true)
 
-const fetchPermissionLogic = async () => {
-  loading.value = true
-  const { data: result } = await apiGetPermissionTree()
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
-    loading.value = false
-    return
-  }
-  updateDataTree(result.data)
-  loading.value = false
-}
-const onSearch = (value: any) => {
-  treeRef.value!.treeFactory.searchTree(value, { isFilter: true })
-}
 const permissionIntoNode = (permission: PermissionTree): ITreeNode => {
   return {
     id: permission.pid,
@@ -72,6 +57,24 @@ const updateDataTree = (permissions: PermissionTree[]) => {
   permissions.forEach((p) => {
     data.value.push(permissionIntoNode(p))
   })
+}
+
+const fetchPermissionLogic = async () => {
+  loading.value = true
+  const { data: result } = await apiGetPermissionTree()
+  if (result.code !== 200) {
+    console.error(result)
+    notify({ type: 'error', title: '错误', text: result.message })
+    loading.value = false
+    return
+  }
+  updateDataTree(result.data)
+  loading.value = false
+}
+onMounted(fetchPermissionLogic)
+
+const onSearch = (value: any) => {
+  treeRef.value!.treeFactory.searchTree(value, { isFilter: true })
 }
 
 const editPermissionLogic = () => {
@@ -96,7 +99,6 @@ const editPermissionLogic = () => {
     emits('onClosed')
   }, 500)
 }
-onMounted(fetchPermissionLogic)
 
 watch(model, () => {
   if (!model.value) {
