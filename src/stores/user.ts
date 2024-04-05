@@ -7,7 +7,7 @@ export const useUserStore = defineStore('user', () => {
     uid: '',
     username: '',
     realName: '',
-    phone: '',
+    email: '',
     authorities: null,
     token: ''
   })
@@ -16,7 +16,7 @@ export const useUserStore = defineStore('user', () => {
     user.uid = newUser.uid
     user.username = newUser.username
     user.realName = newUser.realName
-    user.phone = newUser.phone
+    user.email = newUser.email
     user.token = newUser.token
     user.authorities = newUser.authorities
   }
