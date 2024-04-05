@@ -17,6 +17,7 @@ declare module 'vue' {
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
+    RouterSideMenu: typeof import('./src/components/home/RouterSideMenu.vue')['default']
     RouterSiderMenu: typeof import('./src/components/home/RouterSiderMenu.vue')['default']
     RouterView: typeof import('vue-router')['RouterView']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']

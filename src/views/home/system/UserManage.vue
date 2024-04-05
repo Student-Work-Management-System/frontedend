@@ -8,6 +8,7 @@ import AddUserForm from '@/components/home/system/AddUserForm.vue'
 import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
 import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
 
 const headers: readonly {
   readonly title: string
@@ -75,6 +76,12 @@ const pageOptions = reactive({
   pageSize: 10,
   pageNum: 1
 })
+
+const store = useUserStore()
+const has = (authority: string) => {
+  console.log('fff')
+  return store.hasAuthorized(authority)
+}
 
 const fetchUserLogic = async () => {
   loading.value = true
@@ -160,14 +167,30 @@ const afterUser = () => {
     </v-dialog>
     <section class="menu">
       <span>
-        <v-btn prepend-icon="mdi-refresh" @click="fetchUserLogic">刷新</v-btn>
-        <v-btn prepend-icon="mdi-plus-circle" color="primary" @click="addUserFormDialog = true"
+        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic"
+          >刷新</v-btn
+        >
+        <v-btn
+          v-if="has('user:insert')"
+          prepend-icon="mdi-plus-circle"
+          color="primary"
+          @click="addUserFormDialog = true"
           >添加</v-btn
         >
-        <v-btn prepend-icon="mdi-card-multiple" color="indigo" @click="editUserRoleBtnHandler"
+        <v-btn
+          v-if="has('user_role:insert') && has('user_role:delete')"
+          prepend-icon="mdi-card-multiple"
+          color="indigo"
+          @click="editUserRoleBtnHandler"
           >设置角色</v-btn
         >
-        <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+        <v-btn
+          v-if="has('user:delete')"
+          prepend-icon="mdi-delete"
+          color="error"
+          @click="deleteDialog = true"
+          >删除</v-btn
+        >
       </span>
       <span class="w-25">
         <v-text-field

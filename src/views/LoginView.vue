@@ -61,6 +61,7 @@ const checkLoginCacheHandler = () => {
   } catch (error) {
     console.log(error)
     notify({ title: '错误', text: '未知的登录数据', type: 'error' })
+    store.cleanStore()
     localStorage.clear()
     setAuthorizationToken('')
   }

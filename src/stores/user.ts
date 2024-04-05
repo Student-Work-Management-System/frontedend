@@ -20,6 +20,18 @@ export const useUserStore = defineStore('user', () => {
     user.token = newUser.token
     user.authorities = newUser.authorities
   }
-
-  return { user, getUserData, updateUser }
+  function hasAuthorized(authority: string): boolean {
+    return user.authorities!.some((a) => a.authority === authority)
+  }
+  function cleanStore() {
+    updateUser({
+      uid: '',
+      username: '',
+      realName: '',
+      email: '',
+      authorities: null,
+      token: ''
+    })
+  }
+  return { user, getUserData, updateUser, hasAuthorized, cleanStore }
 })

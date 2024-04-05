@@ -7,6 +7,7 @@ import AddRoleForm from '@/components/home/system/AddRoleForm.vue'
 import SelectPermission from '@/components/home/system/SelectPermission.vue'
 import { reactive } from 'vue'
 import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
 
 const headers = [
   {
@@ -48,6 +49,11 @@ const editRoleInfo = reactive<Role>({
   roleDesc: '',
   permissionList: []
 })
+
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
 
 const fetchRoleLogic = async () => {
   loading.value = true
@@ -125,14 +131,30 @@ onMounted(fetchRoleLogic)
       </v-card>
     </v-dialog>
     <section class="menu">
-      <v-btn prepend-icon="mdi-refresh" @click="fetchRoleLogic">刷新</v-btn>
-      <v-btn prepend-icon="mdi-plus-circle" color="primary" @click="addRoleFormDialog = true"
+      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic"
+        >刷新</v-btn
+      >
+      <v-btn
+        v-if="has('role:insert')"
+        prepend-icon="mdi-plus-circle"
+        color="primary"
+        @click="addRoleFormDialog = true"
         >添加</v-btn
       >
-      <v-btn prepend-icon="mdi-card-multiple" color="indigo" @click="editRoleBtnHandler"
+      <v-btn
+        v-if="has('role_permission:insert') && has('role_permission:delete')"
+        prepend-icon="mdi-card-multiple"
+        color="indigo"
+        @click="editRoleBtnHandler"
         >设置权限</v-btn
       >
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn
+        v-if="has('role:delete')"
+        prepend-icon="mdi-delete"
+        color="error"
+        @click="deleteDialog = true"
+        >删除</v-btn
+      >
     </section>
     <section class="pa-4 d-inline-block h-100 w-100">
       <v-card width="100%" height="100%">
