@@ -25,7 +25,7 @@ export default {
       name: 'punishment-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '处分信息统计',
         hasPage: true,
         auth: 'poverty_assistance:select'

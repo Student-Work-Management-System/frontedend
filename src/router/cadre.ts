@@ -25,7 +25,7 @@ export default {
       name: 'cadre-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '职位信息统计',
         hasPage: true,
         auth: 'cadre:select'

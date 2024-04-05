@@ -25,7 +25,7 @@ export default {
       name: 'status-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '学籍信息统计',
         hasPage: true,
         auth: 'student_status:select'

@@ -36,7 +36,7 @@ export default {
       name: 'academic-list',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '学术成果统计',
         hasPage: true,
         auth: 'student_academic_work_claim:select'

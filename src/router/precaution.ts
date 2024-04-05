@@ -25,7 +25,7 @@ export default {
       name: 'precaution-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '预警信息统计',
         hasPage: true,
         auth: 'student_school_precaution:select'

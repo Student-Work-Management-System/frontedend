@@ -36,7 +36,7 @@ export default {
       name: 'competition-list',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '获奖情况统计',
         hasPage: true,
         auth: 'student_competition_claim:select'

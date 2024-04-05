@@ -25,7 +25,7 @@ export default {
       name: 'enrollment-list',
       component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
-        icon: 'mdi-chart-bell-curve',
+        icon: 'mdi-chart-bar',
         title: '招生信息统计',
         hasPage: true,
         auth: 'enrollment_info:select'
