@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-camera-account',
     title: '学生基本信息',
-    itemShow: false
+    hasPage: false,
+    auth: 'student:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '基本信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '基本信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student:update'
       }
     }
   ]

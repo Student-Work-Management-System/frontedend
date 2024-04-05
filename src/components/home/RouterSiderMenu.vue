@@ -1,9 +1,25 @@
 <script lang="ts" setup>
 import { routes } from '@/router/index'
+import { useUserStore } from '@/stores/user'
+import { computed } from 'vue'
 import { ref } from 'vue'
 
 const drawer = ref(true)
 const rail = ref(false)
+const store = useUserStore()
+const authorities = store.getUserData.authorities?.map((a) => a.authority)
+console.log(routes)
+
+const items = computed(() =>
+  routes
+    .filter((r) => (r.meta.auth === null ? true : authorities?.includes(r.meta.auth)))
+    .map((r) => ({
+      ...r,
+      children: r.children.filter((item) =>
+        item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
+      )
+    }))
+)
 </script>
 
 <template>
@@ -29,7 +45,7 @@ const rail = ref(false)
     </v-list-item>
     <v-list density="compact" nav>
       <v-list-group
-        v-for="(item, index) in routes"
+        v-for="(item, index) in items"
         base-color="#147ddf"
         color="#fff"
         :key="index"

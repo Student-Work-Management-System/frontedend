@@ -4,8 +4,9 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-cogs',
-    itemShow: false,
-    title: '系统管理'
+    hasPage: false,
+    title: '系统管理',
+    auth: 'permission:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-account-cog',
         title: '用户账号管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'user:select'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-credit-card-edit',
         title: '角色权限管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'role_permission:select'
       }
     }
   ]

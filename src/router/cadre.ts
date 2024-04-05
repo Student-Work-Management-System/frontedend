@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-account-tie',
     title: '学生干部信息',
-    itemShow: false
+    hasPage: false,
+    auth: 'cadre:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '职位信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'cadre:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '职位信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'cadre:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '职位任期管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'cadre:update'
       }
     }
   ]

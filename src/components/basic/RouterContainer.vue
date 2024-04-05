@@ -4,7 +4,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <main v-if="!route.meta.itemShow">
+  <main v-if="!route.meta.hasPage">
     <div>
       <h1>当前未打开任何管理条目</h1>
       <h2>( 请尝试点击左侧栏以打开条目 )</h2>

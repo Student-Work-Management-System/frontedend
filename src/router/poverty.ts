@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-sprout',
     title: '学生贫困资助',
-    itemShow: false
+    hasPage: false,
+    auth: 'poverty_assistance:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '贫困信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '贫困信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '贫困信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:update'
       }
     }
   ]

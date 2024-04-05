@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-cancel',
     title: '学生处分情况',
-    itemShow: false
+    hasPage: false,
+    auth: 'poverty_assistance:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '处分信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '处分信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '处分信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'poverty_assistance:update'
       }
     }
   ]

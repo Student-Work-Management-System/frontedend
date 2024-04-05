@@ -4,7 +4,8 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-school',
-    itemShow: false,
+    hasPage: false,
+    auth: 'student_status:select',
     title: '学生学籍变动'
   },
   children: [
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '学籍信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_status:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '学籍信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_status:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '学籍信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_status:update'
       }
     }
   ]

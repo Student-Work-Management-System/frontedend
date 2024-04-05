@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-horse-variant',
     title: '学科竞赛记录',
-    itemShow: false
+    hasPage: false,
+    auth: null
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生获奖上报',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_competition:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_competition_claim:update'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '获奖情况统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_competition_claim:select'
       }
     },
     {
@@ -45,7 +49,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '竞赛类别管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'competition:update'
       }
     }
   ]

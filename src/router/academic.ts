@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-book-open',
     title: '学生学术成果',
-    itemShow: false
+    hasPage: false,
+    auth: null
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生成果上报',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_academic_work:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_academic_work_claim:update'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '学术成果统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_academic_work_claim:select'
       }
     },
     {
@@ -45,7 +49,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '学术成果管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_academic_work_claim:update'
       }
     }
   ]

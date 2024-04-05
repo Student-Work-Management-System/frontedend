@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-web',
     title: 'CET等级成绩统计',
-    itemShow: false
+    hasPage: false,
+    auth: 'student_cet:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '考试成绩录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_cet:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '考试成绩统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_cet:select'
       }
     }
   ]

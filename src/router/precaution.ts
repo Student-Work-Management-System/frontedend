@@ -4,7 +4,8 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-shield-alert-outline',
-    itemShow: false,
+    hasPage: false,
+    auth: 'student_school_precaution:select',
     title: '学业预警信息'
   },
   children: [
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '预警信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_school_precaution:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '预警信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_school_precaution:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '预警信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_school_precaution:update'
       }
     }
   ]

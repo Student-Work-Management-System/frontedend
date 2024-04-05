@@ -4,7 +4,8 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-bus-school',
-    itemShow: false,
+    hasPage: false,
+    auth: 'enrollment_info:select',
     title: '学生招生信息'
   },
   children: [
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '招生信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'enrollment_info:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '招生信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'enrollment_info:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '招生信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'enrollment_info:update'
       }
     }
   ]

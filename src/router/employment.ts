@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-briefcase',
     title: '学生就业统计',
-    itemShow: false
+    hasPage: false,
+    auth: 'student_employment:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '就业信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_employment:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '就业信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_employment:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '就业信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_employment:update'
       }
     }
   ]

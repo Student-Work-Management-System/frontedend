@@ -43,31 +43,41 @@ const router = createRouter({
       component: HomeView,
       meta: {
         title: '首页',
-        itemShow: false
+        hasPage: false,
+        auth: null
       },
       children: routes
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginView,
+      meta: {
+        auth: null
+      }
     }
   ]
 })
 
 router.beforeEach(async (to) => {
-  const store = useUserStore()
+  const userData = useUserStore().getUserData
   // 检查用户是否已登录
-  if (store.getUserData.uid === '') {
+  if (userData.uid === '') {
     if (to.name === 'login') return // ❗️ 避免无限重定向
     return { name: 'login' }
   }
 
   // 已登录，不允许直接访问登录页面
-  if (store.getUserData.uid !== '' && to.name === 'login') return { name: 'home' }
+  if (userData.uid !== '' && to.name === 'login') return { name: 'home' }
 
   // 检测用户是否用对应的页面权限
-  // store.getUserData.authorities?.find(() => {})
+  if (
+    to.meta !== undefined &&
+    to.meta.auth !== undefined &&
+    to.meta.auth !== null &&
+    !userData.authorities?.map((a) => a.authority).includes(to.meta.auth as string)
+  )
+    return { name: 'home' }
 })
 
 export default router

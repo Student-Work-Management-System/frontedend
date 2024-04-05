@@ -5,7 +5,8 @@ export default {
   meta: {
     icon: 'mdi-medal',
     title: '奖学金记录',
-    itemShow: false
+    hasPage: false,
+    auth: 'student_scholarship:select'
   },
   children: [
     {
@@ -15,7 +16,8 @@ export default {
       meta: {
         icon: 'mdi-upload-outline',
         title: '奖学金信息录入',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_scholarship:insert'
       }
     },
     {
@@ -25,7 +27,8 @@ export default {
       meta: {
         icon: 'mdi-chart-bell-curve',
         title: '奖学金信息统计',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_scholarship:select'
       }
     },
     {
@@ -35,7 +38,8 @@ export default {
       meta: {
         icon: 'mdi-cog',
         title: '奖学金信息管理',
-        itemShow: true
+        hasPage: true,
+        auth: 'student_scholarship:update'
       }
     }
   ]
