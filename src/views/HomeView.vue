@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import RouterContainer from '@/components/basic/RouterContainer.vue'
 import RouterBreadcrumb from '@/components/home/RouterBreadcrumb.vue'
-import RouterSiderMenu from '@/components/home/RouterSiderMenu.vue'
+import RouterSideMenu from '@/components/home/RouterSideMenu.vue'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -59,7 +59,7 @@ onMounted(finishLoading)
 
   <v-card :loading="loading">
     <v-layout>
-      <RouterSiderMenu />
+      <RouterSideMenu />
       <v-main style="width: 100vw; height: 100vh; display: flex; flex-direction: column">
         <div class="nav">
           <v-card elevation="4" class="pb-1 w-100">
