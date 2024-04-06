@@ -115,6 +115,7 @@ onMounted(checkLoginCacheHandler)
           :loading="loadingForm"
           :counter="18"
           clearable
+          hide-details
           class="password mt-1"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
@@ -159,12 +160,6 @@ onMounted(checkLoginCacheHandler)
     </v-card>
   </main>
 </template>
-
-<style>
-.password .v-input__details {
-  min-height: 0%;
-}
-</style>
 
 <style scoped>
 .threed #spline-canvas {
