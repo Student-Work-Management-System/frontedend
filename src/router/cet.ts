@@ -14,7 +14,7 @@ export default {
       name: 'cet-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '考试成绩录入',
         hasPage: true,
         auth: 'student_cet:insert'

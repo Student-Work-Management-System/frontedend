@@ -14,7 +14,7 @@ export default {
       name: 'status-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '学籍信息录入',
         hasPage: true,
         auth: 'student_status:insert'

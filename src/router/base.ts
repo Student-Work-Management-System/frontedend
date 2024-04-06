@@ -14,7 +14,7 @@ export default {
       name: 'base-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '基本信息录入',
         hasPage: true,
         auth: 'student:insert'

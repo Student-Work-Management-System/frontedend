@@ -14,7 +14,7 @@ export default {
       name: 'precaution-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '预警信息录入',
         hasPage: true,
         auth: 'student_school_precaution:insert'

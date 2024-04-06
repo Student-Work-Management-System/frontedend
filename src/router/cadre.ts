@@ -14,7 +14,7 @@ export default {
       name: 'cadre-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '职位信息录入',
         hasPage: true,
         auth: 'cadre:insert'

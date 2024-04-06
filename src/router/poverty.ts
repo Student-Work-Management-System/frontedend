@@ -14,7 +14,7 @@ export default {
       name: 'poverty-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '贫困信息录入',
         hasPage: true,
         auth: 'poverty_assistance:insert'

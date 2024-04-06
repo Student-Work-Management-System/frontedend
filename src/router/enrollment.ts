@@ -14,7 +14,7 @@ export default {
       name: 'enrollment-import',
       component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
-        icon: 'mdi-upload-outline',
+        icon: 'mdi-plus-box-multiple',
         title: '招生信息录入',
         hasPage: true,
         auth: 'enrollment_info:insert'
