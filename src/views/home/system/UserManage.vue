@@ -79,7 +79,6 @@ const pageOptions = reactive({
 
 const store = useUserStore()
 const has = (authority: string) => {
-  console.log('fff')
   return store.hasAuthorized(authority)
 }
 
