@@ -191,7 +191,7 @@ const afterUser = () => {
           >删除</v-btn
         >
       </span>
-      <span class="w-25">
+      <span class="w-25 text-indigo">
         <v-text-field
           v-model="search"
           @update:modelValue="fetchUserLogic"

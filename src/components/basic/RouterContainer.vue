@@ -4,7 +4,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <main v-if="!route.meta.hasPage">
+  <main class="router-container-main" v-if="!route.meta.hasPage">
     <div>
       <h1>当前未打开任何管理条目</h1>
       <h2>( 请尝试点击左侧栏以打开条目 )</h2>
@@ -14,15 +14,15 @@ const route = useRoute()
 </template>
 
 <style scoped>
-main {
+.router-container-main {
   display: flex;
   height: 90%;
   widows: 100%;
   justify-content: center;
   align-items: center;
 }
-main div {
-  color: #9da2c4;
+.router-container-main div {
+  color: #8e95c9;
   display: flex;
   flex-direction: column;
   align-items: center;
