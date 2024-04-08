@@ -20,8 +20,10 @@
     "vue": "^3.4.21",
     "vue-devui": "^1.6.5",
     "vue-router": "^4.3.0",
+    "vue3-excel-editor": "^1.0.29",
     "vue3-spline": "^1.0.0",
-    "vuetify": "^3.5.11"
+    "vuetify": "^3.5.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",

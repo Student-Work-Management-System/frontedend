@@ -13,6 +13,8 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 // notification
 import Notifications from '@kyvg/vue3-notification'
+import VueExcelEditor from 'vue3-excel-editor'
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -33,5 +35,6 @@ app.use(router)
 app.use(vuetify)
 app.use(Vue3Spline)
 app.use(Notifications)
+app.use(VueExcelEditor)
 
 app.mount('#app')
