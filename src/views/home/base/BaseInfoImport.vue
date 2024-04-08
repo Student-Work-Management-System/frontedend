@@ -36,7 +36,18 @@ const analyzeHandler = async () => {
   }
   const workbook = XLSX.read(await file.value?.arrayBuffer())
   const worksheet = workbook.Sheets[workbook.SheetNames[0]]
-  jsonData.value = XLSX.utils.sheet_to_json(worksheet)
+  const rawData = XLSX.utils.sheet_to_json(worksheet)
+  console.log(rawData)
+
+  const fieldKeyMap = baseheaders.reduce((map, header) => {
+    map.set(header.label, header.field)
+    return map
+  }, new Map())
+  jsonData.value = rawData.map((row: any) => {
+    const newRow: { [key: string]: any } = {}
+    Object.keys(row).forEach((key) => (newRow[fieldKeyMap.get(key)] = row[key]))
+    return newRow
+  }) as BaseHeader[]
 }
 
 const uploadLogic = async () => {
@@ -72,6 +83,7 @@ const uploadLogic = async () => {
     return
   }
   notify({ title: '成功', text: '上传成功！', type: 'success' })
+  uploadDialog.value = false
   loading.value = false
 }
 </script>
@@ -112,7 +124,7 @@ const uploadLogic = async () => {
         >解析文件</v-btn
       >
       <v-btn prepend-icon="mdi-upload" color="primary" @click="uploadDialog = true">上传数据</v-btn>
-      <v-btn prepend-icon="mdi-download">下载模板</v-btn>
+      <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模版.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 h-100 w-100">
       <ExcelTable v-model="jsonData" :headers="baseheaders" :nil-data="nilData" />
