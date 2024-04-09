@@ -7,6 +7,7 @@ import { baseheaders, type BaseHeader, BaseHeaderChecker } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import { apiGetMajorList } from '@/api/major'
 import { apiAddStudentBaseInfo } from '@/api/base'
+import { useUserStore } from '@/stores/user'
 
 const excel = ref<File[]>()
 const jsonData = ref<BaseHeader[]>([])
@@ -48,6 +49,12 @@ const analyzeHandler = async () => {
     Object.keys(row).forEach((key) => (newRow[fieldKeyMap.get(key)] = row[key]))
     return newRow
   }) as BaseHeader[]
+}
+
+// 检验用户权限用的
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
 }
 
 const uploadLogic = async () => {
@@ -98,6 +105,7 @@ const uploadLogic = async () => {
       >
         <v-card-actions class="mx-auto">
           <v-btn
+            v-if="has('student:insert')"
             :loading="loading"
             :disabled="jsonData.length === 0 && ifValided"
             color="indigo"
