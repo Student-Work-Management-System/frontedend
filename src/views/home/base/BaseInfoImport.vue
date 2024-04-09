@@ -132,12 +132,6 @@ const uploadLogic = async () => {
   </v-card>
 </template>
 
-<style>
-.component-content {
-  width: 100% !important;
-  height: 100% !important;
-}
-</style>
 <style scoped>
 .menu {
   width: 100%;
