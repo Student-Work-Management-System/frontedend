@@ -7,7 +7,7 @@ const props = defineProps<{ headers: TableHeader[]; nilData: any }>()
 const tableRef = ref()
 
 const addNewRow = () => {
-  tableRef.value.newRecord(props.nilData)
+  tableRef.value.newRecord(JSON.parse(JSON.stringify(props.nilData)))
 }
 const deleteSelectRows = () => {
   tableRef.value.deleteSelectedRecords()
@@ -20,7 +20,6 @@ const deleteSelectRows = () => {
     v-model="model"
     no-header-edit
     ref="tableRef"
-    new-if-bottom
     free-select
     disable-panel-setting
     :localized-label="chLabel"

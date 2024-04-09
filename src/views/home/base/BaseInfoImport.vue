@@ -72,6 +72,7 @@ const uploadLogic = async () => {
   if (result.code !== 200) {
     console.log(result)
     notify({ title: '错误', text: result.message, type: 'error' })
+    loading.value = false
     return
   }
   const majorMap = result.data.reduce((majorMap, major) => {
@@ -87,6 +88,7 @@ const uploadLogic = async () => {
   if (result2.code !== 200) {
     console.log(result2)
     notify({ title: '错误', text: result2.message, type: 'error' })
+    loading.value = false
     return
   }
   notify({ title: '成功', text: '上传成功！', type: 'success' })

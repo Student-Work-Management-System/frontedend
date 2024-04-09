@@ -11,12 +11,16 @@ http.interceptors.response.use(
       console.error('用户权限不足：', res)
       localStorage.clear()
       setAuthorizationToken('')
-      location.reload()
+      setTimeout(() => {
+        location.reload()
+      }, 500)
     } else if (res.data.code === -210) {
       console.error('用户token过期：', res)
       localStorage.clear()
       setAuthorizationToken('')
-      location.reload()
+      setTimeout(() => {
+        location.reload()
+      }, 500)
     }
 
     return res

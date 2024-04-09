@@ -157,7 +157,7 @@ onMounted(fetchRoleLogic)
       >
     </section>
     <section class="pa-4 d-inline-block h-100 w-100">
-      <v-card width="100%" height="100%">
+      <v-card>
         <v-data-table
           v-model="selected"
           :headers="headers"

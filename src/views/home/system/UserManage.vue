@@ -96,7 +96,7 @@ const fetchUserLogic = async () => {
     return
   }
   // success
-  data.value = result.data.records
+  data.value = result.data
   loading.value = false
 }
 onMounted(fetchUserLogic)
@@ -208,7 +208,7 @@ const afterUser = () => {
       </span>
     </section>
     <section class="pa-4 d-inline-block h-100 w-100">
-      <v-card min-width="100%" min-height="100%">
+      <v-card>
         <v-data-table
           v-model="selected"
           :headers="headers"

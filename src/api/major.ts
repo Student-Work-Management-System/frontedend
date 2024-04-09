@@ -2,7 +2,7 @@ import http from '.'
 import { type Result } from '.'
 import { type AxiosResponse } from 'axios'
 
-interface Major {
+export interface Major {
   majorId: string
   majorName: string
 }

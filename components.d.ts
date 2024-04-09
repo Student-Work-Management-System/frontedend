@@ -15,6 +15,8 @@ declare module 'vue' {
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     ExcelTable: typeof import('./src/components/home/ExcelTable.vue')['default']
+    GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
+    MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -59,7 +59,7 @@ export async function apiGetUserList(params: {
   keyword?: string
   pageNo: number
   pageSize: number
-}): Promise<AxiosResponse<Result<RecordsPage<UserRecord>>>> {
+}): Promise<AxiosResponse<Result<UserRecord[]>>> {
   return http.get('/user/gets', { params })
 }
 
