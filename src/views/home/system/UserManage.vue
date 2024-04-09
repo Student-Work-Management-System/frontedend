@@ -165,6 +165,21 @@ const afterUser = () => {
       </v-card>
     </v-dialog>
     <section class="menu">
+      <span class="w-20 text-indigo">
+        <v-text-field
+          v-model="search"
+          @update:modelValue="fetchUserLogic"
+          :loading="loading"
+          :counter="15"
+          clearable
+          label="搜索"
+          prepend-inner-icon="mdi-magnify"
+          variant="underlined"
+          hide-details
+        >
+          <v-tooltip activator="parent" location="top">以用户名或真实姓名搜索</v-tooltip>
+        </v-text-field>
+      </span>
       <span>
         <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic"
           >刷新</v-btn
@@ -190,21 +205,6 @@ const afterUser = () => {
           @click="deleteDialog = true"
           >删除</v-btn
         >
-      </span>
-      <span class="w-25 text-indigo">
-        <v-text-field
-          v-model="search"
-          @update:modelValue="fetchUserLogic"
-          :loading="loading"
-          :counter="15"
-          clearable
-          label="搜索"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          hide-details
-        >
-          <v-tooltip activator="parent" location="top">以用户名或真实姓名搜索</v-tooltip>
-        </v-text-field>
       </span>
     </section>
     <section class="pa-4 d-inline-block h-100 w-100">
@@ -258,11 +258,13 @@ const afterUser = () => {
 .menu {
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
 .menu span > * {
   margin-right: 0.5rem;
+}
+.w-20 {
+  width: 20% !important;
 }
 </style>
