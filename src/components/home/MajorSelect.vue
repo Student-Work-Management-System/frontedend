@@ -5,6 +5,17 @@ import { ref } from 'vue'
 import { onMounted } from 'vue'
 
 const model = defineModel<string>()
+const props = defineProps<{
+  variant?:
+    | 'filled'
+    | 'underlined'
+    | 'outlined'
+    | 'plain'
+    | 'solo'
+    | 'solo-inverted'
+    | 'solo-filled'
+    | undefined
+}>()
 const items = ref<Major[]>([])
 
 const loading = ref(true)
@@ -15,7 +26,7 @@ const getMajorListLogic = async () => {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
-  items.value = [{ majorId: '', majorName: '' }, ...result.data]
+  items.value = result.data
   loading.value = false
 }
 onMounted(getMajorListLogic)
@@ -31,7 +42,12 @@ onMounted(getMajorListLogic)
     :items="items"
     item-title="majorName"
     item-value="majorId"
-    variant="underlined"
+    :variant="props.variant"
     hide-details
-  ></v-select>
+    clearable
+  >
+    <template v-slot:prepend>
+      <slot></slot>
+    </template>
+  </v-select>
 </template>

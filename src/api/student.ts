@@ -12,6 +12,7 @@ export interface Student {
   phone: string
   nation: string
   majorName: string
+  majorId: string
   grade: string
   classNo: string
   politicsStatus: string
@@ -29,4 +30,8 @@ export function apiGetStudentList(query: {
 
 export function apiDeleteStudent(studentId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/student/delete/${studentId}`)
+}
+
+export function apiUpdateStudent(info: Student): Promise<AxiosResponse<Result<null>>> {
+  return http.put('/student/update', info)
 }

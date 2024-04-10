@@ -6,6 +6,7 @@ import { type Student, apiGetStudentList, apiDeleteStudent } from '@/api/student
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
+import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 
 const headers = [
   {
@@ -75,6 +76,12 @@ const headers = [
     key: 'phone'
   },
   {
+    title: '邮政编码',
+    align: 'start',
+    sortable: false,
+    key: 'postalCode'
+  },
+  {
     title: '操作',
     align: 'start',
     sortable: false,
@@ -89,6 +96,22 @@ const dataLength = ref<number>(0)
 const selectedMajor = ref<string>('')
 const selectedGrade = ref<string>('')
 const deleteDialog = ref(false)
+const editDialog = ref(false)
+const modifyInfo = ref<Student>({
+  majorId: '',
+  studentId: '',
+  idNumber: '',
+  name: '',
+  gender: '',
+  nativePlace: '',
+  postalCode: '',
+  phone: '',
+  nation: '',
+  majorName: '',
+  grade: '',
+  classNo: '',
+  politicsStatus: ''
+})
 const pageOptions = reactive({
   pageSize: 10,
   pageNo: 1
@@ -122,7 +145,7 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
   fetchStudentLogic()
 }
 
-const deleteUserLogic = async () => {
+const deleteStudentLogic = async () => {
   loading.value = true
   const studentIds = selected.value.map((v) => v.studentId)
   studentIds.forEach(async (id) => {
@@ -138,6 +161,11 @@ const deleteUserLogic = async () => {
     loading.value = false
   }, 500)
 }
+
+const afterEditStudent = () => {
+  editDialog.value = false
+  fetchStudentLogic()
+}
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -152,19 +180,25 @@ const deleteUserLogic = async () => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
-            @click="deleteUserLogic"
+            @click="deleteStudentLogic"
             >删除</v-btn
           >
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <EditBaseInfoForm
+      v-model="editDialog"
+      v-model:info="modifyInfo"
+      @on-closed="afterEditStudent"
+    />
     <section class="menu">
       <span class="w-20">
-        <MajorSelect v-model="selectedMajor" />
+        <MajorSelect v-model="selectedMajor" variant="underlined" />
       </span>
       <span class="w-20">
-        <GradeSelect v-model="selectedGrade" />
+        <GradeSelect v-model="selectedGrade" variant="underlined" />
       </span>
       <span class="w-20 text-indigo">
         <v-text-field
@@ -207,8 +241,8 @@ const deleteUserLogic = async () => {
                 color="indigo"
                 @click="
                   () => {
-                    editInfo = item as UserRecord
-                    editUserInfoFormDialog = true
+                    modifyInfo = { ...item }
+                    editDialog = true
                   }
                 "
                 >编辑</v-btn

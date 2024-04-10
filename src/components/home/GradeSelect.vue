@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
 import { ref } from 'vue'
 
 const model = defineModel<string>()
+const props = defineProps<{
+  variant?:
+    | 'filled'
+    | 'underlined'
+    | 'outlined'
+    | 'plain'
+    | 'solo'
+    | 'solo-inverted'
+    | 'solo-filled'
+    | undefined
+}>()
 const items = ref<string[]>([])
 const since = 2017
 const nowYear = new Date().getFullYear()
 items.value = Array.from({ length: nowYear - since + 1 }, (_, index) => (since + index).toString())
-items.value.push('')
 items.value = items.value.reverse()
-
-onMounted
 </script>
 <template>
   <v-select
@@ -19,7 +26,12 @@ onMounted
     color="indigo"
     label="年级"
     :items="items"
-    variant="underlined"
+    :variant="props.variant"
     hide-details
-  ></v-select>
+    clearable
+  >
+    <template v-slot:prepend>
+      <slot></slot>
+    </template>
+  </v-select>
 </template>
