@@ -89,13 +89,19 @@ onMounted(checkLoginCacheHandler)
     <v-card
       :loading="loadingForm"
       :disabled="loadingForm"
-      style="padding: 6rem 5rem"
+      style="
+        padding: 6rem 3rem;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+      "
       elevation="8"
       height="70%"
       width="32%"
     >
       <h1 class="text-h4 text-center text-deep-purple-darken-4 mb-10">用户登录</h1>
-      <v-form v-model="form">
+      <v-form v-model="form" style="width: 75%">
         <v-text-field
           :loading="loadingForm"
           :counter="15"

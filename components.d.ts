@@ -11,7 +11,6 @@ declare module 'vue' {
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     DSearch: typeof import('vue-devui/search/index.es.js')['Search']
     DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
-    EditRoleForm: typeof import('./src/components/home/system/EditRoleForm.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     ExcelTable: typeof import('./src/components/home/ExcelTable.vue')['default']
@@ -21,7 +20,6 @@ declare module 'vue' {
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterSideMenu: typeof import('./src/components/home/RouterSideMenu.vue')['default']
-    RouterSiderMenu: typeof import('./src/components/home/RouterSiderMenu.vue')['default']
     RouterView: typeof import('vue-router')['RouterView']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
   }
