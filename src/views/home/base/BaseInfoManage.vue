@@ -220,7 +220,7 @@ const afterEditStudent = () => {
 
       <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
-    <section class="pa-4 h-100 w-100">
+    <section class="pa-4 w-100">
       <v-card>
         <v-data-table-server
           v-model="selected"

@@ -27,4 +27,7 @@ declare module 'vue' {
     RouterView: (typeof import('vue-router'))['RouterView']
     SelectPermission: (typeof import('./src/components/home/system/SelectPermission.vue'))['default']
   }
+  export interface ComponentCustomProperties {
+    vS: typeof import('vue-devui/s/index.es.js')['SDirective']
+  }
 }

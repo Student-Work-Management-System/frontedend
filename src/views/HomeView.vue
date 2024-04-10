@@ -63,7 +63,7 @@ onMounted(finishLoading)
       <v-main style="width: 100vw; height: 100vh; display: flex; flex-direction: column">
         <div class="nav">
           <v-card elevation="4" class="pb-1 w-100">
-            <v-card-title class="d-flex justify-space-between align-center">
+            <v-card-title class="d-flex justify-space-between align-center" style="height: 5vh">
               <span>
                 <RouterBreadcrumb />
               </span>
@@ -102,6 +102,7 @@ onMounted(finishLoading)
 .contain {
   flex: 1;
   width: 100%;
+  height: 94vh;
   padding: 0 1rem 0.5rem 1rem;
 }
 </style>

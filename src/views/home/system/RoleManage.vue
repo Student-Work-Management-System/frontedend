@@ -156,7 +156,7 @@ onMounted(fetchRoleLogic)
         >删除</v-btn
       >
     </section>
-    <section class="pa-4 d-inline-block h-100 w-100">
+    <section class="pa-4 d-inline-block w-100">
       <v-card>
         <v-data-table
           v-model="selected"

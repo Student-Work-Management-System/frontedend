@@ -5,7 +5,6 @@ import { computed } from 'vue'
 import { ref } from 'vue'
 
 const drawer = ref(true)
-const rail = ref(false)
 const store = useUserStore()
 const authorities = store.getUserData.authorities?.map((a) => a.authority)
 console.log(routes)
@@ -23,27 +22,13 @@ const items = computed(() =>
 </script>
 
 <template>
-  <v-navigation-drawer
-    color="#001529"
-    theme="dark"
-    v-model="drawer"
-    :rail="rail"
-    permanent
-    @click="rail = false"
-  >
+  <v-navigation-drawer color="#001529" theme="dark" v-model="drawer" permanent>
     <v-list-item class="logo">
       <template v-slot:append>
-        <v-img v-if="!rail" :width="200" src="logo2.png"></v-img>
-        <v-img v-else style="left: -2px; top: 6px" :width="35" src="logo-mini.png"></v-img>
-        <v-btn
-          v-if="!rail"
-          icon="mdi-chevron-left"
-          variant="text"
-          @click.stop="rail = !rail"
-        ></v-btn>
+        <v-img :width="235" src="logo2.png" />
       </template>
     </v-list-item>
-    <v-list density="compact" nav>
+    <v-list density="compact" nav open-strategy="single">
       <v-list-group
         v-for="(item, index) in items"
         base-color="#147ddf"
@@ -52,11 +37,7 @@ const items = computed(() =>
         :value="item.name"
       >
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            :prepend-icon="item.meta.icon"
-            :title="item.meta.title"
-          ></v-list-item>
+          <v-list-item v-bind="props" :prepend-icon="item.meta.icon" :title="item.meta.title" />
         </template>
         <v-list-item
           class="back"
@@ -66,13 +47,19 @@ const items = computed(() =>
           :title="chitem.meta.title"
           :value="chitem.name"
           :to="chitem.path"
-        ></v-list-item>
+        />
       </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <style scoped>
+.logo {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  margin-top: 0.3rem;
+}
 .v-list-group__items .v-list-item {
   padding-inline-start: 2rem !important;
 }

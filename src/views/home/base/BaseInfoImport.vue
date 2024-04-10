@@ -136,7 +136,7 @@ const uploadLogic = async () => {
       <v-btn prepend-icon="mdi-upload" color="primary" @click="uploadDialog = true">上传数据</v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模版.xlsx">下载模板</v-btn>
     </section>
-    <section class="pa-4 h-100 w-100">
+    <section class="pa-4 w-100">
       <ExcelTable v-model="jsonData" :headers="baseheaders" :nil-data="nilData" />
     </section>
   </v-card>

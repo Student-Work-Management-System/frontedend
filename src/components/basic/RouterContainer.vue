@@ -16,7 +16,7 @@ const route = useRoute()
 <style scoped>
 .router-container-main {
   display: flex;
-  height: 90%;
+  height: 100%;
   widows: 100%;
   justify-content: center;
   align-items: center;
