@@ -89,6 +89,20 @@ export async function apiUpdateUserInfo(userInfo: {
   realName: string
   email: string
   password: string | null
-}) {
+}): Promise<AxiosResponse<Result<null>>> {
   return http.put('/user/update', userInfo)
+}
+
+export async function apiFindBackPassword(
+  username: string
+): Promise<AxiosResponse<Result<{ email: string }>>> {
+  return http.get(`/user/findBackPassword/${username}`)
+}
+
+export async function apiUpdatePassword(body: {
+  username: string
+  password: string
+  code: string
+}): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/user/updatePassword', body)
 }

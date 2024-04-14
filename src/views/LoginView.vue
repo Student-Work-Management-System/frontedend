@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
+import ForgetPasswordForm from '@/components/login/ForgetPasswordForm.vue'
 
 interface UserLoginData {
   username: string
@@ -21,6 +22,7 @@ const visible = ref(false)
 const loadingForm = ref(true)
 const remember = ref(true)
 const form = ref(false)
+const forgetDialog = ref(false)
 
 const loginHandler = async () => {
   loadingForm.value = true
@@ -72,6 +74,7 @@ onMounted(checkLoginCacheHandler)
 
 <template>
   <main class="d-flex justify-center align-center">
+    <ForgetPasswordForm v-model="forgetDialog" />
     <v-card
       class="py-8 px-16 d-flex flex-column justify-center align-center"
       elevation="8"
@@ -147,7 +150,7 @@ onMounted(checkLoginCacheHandler)
             label="记住账号"
             hide-details
           ></v-checkbox>
-          <v-btn variant="text" color="indigo">忘记密码</v-btn>
+          <v-btn variant="text" color="indigo" @click="forgetDialog = true">忘记密码</v-btn>
         </div>
 
         <v-btn
