@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
+    DeletDialog: typeof import('./src/components/basic/DeletDialog.vue')['default']
+    DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
     DSearch: typeof import('vue-devui/search/index.es.js')['Search']
     DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
@@ -18,6 +20,7 @@ declare module 'vue' {
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
     ForgetWindows: typeof import('./src/components/ForgetWindows.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
+    MajorForm: typeof import('./src/components/system/MajorForm.vue')['default']
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']

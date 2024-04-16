@@ -10,6 +10,17 @@ export default {
   },
   children: [
     {
+      path: '/system/major/manage',
+      name: 'major-manage',
+      component: () => import('@/views/home/system/MajorManage.vue'),
+      meta: {
+        icon: 'mdi-book-cog',
+        title: '学院专业管理',
+        hasPage: true,
+        auth: 'major:update'
+      }
+    },
+    {
       path: '/system/user/manage',
       name: 'user-manage',
       component: () => import('@/views/home/system/UserManage.vue'),
