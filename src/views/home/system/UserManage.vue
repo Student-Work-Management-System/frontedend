@@ -7,6 +7,7 @@ import { onMounted } from 'vue'
 import AddUserForm from '@/components/home/system/AddUserForm.vue'
 import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
 import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
+import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 
@@ -145,25 +146,11 @@ const afterUser = () => {
       @on-closed="afterUser"
     />
     <EditUserInfoForm v-model="editUserInfoFormDialog" :info="editInfo" @on-closed="afterUser" />
-
-    <v-dialog width="500" v-model="deleteDialog">
-      <v-card
-        prepend-icon="mdi-delete"
-        title="删除选择"
-        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
-      >
-        <v-card-actions class="mx-auto">
-          <v-btn
-            :loading="loading"
-            :disabled="selected.length === 0"
-            color="error"
-            @click="deleteUserLogic"
-            >删除</v-btn
-          >
-          <v-btn @click="deleteDialog = false">取消</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <DeleteDialog
+      v-model="deleteDialog"
+      v-model:length="selected.length"
+      @delete="deleteUserLogic"
+    />
     <section class="menu">
       <span class="w-20 text-indigo">
         <v-text-field

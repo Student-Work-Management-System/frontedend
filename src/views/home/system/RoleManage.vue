@@ -5,6 +5,7 @@ import { apiGetRoleList, apiDeleteRole, type Role } from '@/api/role'
 import { notify } from '@kyvg/vue3-notification'
 import AddRoleForm from '@/components/home/system/AddRoleForm.vue'
 import SelectPermission from '@/components/home/system/SelectPermission.vue'
+import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { reactive } from 'vue'
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
@@ -112,24 +113,11 @@ onMounted(fetchRoleLogic)
       :permissions="selectedPermissions"
       @on-closed="afterRole"
     />
-    <v-dialog width="500" v-model="deleteDialog">
-      <v-card
-        prepend-icon="mdi-delete"
-        title="删除选择"
-        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
-      >
-        <v-card-actions class="mx-auto">
-          <v-btn
-            :loading="loading"
-            :disabled="selected.length === 0"
-            color="error"
-            @click="deleteRolerLogic"
-            >删除</v-btn
-          >
-          <v-btn @click="deleteDialog = false">取消</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <DeleteDialog
+      v-model="deleteDialog"
+      v-model:length="selected.length"
+      @delete="deleteRolerLogic"
+    />
     <section class="menu">
       <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic"
         >刷新</v-btn

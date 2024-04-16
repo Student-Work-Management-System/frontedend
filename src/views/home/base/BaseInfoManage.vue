@@ -7,6 +7,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
+import DeleteDialog from '@/components/home/DeleteDialog.vue'
 
 const headers = [
   {
@@ -157,42 +158,26 @@ const deleteStudentLogic = async () => {
     }
   })
   setTimeout(() => {
-    deleteDialog.value = false
+    afterStudent()
     loading.value = false
   }, 500)
 }
 
-const afterEditStudent = () => {
+const afterStudent = () => {
   editDialog.value = false
+  deleteDialog.value = false
   fetchStudentLogic()
 }
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <v-dialog width="500" v-model="deleteDialog">
-      <v-card
-        prepend-icon="mdi-delete"
-        title="删除选择"
-        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
-      >
-        <v-card-actions class="mx-auto">
-          <v-btn
-            :loading="loading"
-            :disabled="selected.length === 0"
-            color="error"
-            @click="deleteStudentLogic"
-            >删除</v-btn
-          >
-          <v-btn @click="deleteDialog = false">取消</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <EditBaseInfoForm
-      v-model="editDialog"
-      v-model:info="modifyInfo"
-      @on-closed="afterEditStudent"
+    <DeleteDialog
+      v-model="deleteDialog"
+      v-model:length="selected.length"
+      @delete="deleteStudentLogic"
     />
+
+    <EditBaseInfoForm v-model="editDialog" v-model:info="modifyInfo" @on-closed="afterStudent" />
     <section class="menu">
       <span class="w-20">
         <MajorSelect v-model="selectedMajor" variant="underlined" />
