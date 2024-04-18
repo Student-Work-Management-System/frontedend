@@ -18,6 +18,12 @@ export interface Student {
   politicsStatus: string
 }
 
+export async function apiAddStudentBaseInfo(
+  students: Student[]
+): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/student/adds', { students })
+}
+
 export function apiGetStudentList(query: {
   search: string
   majorId: string | null
