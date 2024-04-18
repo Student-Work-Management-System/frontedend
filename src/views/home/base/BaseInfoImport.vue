@@ -2,11 +2,11 @@
 import { computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { baseheaders, type BaseHeader, BaseHeaderChecker, AnalyzeFileToTable } from '@/misc/table'
+import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList } from '@/api/major'
-import { apiAddStudentBaseInfo } from '@/api/base'
+import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/user'
 
 const excel = ref<File[]>()
@@ -25,12 +25,18 @@ const nilData: BaseHeader = {
   phone: '',
   nation: '',
   majorName: '',
+  majorId: '',
   grade: '',
   classNo: ''
 }
 
 const analyzeHandler = async () => {
-  jsonData.value = await AnalyzeFileToTable() as BaseHeader[]
+  loading.value = true
+  const ret = await AnalyzeFileToTable(file.value as File, baseheaders, notify) as BaseHeader[]
+  if (ret !== undefined) {
+    jsonData.value = ret
+  }
+  loading.value = false
 }
 
 // 检验用户权限用的
@@ -43,7 +49,8 @@ const uploadLogic = async () => {
   loading.value = true
   // valid data format before upload
   if (
-    !jsonData.value.reduce((valid, student) => (!valid ? false : BaseHeaderChecker(student)), true)
+    !jsonData.value.
+      reduce((valid, student) => (!valid ? false : HeaderValidChecker(student, baseheaders)), true)
   ) {
     notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
     loading.value = false
@@ -91,7 +98,7 @@ const uploadLogic = async () => {
       <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
       <v-btn v-if="has('student:insert')" prepend-icon="mdi-upload" color="primary"
         @click="uploadDialog = true">上传数据</v-btn>
-      <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模版.xlsx">下载模板</v-btn>
+      <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
       <ExcelTable v-model="jsonData" :headers="baseheaders" :nil-data="nilData" />

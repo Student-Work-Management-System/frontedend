@@ -28,5 +28,6 @@ declare module 'vue' {
     RouterSideMenu: typeof import('./src/components/home/RouterSideMenu.vue')['default']
     RouterView: typeof import('vue-router')['RouterView']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
+    UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
   }
 }

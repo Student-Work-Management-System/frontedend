@@ -12,7 +12,7 @@ export default {
     {
       path: '/employment/import',
       name: 'employment-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/employment/EmployImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '就业信息录入',

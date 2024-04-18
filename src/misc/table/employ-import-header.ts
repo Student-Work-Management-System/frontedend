@@ -1,17 +1,10 @@
+import type { Employ } from '@/api/employ'
 import { type TableHeader } from '.'
 
-export interface EmployHeader {
+export interface EmployHeader extends Employ {
   [key: string]: any
-  studentId: string
-  graduationState: string
-  graduationYear: string
-  whereabouts: string
-  jobNature: string
-  jobIndustry: string
-  jobLocation: string
-  category: string
-  salary: string
 }
+
 export const employheaders: TableHeader[] = [
   {
     type: 'string',
@@ -25,7 +18,7 @@ export const employheaders: TableHeader[] = [
     }
   },
   {
-    type: 'string',
+    type: 'select',
     field: 'graduationState',
     label: '毕业状态',
     require: true,

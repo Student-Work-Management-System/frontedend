@@ -1,27 +1,7 @@
 import { type TableHeader } from '.'
-export interface BaseHeader {
+import { type Student } from '@/api/student'
+export interface BaseHeader extends Student {
   [key: string]: any
-  studentId: string
-  name: string
-  idNumber: string
-  gender: string
-  nativePlace: string
-  postalCode: string
-  politicsStatus: string
-  phone: string
-  nation: string
-  majorName: string
-  grade: string
-  classNo: string
-}
-
-export function BaseHeaderChecker(student: BaseHeader): boolean {
-  for (const check of baseheaders) {
-    const result = check.validate?.(student[check.field], '', '', check.field)
-    if (result === undefined || result === '') continue
-    return false
-  }
-  return true
 }
 
 export const baseheaders: TableHeader[] = [

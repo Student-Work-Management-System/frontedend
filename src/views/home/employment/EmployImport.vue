@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-import { employheaders, type EmployHeader } from '@/misc/table'
+import { employheaders, type EmployHeader, AnalyzeFileToTable, HeaderValidChecker } from '@/misc/table'
 import { ref, computed } from 'vue'
 import UploadDialog from '@/components/home/UploadDialog.vue';
+import { notify } from '@kyvg/vue3-notification'
+import { useUserStore } from '@/stores/user';
+import { apiAddEmployInfo } from '@/api/employ';
 
 const excel = ref<File[]>()
 const jsonData = ref<EmployHeader[]>([])
@@ -20,8 +23,40 @@ const nilData: EmployHeader = {
   salary: ''
 }
 
-const analyzeHandler = () => {
+const analyzeHandler = async () => {
   loading.value = true
+  const ret = await AnalyzeFileToTable(file.value as File, employheaders, notify) as EmployHeader[]
+  if (ret !== undefined) {
+    jsonData.value = ret
+  }
+  loading.value = false
+}
+
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
+
+const uploadLogic = async () => {
+  loading.value = true
+  // valid data format before upload
+  if (
+    !jsonData.value.
+      reduce((valid, employ) => (!valid ? false : HeaderValidChecker(employ, employheaders)), true)
+  ) {
+    notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
+    loading.value = false
+    return
+  }
+  const { data: result } = await apiAddEmployInfo(jsonData.value)
+  if (result.code !== 200) {
+    console.log(result)
+    notify({ title: '错误', text: result.message, type: 'error' })
+    loading.value = false
+    return
+  }
+  notify({ title: '成功', text: '上传成功！', type: 'success' })
+  uploadDialog.value = false
   loading.value = false
 }
 
@@ -29,7 +64,7 @@ const analyzeHandler = () => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%" :loading="loading">
-    <UploadDialog v-model="uploadDialog" />
+    <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
     <section class="menu">
       <span class="file text-indigo">
         <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
@@ -37,8 +72,9 @@ const analyzeHandler = () => {
           label="Excel 文件选择"></v-file-input>
       </span>
       <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-      <v-btn prepend-icon="mdi-upload" color="primary" @click="uploadDialog = true">上传数据</v-btn>
-      <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模版.xlsx">下载模板</v-btn>
+      <v-btn v-if="has('student_employment:insert')" prepend-icon="mdi-upload" color="primary"
+        @click="uploadDialog = true">上传数据</v-btn>
+      <v-btn prepend-icon="mdi-download" href="/template/学生就业信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
       <ExcelTable v-model="jsonData" :headers="employheaders" :nil-data="nilData" />

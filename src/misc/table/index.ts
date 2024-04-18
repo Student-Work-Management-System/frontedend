@@ -13,10 +13,19 @@ export interface TableHeader {
   validate?: (content: any, oldContent: any, record: any, field: any) => string
 }
 
-export async function AnalyzeFileToTable(file: File, headers: TableHeader[], notify: any): Promise<TableHeader[]> {
+export function HeaderValidChecker<T extends { [key: string]: any }>(instance: T, headers: TableHeader[]): boolean {
+  for (const check of headers) {
+    const result = check.validate?.(instance[check.field], '', '', check.field)
+    if (result === undefined || result === '') continue
+    return false
+  }
+  return true
+}
+
+export async function AnalyzeFileToTable(file: File, headers: TableHeader[], notify: any): Promise<any> {
   if (file === null || file === undefined) {
     notify({ type: 'warn', title: '提示', text: '还未选择文件！' })
-    return []
+    return
   }
   const workbook = XLSX.read(await file?.arrayBuffer())
   const worksheet = workbook.Sheets[workbook.SheetNames[0]]
@@ -31,5 +40,5 @@ export async function AnalyzeFileToTable(file: File, headers: TableHeader[], not
     const newRow: { [key: string]: any } = {}
     Object.keys(row).forEach((key) => (newRow[fieldKeyMap.get(key)] = row[key]))
     return newRow
-  }) as TableHeader[]
+  })
 }
