@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores/user'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { apiDeleteMajor, apiGetMajorList, type Major } from '@/api/major'
-import MajorForm from '@/components/system/MajorForm.vue'
+import MajorForm from '@/components/home/system/MajorForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { onMounted } from 'vue'
 
@@ -89,74 +89,36 @@ const deleteLogic = async () => {
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <MajorForm
-      v-model="majorFormDialog"
-      v-model:info="editInfo"
-      v-model:type="formType"
-      @on-closed="afterForm"
-    />
+    <MajorForm v-model="majorFormDialog" v-model:info="editInfo" v-model:type="formType" @on-closed="afterForm" />
     <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
     <section class="menu">
       <span class="w-20 text-indigo">
-        <v-text-field
-          v-model="collegeName"
-          color="indigo"
-          variant="outlined"
-          label="学院名称"
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="collegeName" color="indigo" variant="outlined" label="学院名称" hide-details></v-text-field>
       </span>
       <v-btn color="primary" text="修改" @click="updateCollegeNameHandler"></v-btn>
     </section>
     <section class="menu">
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchMajorLogic"
-          >刷新</v-btn
-        >
-        <v-btn
-          v-if="has('major:insert')"
-          prepend-icon="mdi-plus-circle"
-          color="primary"
-          @click="
-            (formType = 'add'),
-              (editInfo = { majorId: '', majorName: '' }),
-              (majorFormDialog = true)
-          "
-          >添加</v-btn
-        >
-        <v-btn
-          v-if="has('major:delete')"
-          prepend-icon="mdi-delete"
-          color="error"
-          @click="deleteDialog = true"
-          >删除</v-btn
-        >
+        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchMajorLogic">刷新</v-btn>
+        <v-btn v-if="has('major:insert')" prepend-icon="mdi-plus-circle" color="primary" @click="
+          (formType = 'add'),
+          (editInfo = { majorId: '', majorName: '' }),
+          (majorFormDialog = true)
+          ">添加</v-btn>
+        <v-btn v-if="has('major:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
       </span>
     </section>
     <section class="pa-4 d-inline-block w-100">
       <v-card>
-        <v-data-table
-          v-model="selected"
-          :headers="headers"
-          :items="data"
-          :loading="loading"
-          show-select
-          return-object
-        >
+        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                @click="
-                  () => {
-                    formType = 'edit'
-                    editInfo = item
-                    majorFormDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                formType = 'edit'
+                editInfo = item
+                majorFormDialog = true
+              }
+                ">编辑</v-btn>
             </div>
           </template>
         </v-data-table>
@@ -169,15 +131,18 @@ const deleteLogic = async () => {
 .v-card {
   align-items: start;
 }
+
 .menu {
   width: 100%;
   display: flex;
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
-.menu span > * {
+
+.menu span>* {
   margin-right: 0.5rem;
 }
+
 .w-20 {
   width: 20% !important;
 }

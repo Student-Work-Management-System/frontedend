@@ -20,7 +20,7 @@ declare module 'vue' {
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
     ForgetWindows: typeof import('./src/components/ForgetWindows.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
-    MajorForm: typeof import('./src/components/system/MajorForm.vue')['default']
+    MajorForm: typeof import('./src/components/home/system/MajorForm.vue')['default']
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
