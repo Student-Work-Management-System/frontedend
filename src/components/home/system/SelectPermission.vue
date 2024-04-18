@@ -121,13 +121,7 @@ watch(model, () => {
   <v-dialog v-model="model" width="600">
     <v-card title="选择权限" prepend-icon="mdi-cog" :loading="loading" style="overflow-y: hidden">
       <v-container>
-        <d-search
-          class="mb-1"
-          style="width: 100%"
-          is-keyup-search
-          placeholder="搜索权限..."
-          @search="onSearch"
-        ></d-search>
+        <d-search class="mb-1" style="width: 100%" is-keyup-search placeholder="搜索权限..." @search="onSearch"></d-search>
         <d-tree ref="treeRef" :height="400" :loading="loading" :data="data" check />
       </v-container>
       <v-card-actions class="d-flex justify-space-evenly">
