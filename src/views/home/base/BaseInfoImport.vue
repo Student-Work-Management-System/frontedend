@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import * as XLSX from 'xlsx'
 import { computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { baseheaders, type BaseHeader, BaseHeaderChecker } from '@/misc/table'
+import { baseheaders, type BaseHeader, BaseHeaderChecker, AnalyzeFileToTable } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
+import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList } from '@/api/major'
 import { apiAddStudentBaseInfo } from '@/api/base'
 import { useUserStore } from '@/stores/user'
@@ -13,8 +13,7 @@ const excel = ref<File[]>()
 const jsonData = ref<BaseHeader[]>([])
 const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const uploadDialog = ref()
-const loading = ref()
-const ifValided = ref(false)
+const loading = ref(false)
 const nilData: BaseHeader = {
   studentId: '',
   name: '',
@@ -31,24 +30,7 @@ const nilData: BaseHeader = {
 }
 
 const analyzeHandler = async () => {
-  if (file.value === null || file.value === undefined) {
-    notify({ type: 'warn', title: '提示', text: '还未选择文件！' })
-    return
-  }
-  const workbook = XLSX.read(await file.value?.arrayBuffer())
-  const worksheet = workbook.Sheets[workbook.SheetNames[0]]
-  const rawData = XLSX.utils.sheet_to_json(worksheet)
-  console.log(rawData)
-
-  const fieldKeyMap = baseheaders.reduce((map, header) => {
-    map.set(header.label, header.field)
-    return map
-  }, new Map())
-  jsonData.value = rawData.map((row: any) => {
-    const newRow: { [key: string]: any } = {}
-    Object.keys(row).forEach((key) => (newRow[fieldKeyMap.get(key)] = row[key]))
-    return newRow
-  }) as BaseHeader[]
+  jsonData.value = await AnalyzeFileToTable() as BaseHeader[]
 }
 
 // 检验用户权限用的
@@ -99,41 +81,16 @@ const uploadLogic = async () => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <v-dialog width="500" v-model="uploadDialog">
-      <v-card
-        prepend-icon="mdi-upload"
-        title="上传数据"
-        :text="`填写选择 ${jsonData.length} 条记录，确定要上传吗？`"
-      >
-        <v-card-actions class="mx-auto">
-          <v-btn
-            v-if="has('student:insert')"
-            :loading="loading"
-            :disabled="jsonData.length === 0 && ifValided"
-            color="indigo"
-            @click="uploadLogic"
-            >上传</v-btn
-          >
-          <v-btn @click="uploadDialog = false">取消</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
     <section class="menu">
       <span class="file text-indigo">
-        <v-file-input
-          v-model="excel"
-          color="indigo"
-          variant="underlined"
-          hide-details
-          free-select
+        <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          label="Excel 文件选择"
-        ></v-file-input>
+          label="Excel 文件选择"></v-file-input>
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
-      <v-btn prepend-icon="mdi-upload" color="primary" @click="uploadDialog = true">上传数据</v-btn>
+      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
+      <v-btn v-if="has('student:insert')" prepend-icon="mdi-upload" color="primary"
+        @click="uploadDialog = true">上传数据</v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模版.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
@@ -149,9 +106,11 @@ const uploadLogic = async () => {
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
-.menu > * {
+
+.menu>* {
   margin-right: 0.5rem;
 }
+
 .file {
   overflow: hidden;
   width: 26%;
