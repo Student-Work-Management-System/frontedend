@@ -21,9 +21,9 @@ export default {
       }
     },
     {
-      path: '/base/list',
+      path: '/employment/list',
       name: 'employment-list',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/employment/EmployDataTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '就业信息统计',
@@ -32,9 +32,9 @@ export default {
       }
     },
     {
-      path: '/base/manage',
+      path: '/employment/manage',
       name: 'employment-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '就业信息管理',
