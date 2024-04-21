@@ -12,7 +12,7 @@ export default {
     {
       path: '/precaution/import',
       name: 'precaution-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '预警信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/precaution/list',
       name: 'precaution-list',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '预警信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/precaution/manage',
       name: 'precaution-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '预警信息管理',

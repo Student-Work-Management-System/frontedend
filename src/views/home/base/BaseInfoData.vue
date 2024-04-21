@@ -94,8 +94,8 @@ const selected = ref<any[]>([])
 const search = ref('')
 const data = ref<Student[]>([])
 const dataLength = ref<number>(0)
-const selectedMajor = ref<string>('')
-const selectedGrade = ref<string>('')
+const selectedMajor = ref<string | null>(null)
+const selectedGrade = ref<string | null>(null)
 const deleteDialog = ref(false)
 const editDialog = ref(false)
 const modifyInfo = ref<Student>({
@@ -171,11 +171,7 @@ const afterStudent = () => {
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog
-      v-model="deleteDialog"
-      v-model:length="selected.length"
-      @delete="deleteStudentLogic"
-    />
+    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteStudentLogic" />
 
     <EditBaseInfoForm v-model="editDialog" v-model:info="modifyInfo" @on-closed="afterStudent" />
     <section class="menu">
@@ -186,18 +182,8 @@ const afterStudent = () => {
         <GradeSelect v-model="selectedGrade" variant="underlined" />
       </span>
       <span class="w-20 text-indigo">
-        <v-text-field
-          v-model="search"
-          color="indigo"
-          @update:modelValue="fetchStudentLogic"
-          :loading="loading"
-          :counter="15"
-          clearable
-          label="搜索"
-          prepend-inner-icon="mdi-magnify"
-          variant="underlined"
-          hide-details
-        >
+        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentLogic" :loading="loading"
+          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
           <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
         </v-text-field>
       </span>
@@ -207,31 +193,16 @@ const afterStudent = () => {
     </section>
     <section class="pa-4 w-100">
       <v-card>
-        <v-data-table-server
-          v-model="selected"
-          :headers="headers"
-          :items="data"
-          :items-length="dataLength"
-          :loading="loading"
-          v-model:page="pageOptions.pageNo"
-          v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems"
-          show-select
-          return-object
-        >
+        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
+          @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                @click="
-                  () => {
-                    modifyInfo = { ...item }
-                    editDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                modifyInfo = { ...item }
+                editDialog = true
+              }
+                ">编辑</v-btn>
             </div>
           </template>
         </v-data-table-server>
@@ -247,9 +218,11 @@ const afterStudent = () => {
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
-.menu > * {
+
+.menu>* {
   margin-right: 0.5rem;
 }
+
 .w-20 {
   width: 15% !important;
 }

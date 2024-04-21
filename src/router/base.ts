@@ -23,7 +23,7 @@ export default {
     {
       path: '/base/manage',
       name: 'base-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '基本信息管理',

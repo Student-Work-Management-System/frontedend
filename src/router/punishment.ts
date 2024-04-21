@@ -12,7 +12,7 @@ export default {
     {
       path: '/punishment/import',
       name: 'punishment-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '处分信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/punishment/list',
       name: 'punishment-list',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '处分信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/punishment/manage',
       name: 'punishment-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '处分信息管理',

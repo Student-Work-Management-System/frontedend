@@ -12,7 +12,7 @@ export default {
     {
       path: '/competition/import',
       name: 'competition-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生获奖上报',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/competition/review',
       name: 'competition-review',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/competition/list',
       name: 'competition-list',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '获奖情况统计',
@@ -45,7 +45,7 @@ export default {
     {
       path: '/competition/manage',
       name: 'competition-manage',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '竞赛类别管理',

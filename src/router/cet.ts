@@ -12,7 +12,7 @@ export default {
     {
       path: '/cet/import',
       name: 'cet-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '考试成绩录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/cet/list',
       name: 'cet-list',
-      component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '考试成绩统计',
