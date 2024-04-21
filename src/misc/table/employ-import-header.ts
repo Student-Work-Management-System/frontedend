@@ -56,7 +56,14 @@ export const employheaders: TableHeader[] = [
   {
     type: 'string',
     field: 'jobIndustry',
-    label: '工作行业',
+    label: '所处行业',
+    require: false,
+    options: null,
+  },
+  {
+    type: 'string',
+    field: 'jobLocation',
+    label: '工作地点',
     require: false,
     options: null,
   },
