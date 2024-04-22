@@ -7,14 +7,14 @@ import { onMounted } from 'vue'
 const model = defineModel<string>()
 const props = defineProps<{
   variant?:
-    | 'filled'
-    | 'underlined'
-    | 'outlined'
-    | 'plain'
-    | 'solo'
-    | 'solo-inverted'
-    | 'solo-filled'
-    | undefined
+  | 'filled'
+  | 'underlined'
+  | 'outlined'
+  | 'plain'
+  | 'solo'
+  | 'solo-inverted'
+  | 'solo-filled'
+  | undefined
 }>()
 const items = ref<Major[]>([])
 
@@ -33,19 +33,8 @@ onMounted(getMajorListLogic)
 </script>
 
 <template>
-  <v-select
-    v-model="model"
-    :loading="loading"
-    class="text-indigo"
-    color="indigo"
-    label="专业"
-    :items="items"
-    item-title="majorName"
-    item-value="majorId"
-    :variant="props.variant"
-    hide-details
-    clearable
-  >
+  <v-select v-model="model" :loading="loading" class="text-indigo" color="indigo" label="专业" :items="items"
+    item-title="majorName" item-value="majorId" :variant="props.variant" hide-details clearable>
     <template v-slot:prepend>
       <slot></slot>
     </template>

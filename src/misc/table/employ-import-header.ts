@@ -77,7 +77,7 @@ export const employheaders: TableHeader[] = [
   {
     type: 'string',
     field: 'salary',
-    label: '薪水',
+    label: '月薪',
     require: false,
     options: null,
   },

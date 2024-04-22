@@ -44,24 +44,13 @@ const submitHandler = computed(() =>
   <v-dialog v-model="dialog" width="500">
     <v-card :title="cardTitle">
       <v-container class="px-8 text-indigo">
-        <v-text-field
-          label="专业名称"
-          color="indigo"
-          v-model="infoModel!.majorName"
-          clearable
-        ></v-text-field>
+        <v-text-field label="专业名称" color="indigo" v-model="infoModel!.majorName" clearable></v-text-field>
       </v-container>
 
       <v-divider></v-divider>
       <v-container class="w-100 d-flex justify-space-evenly">
-        <v-btn
-          :disabled="infoModel?.majorName === undefined || infoModel?.majorName.length <= 0"
-          text="提交"
-          :loading="loading"
-          color="indigo"
-          variant="plain"
-          @click="submitHandler()"
-        ></v-btn>
+        <v-btn :disabled="infoModel?.majorName === undefined || infoModel?.majorName.length <= 0" text="提交"
+          :loading="loading" color="indigo" variant="plain" @click="submitHandler()"></v-btn>
         <v-btn text="取消" variant="plain" @click="dialog = false"></v-btn>
       </v-container>
     </v-card>
