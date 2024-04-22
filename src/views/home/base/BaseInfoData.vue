@@ -123,8 +123,8 @@ const fetchStudentLogic = async () => {
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
   const { data: result } = await apiGetStudentList({
     search: search.value,
-    grade: selectedGrade.value === '' ? null : selectedGrade.value,
-    majorId: selectedMajor.value === '' ? null : selectedMajor.value,
+    grade: selectedGrade.value,
+    majorId: selectedMajor.value,
     ...pageOptions
   })
   if (result.code !== 200) {
