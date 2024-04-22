@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
-import { type Employ, apiGetEmployList } from '@/api/employ'
+import { type Employ, apiGetEmployList, apiDeleteEmploy } from '@/api/employ'
 import { notify } from '@kyvg/vue3-notification'
+import EmployForm from '@/components/home/employ/EmployForm.vue'
 
 const headers = [
   {
@@ -17,16 +18,16 @@ const headers = [
     key: 'name'
   },
   {
-    title: '性别',
-    align: 'start',
-    sortable: false,
-    key: 'gender'
-  },
-  {
     title: '专业',
     align: 'start',
     sortable: false,
     key: 'majorName'
+  },
+  {
+    title: '年级',
+    align: 'start',
+    sortable: false,
+    key: 'grade'
   },
   {
     title: '毕业状态',
@@ -71,7 +72,7 @@ const headers = [
     key: 'category'
   },
   {
-    title: '薪水',
+    title: '月薪',
     align: 'start',
     sortable: false,
     key: 'salary'
@@ -85,16 +86,19 @@ const headers = [
 ]
 
 const deleteDialog = ref(false)
-const selected = ref([])
+const editDialog = ref(false)
+const selected = ref<Employ[]>([])
 const loading = ref(false)
 const selectedMajor = ref<string | null>(null)
 const selectedGrade = ref<string | null>(null)
+const selectedYear = ref<string | null>(null)
 const search = ref('')
 const data = ref<Employ[]>()
 const dataLength = ref(0)
-const editDialog = ref(false)
 const editModel = ref<Employ>({
   studentId: '',
+  studentEmploymentId: '',
+  grade: '',
   graduationState: '',
   graduationYear: '',
   whereabouts: '',
@@ -102,7 +106,7 @@ const editModel = ref<Employ>({
   jobIndustry: '',
   jobLocation: '',
   category: '',
-  salary: ''
+  salary: '',
 })
 const pageOptions = reactive({
   pageSize: 10,
@@ -112,16 +116,40 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
   fetchEmployLogic()
 }
 
-const deleteStudentLogic = async () => {
+const deleteEmployLogic = async () => {
+  loading.value = true
+
+  selected.value.forEach(async (e) => {
+    const eid = e.studentEmploymentId
+    const { data: result } = await apiDeleteEmploy(eid)
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      return
+    }
+    notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
+  })
+  setTimeout(() => {
+    afterEditHandler()
+    loading.value = false
+  }, 500)
 
 }
+
+const afterEditHandler = () => {
+  editDialog.value = false
+  deleteDialog.value = false
+  fetchEmployLogic()
+}
+
 const fetchEmployLogic = async () => {
   loading.value = true
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
   const { data: result } = await apiGetEmployList({
-    // search: search.value,
-    grade: selectedGrade.value === '' ? null : selectedGrade.value,
-    majorId: selectedMajor.value === '' ? null : selectedMajor.value,
+    search: search.value,
+    graduationYear: selectedYear.value,
+    grade: selectedGrade.value,
+    majorId: selectedMajor.value,
     ...pageOptions
   })
   if (result.code !== 200) {
@@ -140,13 +168,17 @@ onMounted(fetchEmployLogic)
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteStudentLogic" />
+    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEmployLogic" />
+    <EmployForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
     <section class="menu">
       <span class="w-20">
         <MajorSelect v-model="selectedMajor" variant="underlined" />
       </span>
       <span class="w-20">
         <GradeSelect v-model="selectedGrade" variant="underlined" />
+      </span>
+      <span class="w-20">
+        <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
       </span>
       <span class="w-20 text-indigo">
         <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEmployLogic" :loading="loading"
@@ -167,8 +199,8 @@ onMounted(fetchEmployLogic)
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editModel = item
-                editDialog = true
+                editModel = JSON.parse(JSON.stringify(item));
+                editDialog = true;
               }
                 ">编辑</v-btn>
             </div>
