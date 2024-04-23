@@ -9,6 +9,8 @@ export interface Major {
 
 export interface Employ {
   studentId: string
+  studentEmploymentId: string
+  grade: string
   graduationState: string
   graduationYear: string
   whereabouts: string

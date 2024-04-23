@@ -80,6 +80,10 @@ export const employheaders: TableHeader[] = [
     label: '月薪',
     require: false,
     options: null,
+    validate: (content, oldContent, record, field) => {
+      if (isNaN(Number(content))) return '数字！'
+      return '' // return empty string if there is no error
+    }
   },
 
 ]

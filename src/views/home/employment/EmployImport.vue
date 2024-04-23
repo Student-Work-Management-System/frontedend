@@ -50,9 +50,10 @@ const uploadLogic = async () => {
   }
   const { data: result } = await apiAddEmployInfo(jsonData.value)
   if (result.code !== 200) {
-    console.log(result)
+    console.error(result)
     notify({ title: '错误', text: result.message, type: 'error' })
     loading.value = false
+    uploadDialog.value = false
     return
   }
   notify({ title: '成功', text: '上传成功！', type: 'success' })
