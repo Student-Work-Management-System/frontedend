@@ -31,16 +31,5 @@ export default {
         auth: 'student_employment:select'
       }
     },
-    {
-      path: '/employment/manage',
-      name: 'employment-manage',
-      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
-      meta: {
-        icon: 'mdi-cog',
-        title: '就业信息管理',
-        hasPage: true,
-        auth: 'student_employment:update'
-      }
-    }
   ]
 }
