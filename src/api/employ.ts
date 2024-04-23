@@ -27,9 +27,10 @@ export function apiAddEmployInfo(employs: Employ[]): Promise<AxiosResponse<Resul
 }
 
 export function apiGetEmployList(query: {
-  // search: string
+  search: string
   majorId: string | null
   grade: string | null
+  graduationYear: string | null
   pageNo: number
   pageSize: number
 }): Promise<AxiosResponse<Result<RecordsPage<Employ>>>> {

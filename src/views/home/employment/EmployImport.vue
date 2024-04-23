@@ -21,7 +21,9 @@ const nilData: EmployHeader = {
   jobIndustry: '',
   jobLocation: '',
   category: '',
-  salary: ''
+  salary: '',
+  studentEmploymentId: '',
+  grade: ''
 }
 
 const analyzeHandler = async () => {
