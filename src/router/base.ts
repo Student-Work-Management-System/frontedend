@@ -25,8 +25,8 @@ export default {
       name: 'base-manage',
       component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
-        icon: 'mdi-cog',
-        title: '基本信息管理',
+        icon: 'mdi-chart-bar',
+        title: '基本信息统计',
         hasPage: true,
         auth: 'student:update'
       }
