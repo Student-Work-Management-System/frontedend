@@ -42,12 +42,7 @@ onMounted(finishLoading)
 </script>
 <template>
   <v-dialog v-model="dialog" width="auto">
-    <v-card
-      max-width="400"
-      prepend-icon="mdi-account-question"
-      text="确定要登出当前账号吗？"
-      title="登出账号"
-    >
+    <v-card max-width="400" prepend-icon="mdi-account-question" text="确定要登出当前账号吗？" title="登出账号">
       <template v-slot:actions>
         <section class="w-100 d-flex justify-space-evenly">
           <v-btn text="确定" @click="logoutBtnHandler"></v-btn>
@@ -71,12 +66,7 @@ onMounted(finishLoading)
                 <v-btn variant="text" :loading="loading" prepend-icon="mdi-account">
                   {{ realName }}
                 </v-btn>
-                <v-btn
-                  variant="text"
-                  :loading="loading"
-                  prepend-icon="mdi-login-variant"
-                  @click="dialog = true"
-                >
+                <v-btn variant="text" :loading="loading" prepend-icon="mdi-login-variant" @click="dialog = true">
                   登出
                 </v-btn>
               </span>
@@ -95,14 +85,15 @@ onMounted(finishLoading)
 .logo {
   padding: 4px 16px 4px 13px !important;
 }
+
 .nav {
   width: 100%;
   padding: 0.5rem 1rem;
 }
+
 .contain {
   flex: 1;
   width: 100%;
-  height: 94vh;
   padding: 0 1rem 0.5rem 1rem;
 }
 </style>
