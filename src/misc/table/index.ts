@@ -3,6 +3,8 @@ import * as XLSX from 'xlsx'
 export { chLabel } from './table-label-ch'
 export * from './base-import-header'
 export * from './employ-import-header'
+export * from './studentcadre-import-header'
+export * from './cadre-import-headers'
 
 export interface TableHeader {
   type: string

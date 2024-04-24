@@ -12,7 +12,7 @@ export default {
     {
       path: '/cadre/import',
       name: 'cadre-import',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/cadre/CadreImportTabs.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '职位信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/cadre/list',
       name: 'cadre-list',
-      // component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/cadre/StudentCadreDataTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '职位信息统计',
@@ -34,10 +34,10 @@ export default {
     {
       path: '/cadre/manage',
       name: 'cadre-manage',
-      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/cadre/CadreManage.vue'),
       meta: {
         icon: 'mdi-cog',
-        title: '职位任期管理',
+        title: '职位管理',
         hasPage: true,
         auth: 'cadre:update'
       }

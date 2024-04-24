@@ -7,19 +7,19 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
+    AddStuentCadreForm: typeof import('./src/components/home/cadre/AddStuentCadreForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
-    DeletDialog: typeof import('./src/components/basic/DeletDialog.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
-    DSearch: typeof import('vue-devui/search/index.es.js')['Search']
-    DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
+    EditCadreForm: typeof import('./src/components/home/cadre/EditCadreForm.vue')['default']
+    EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     EmployForm: typeof import('./src/components/home/employ/EmployForm.vue')['default']
     ExcelTable: typeof import('./src/components/home/ExcelTable.vue')['default']
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
-    ForgetWindows: typeof import('./src/components/ForgetWindows.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
     MajorForm: typeof import('./src/components/home/system/MajorForm.vue')['default']
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
