@@ -17,7 +17,7 @@ const store = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
-const userForm = reactive<UserLoginData>({ username: '2100300307', password: '123456' })
+const userForm = reactive<UserLoginData>({ username: '', password: '' })
 const visible = ref(false)
 const loadingForm = ref(true)
 const remember = ref(true)
@@ -75,12 +75,7 @@ onMounted(checkLoginCacheHandler)
 <template>
   <main class="d-flex justify-center align-center">
     <ForgetPasswordForm v-model="forgetDialog" />
-    <v-card
-      class="py-8 px-16 d-flex flex-column justify-center align-center"
-      elevation="8"
-      height="70%"
-      width="32%"
-    >
+    <v-card class="py-8 px-16 d-flex flex-column justify-center align-center" elevation="8" height="70%" width="32%">
       <div class="text-center text-deep-purple-darken-4 mb-2">
         <v-icon icon="mdi-cube" :size="110" />
       </div>
@@ -89,82 +84,38 @@ onMounted(checkLoginCacheHandler)
       </h1>
       <h1 class="text-h4 font-weight-bold text-center text-deep-purple-darken-4">管理系统</h1>
     </v-card>
-    <v-card
-      :loading="loadingForm"
-      :disabled="loadingForm"
-      style="
+    <v-card :loading="loadingForm" :disabled="loadingForm" style="
         padding: 6rem 3rem;
         display: flex;
         align-items: center;
         flex-direction: column;
         justify-content: center;
-      "
-      elevation="8"
-      height="70%"
-      width="32%"
-    >
+      " elevation="8" height="70%" width="32%">
       <h1 class="text-h4 text-center text-deep-purple-darken-4 mb-10">用户登录</h1>
       <v-form v-model="form" style="width: 75%">
-        <v-text-field
-          :loading="loadingForm"
-          :counter="15"
-          clearable
-          density="compact"
-          placeholder="输入账户"
-          prepend-inner-icon="mdi-account-box"
-          variant="outlined"
-          v-model="userForm.username"
-          required
-          :rules="[() => !!userForm.username || '该选项必填！']"
-        >
+        <v-text-field :loading="loadingForm" :counter="15" clearable density="compact" placeholder="输入账户"
+          prepend-inner-icon="mdi-account-box" variant="outlined" v-model="userForm.username" required
+          :rules="[() => !!userForm.username || '该选项必填！']">
           <v-tooltip activator="parent" location="top">账户名一般为 教师工号 或 学生学号</v-tooltip>
         </v-text-field>
 
-        <v-text-field
-          :loading="loadingForm"
-          :counter="18"
-          clearable
-          hide-details
-          class="password mt-1"
-          :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-          :type="visible ? 'text' : 'password'"
-          density="compact"
-          placeholder="输入密码"
-          prepend-inner-icon="mdi-lock-outline"
-          variant="outlined"
-          @click:append-inner="visible = !visible"
-          v-model="userForm.password"
-          required
-          :rules="[() => !!userForm.password || '该选项必填！']"
-        >
-          <v-tooltip activator="parent" location="top"
-            >密码为 6-18 位任意数字、字母与常见字符的组合</v-tooltip
-          >
+        <v-text-field :loading="loadingForm" :counter="18" clearable hide-details class="password mt-1"
+          :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'" density="compact"
+          placeholder="输入密码" prepend-inner-icon="mdi-lock-outline" variant="outlined"
+          @click:append-inner="visible = !visible" v-model="userForm.password" required
+          :rules="[() => !!userForm.password || '该选项必填！']">
+          <v-tooltip activator="parent" location="top">密码为 6-18 位任意数字、字母与常见字符的组合</v-tooltip>
         </v-text-field>
 
         <div class="d-flex align-center justify-space-between">
-          <v-checkbox
-            v-model="remember"
-            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-            color="indigo"
-            label="记住账号"
-            hide-details
-          ></v-checkbox>
+          <v-checkbox v-model="remember"
+            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between" color="indigo"
+            label="记住账号" hide-details></v-checkbox>
           <v-btn variant="text" color="indigo" @click="forgetDialog = true">忘记密码</v-btn>
         </div>
 
-        <v-btn
-          :loading="loadingForm"
-          :disabled="!form"
-          prepend-icon="mdi-login-variant"
-          class="mb-4"
-          color="blue"
-          size="large"
-          variant="tonal"
-          block
-          @click="loginHandler"
-          >登 录</v-btn
-        >
+        <v-btn :loading="loadingForm" :disabled="!form" prepend-icon="mdi-login-variant" class="mb-4" color="blue"
+          size="large" variant="tonal" block @click="loginHandler">登 录</v-btn>
       </v-form>
     </v-card>
   </main>
@@ -181,6 +132,7 @@ onMounted(checkLoginCacheHandler)
     0px 15px 33.4px rgba(0, 0, 0, 0.05),
     0px 36px 80px rgba(0, 0, 0, 0.07);
 }
+
 main {
   height: 100vh;
   width: 100vw;
@@ -189,6 +141,7 @@ main {
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background: linear-gradient(-160deg, #8eb2e6, #8f6afb, #3e4add);
 }
+
 .v-card {
   border-radius: 0;
 }
