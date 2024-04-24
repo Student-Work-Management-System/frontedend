@@ -44,3 +44,24 @@ export function apiUpdateEmploy(employ: Employ): Promise<AxiosResponse<Result<nu
 export function apiDeleteEmploy(employId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/employment/delete/${employId}`,)
 }
+
+export interface EmployStats {
+  graduationStatus: any
+  jobIndustry: any
+  jobLocation: any
+  salary: string
+}
+
+export function apiStatsEmploy(query: {
+  graduationYears: string[] | null
+  majorIds: string[] | null
+}): Promise<AxiosResponse<Result<{ [key: string]: EmployStats }>>> {
+  return http.post('/employment/stat', query)
+}
+
+export function apiDownloadStatsEmploy(query: {
+  graduationYears: string[]
+  majorIds: string[]
+}): Promise<AxiosResponse<Blob>> {
+  return http.post('/employment/download', query, { responseType: 'blob' })
+}
