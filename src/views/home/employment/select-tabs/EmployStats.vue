@@ -133,10 +133,10 @@ const updateChart = () => {
     statusChart = new VChart(parseISpec("就业状态", stats.value?.graduationStatus), { dom: statusChartRef.value })
     statusChart.renderSync()
 
-    jobIndustryChart = new VChart(parseISpec("工作地点", stats.value?.jobIndustry), { dom: industryChartRef.value })
+    jobIndustryChart = new VChart(parseISpec("所处产业", stats.value?.jobIndustry), { dom: industryChartRef.value })
     jobIndustryChart.renderSync()
 
-    jobLocationChart = new VChart(parseISpec("所处产业", stats.value?.jobLocation), { dom: locationChartRef.value })
+    jobLocationChart = new VChart(parseISpec("工作地点", stats.value?.jobLocation), { dom: locationChartRef.value })
     jobLocationChart.renderSync()
     loading.value = false
     return
@@ -161,12 +161,20 @@ const updateChart = () => {
       <v-btn prepend-icon="mdi-export" :loading="loading" @click="exportStatsExeclHandler">导出表格</v-btn>
     </section>
     <v-card :loading="loading" class="chart-container">
-      <h1 v-if="salary.length > 0" class="text-indigo ma-8 text-weigh-black">平均月薪：{{ salary }}</h1>
-      <span class="d-flex justify-space-evenly">
-        <div ref="statusChartRef"></div>
-        <div ref="locationChartRef"></div>
+      <h1 v-if="salary.length > 0" class="text-indigo ma-8 text-weigh-black font-weight-medium">平均月薪：{{ salary }}</h1>
+      <span class="d-flex justify-space-evenly mb-4">
+        <v-card>
+          <div ref="statusChartRef"></div>
+        </v-card>
+        <v-card>
+          <div ref="locationChartRef"></div>
+        </v-card>
       </span>
-      <div ref="industryChartRef"></div>
+      <div class="box">
+        <v-card>
+          <div ref="industryChartRef"></div>
+        </v-card>
+      </div>
     </v-card>
   </section>
 </template>
@@ -187,8 +195,12 @@ const updateChart = () => {
 }
 
 .chart-container {
-  height: 83vh;
+  height: 79vh;
   overflow: hidden;
   overflow-y: auto;
+}
+
+.box {
+  padding: 3rem 5.2rem 3rem 5.2rem;
 }
 </style>
