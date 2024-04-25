@@ -6,11 +6,9 @@ import { reactive } from 'vue'
 
 
 
+
 const CadreLevels = ref<String[]>(getCadreLevers());
 
-const model = defineModel<boolean>()
-const emits = defineEmits(['onClosed'])
-const form = ref(false)
 
 const loading = ref(false)
 

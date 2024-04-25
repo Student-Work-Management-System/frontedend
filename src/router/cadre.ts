@@ -12,7 +12,7 @@ export default {
     {
       path: '/cadre/import',
       name: 'cadre-import',
-      component: () => import('@/views/home/cadre/CadreImportTabs.vue'),
+      component: () => import('@/views/home/cadre/StudentCadreInfoImpot.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '职位信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/cadre/list',
       name: 'cadre-list',
-      component: () => import('@/views/home/cadre/StudentCadreDataTabs.vue'),
+      component: () => import('@/views/home/cadre/StudentCadreList.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '职位信息统计',

@@ -54,6 +54,8 @@ const fetchCadreList = async () => {
 }
 
 watchEffect(() => {
+  console.log(props.info);
+  
   studentCadreInfo.studentCadreId = props.info.studentCadreId
   studentCadreInfo.studentId = props.info.studentId
   studentCadreInfo.cadreId = props.info.cadreId
@@ -76,7 +78,7 @@ onMounted(() => {
         <v-card width="auto" prepend-icon="mdi-account-edit" :title="sname + '的任职信息'">
           <v-container>
            
-              <v-form v-model="form" class="px-8 form">
+              <v-form v-model="form" class="px-8 ">
               <v-text-field
                 label="学号"
                 v-model="studentCadreInfo.studentId"
@@ -103,29 +105,29 @@ onMounted(() => {
                 </template>
               </v-autocomplete>
 
-              <v-text-field
-                label="任职开始学期"
-                v-model="studentCadreInfo.appointmentStartTerm"
-                :counter="20"
-                required
-                :rules="[() => !!studentCadreInfo.studentId || '该选项必填！']"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </template>
-              </v-text-field>
+              <SemesterSelect
+                class="mb-1"
+                  v-model="studentCadreInfo.appointmentStartTerm"
+                  label="任职开始学期"
+                  variant="filled"
+                >
+                <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                </SemesterSelect>
+          
 
-              <v-text-field
-                label="任职结束学期"
-                v-model="studentCadreInfo.appointmentEndTerm"
-                :counter="20"
-                required
-                :rules="[() => !!studentCadreInfo.studentId || '该选项必填！']"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </template>
-              </v-text-field>
+          
+   
+      
+              <SemesterSelect
+              class="mb-1"
+                  v-model="studentCadreInfo.appointmentEndTerm"
+                  label="任职结束学期"
+             
+                  variant="filled"
+                >
+                <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                </SemesterSelect>
+          
 
               <v-text-field
                 label="备注"
@@ -164,7 +166,13 @@ onMounted(() => {
 </style>
 
 <style scoped>
+<<<<<<< HEAD
+
+.mb-1 {
+  margin-bottom: 1rem !important;
+=======
 .form > * {
   margin-bottom: 0.5rem;
+>>>>>>> d94dbfa (feat/cadre (#10))
 }
 </style>

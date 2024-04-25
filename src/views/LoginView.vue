@@ -17,7 +17,7 @@ const store = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
-const userForm = reactive<UserLoginData>({ username: '', password: '' })
+const userForm = reactive<UserLoginData>({ username: '2100300307', password: '123456' })
 const visible = ref(false)
 const loadingForm = ref(true)
 const remember = ref(true)

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { apiAddStudentCadre, apiGetCadreList, type Cadre } from '@/api/cadre'
+import SemesterSelect from '@/components/home/cadre/SemesterSelect.vue'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { reactive } from 'vue'
@@ -27,7 +28,7 @@ const fetchCadreList = async () => {
   }
   cadres.value = result.data
 }
-const AddStudentCadreLogic = async () => {  
+const AddStudentCadreLogic = async () => {
   loading.value = true
   const { data: result } = await apiAddStudentCadre(newStudentCadre)
   if (result.code !== 200) {
@@ -69,7 +70,7 @@ onMounted(() => {
       <v-window-item :value="1">
         <v-card width="auto" prepend-icon="mdi-account-box-plus-outline" title="任职信息">
           <v-container>
-            <v-form v-model="form" class="px-8 form">
+            <v-form v-model="form" class="px-8 ">
               <v-text-field
                 label="学号"
                 v-model="newStudentCadre.studentId"
@@ -96,44 +97,40 @@ onMounted(() => {
                 </template>
               </v-autocomplete>
 
-              <v-text-field
-                label="任职开始学期"
-                v-model="newStudentCadre.appointmentStartTerm"
-                :counter="20"
-                required
-                :rules="[() => !!newStudentCadre.studentId || '该选项必填！']"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </template>
-              </v-text-field>
-
-              <v-text-field
-                label="任职结束学期"
-                v-model="newStudentCadre.appointmentEndTerm"
-                :counter="20"
-                required
-                :rules="[() => !!newStudentCadre.studentId || '该选项必填！']"
-              >
-                <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </template>
-              </v-text-field>
-
-              <v-text-field
-                label="备注"
-                v-model="newStudentCadre.comment"
-                :counter="20"
-                required
         
-              >
+              
+          
+              <SemesterSelect
+                class="mb-1"
+                  v-model="newStudentCadre.appointmentStartTerm"
+                  label="任职开始学期"
+                  variant="filled"
+                
+                >
+                <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                </SemesterSelect>
+          
+
+          
+   
+      
+              <SemesterSelect
+              class="mb-1"
+                  v-model="newStudentCadre.appointmentEndTerm"
+                  label="任职结束学期"
+                 
+                  variant="filled"
+                >
+                <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                </SemesterSelect>
+          
+     
+
+              <v-text-field label="备注" v-model="newStudentCadre.comment" :counter="20" required>
                 <template v-slot:prepend>
                   <v-icon size="smaller" icon="mdi-pencil"></v-icon>
                 </template>
               </v-text-field>
-
-
-              
             </v-form>
           </v-container>
           <v-divider></v-divider>
@@ -146,7 +143,6 @@ onMounted(() => {
               variant="plain"
             ></v-btn>
             <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
-         
           </v-container>
         </v-card>
       </v-window-item>
@@ -161,7 +157,8 @@ onMounted(() => {
 </style>
 
 <style scoped>
-.form > * {
-  margin-bottom: 0.5rem;
+
+.mb-1 {
+  margin-bottom: 1rem !important;
 }
 </style>

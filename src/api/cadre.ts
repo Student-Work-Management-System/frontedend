@@ -81,9 +81,9 @@ export async function apiAddStudentCadre(studentCadre: {
 }
 
 export async function apiAddStudentCadreInfo(
-  studentcadres: StudentCadre[]
+  insertStudentCadreDTOList: StudentCadre[]
 ): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student_cadre/adds', { studentcadres })
+  return http.post('/student_cadre/adds', { insertStudentCadreDTOList })
 }
 
 export async function apiUpdateCadreInfo(cadreInfo: {
