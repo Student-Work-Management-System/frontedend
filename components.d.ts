@@ -17,6 +17,7 @@ declare module 'vue' {
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
     EditCadreForm: typeof import('./src/components/home/cadre/EditCadreForm.vue')['default']
     EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']
+    EditStudentCet: typeof import('./src/components/cet/EditStudentCet.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     EmployForm: typeof import('./src/components/home/employ/EmployForm.vue')['default']
