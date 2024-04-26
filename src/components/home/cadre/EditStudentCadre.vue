@@ -54,8 +54,6 @@ const fetchCadreList = async () => {
 }
 
 watchEffect(() => {
-  console.log(props.info);
-  
   studentCadreInfo.studentCadreId = props.info.studentCadreId
   studentCadreInfo.studentId = props.info.studentId
   studentCadreInfo.cadreId = props.info.cadreId
@@ -166,13 +164,13 @@ onMounted(() => {
 </style>
 
 <style scoped>
-<<<<<<< HEAD
+
+
+.form > * {
+  margin-bottom: 0.5rem;
+}
 
 .mb-1 {
   margin-bottom: 1rem !important;
-=======
-.form > * {
-  margin-bottom: 0.5rem;
->>>>>>> d94dbfa (feat/cadre (#10))
 }
 </style>

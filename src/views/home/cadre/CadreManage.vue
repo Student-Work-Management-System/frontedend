@@ -84,7 +84,7 @@ const deleteCadreLogic = async () => {
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
-    notify({ type: 'success', title: '成功', text: `权限:${cadrePosition} 删除成功！` })
+    notify({ type: 'success', title: '成功', text: `职位:${cadrePosition} 删除成功！` })
   })
   setTimeout(() => {
     afterCadre()
