@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { employheaders, type EmployHeader, AnalyzeFileToTable, HeaderValidChecker } 
-from '@/misc/table'
+import { employheaders, type EmployHeader, AnalyzeFileToTable, HeaderValidChecker }
+  from '@/misc/table'
 import { ref, computed } from 'vue'
 import UploadDialog from '@/components/home/UploadDialog.vue';
 import { notify } from '@kyvg/vue3-notification'

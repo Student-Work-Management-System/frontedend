@@ -199,8 +199,8 @@ onMounted(fetchEmployLogic)
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editModel = JSON.parse(JSON.stringify(item));
-                editDialog = true;
+                editModel = JSON.parse(JSON.stringify(item))
+                editDialog = true
               }
                 ">编辑</v-btn>
             </div>
