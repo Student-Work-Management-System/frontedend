@@ -12,6 +12,8 @@ declare module 'vue' {
     AddStuentCadreForm: typeof import('./src/components/home/cadre/AddStuentCadreForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
+    DSearch: typeof import('vue-devui/search/index.es.js')['Search']
+    DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
     EditCadreForm: typeof import('./src/components/home/cadre/EditCadreForm.vue')['default']
     EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']

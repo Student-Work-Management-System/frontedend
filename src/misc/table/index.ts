@@ -4,6 +4,7 @@ export { chLabel } from './table-label-ch'
 export * from './base-import-header'
 export * from './employ-import-header'
 export * from './studentcadre-import-header'
+export * from './enroll-import-header'
 
 export interface TableHeader {
   type: string
