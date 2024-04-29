@@ -1,30 +1,40 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import { apiGetCadreList,apiDeleteCadre, apiUpdateCadreInfo,type Cadre } from '@/api/cadre'
+import {
+  apiGetPovertyAssistanceList,
+  apiDeletePovertyAssistance,
+  type PovertyAssistance
+} from '@/api/poverty'
 import { notify } from '@kyvg/vue3-notification'
-import AddCadreForm from '@/components/home/cadre/AddCadreForm.vue'
-import EditCadreForm from '@/components/home/cadre/EditCadreForm.vue'
+import AddPovertyForm from '@/components/home/poverty/AddPovertyForm.vue'
+import EditPovertyForm from '@/components/home/poverty/EditPovertyForm.vue'
 import { useUserStore } from '@/stores/user'
 
 const headers = [
   {
-    title: '职位ID',
+    title: '贫困类型ID',
     align: 'start',
     sortable: true,
-    key: 'cadreId'
+    key: 'povertyAssistanceId'
   },
   {
-    title: '职位名称',
+    title: '贫困类型',
     align: 'start',
     sortable: false,
-    key: 'cadrePosition'
+    key: 'povertyType'
   },
   {
-    title: '职位级别',
+    title: '贫困等级',
     align: 'start',
     sortable: false,
-    key: 'cadreLevel'
+    key: 'povertyLevel'
+  },
+  {
+    title: '资助标准',
+    align: 'start',
+    sortable: false,
+    key: 'povertyAssistanceStandard'
   },
   {
     title: '操作',
@@ -34,26 +44,27 @@ const headers = [
   }
 ]
 
-const selected = ref<Cadre[]>([])
+const selected = ref<PovertyAssistance[]>([])
 const loading = ref(true)
 const data = ref<any>([])
-const addCadreFormDialog = ref(false)
+const addPovertyFormDialog = ref(false)
 const selectPermissionDialog = ref(false)
 const deleteDialog = ref(false)
 const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
-const editCadreInfoFormDialog = ref(false)
-const editInfo = ref<Cadre>({
-    cadreId: '',
-    cadrePosition: '',
-    cadreLevel: ',',
+const editPovertyInfoFormDialog = ref(false)
+const editInfo = ref<PovertyAssistance>({
+povertyAssistanceId: '',
+  povertyLevel: '',
+  povertyType: '',
+  povertyAssistanceStandard: ''
 })
 
-const fetchCadreLogic = async () => {
+const fetchPovertyLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetCadreList()
+  const { data: result } = await apiGetPovertyAssistanceList()
   if (result.code !== 200) {
     console.log(result.message)
     notify({ title: '错误', text: result.message, type: 'error' })
@@ -63,48 +74,44 @@ const fetchCadreLogic = async () => {
   loading.value = false
 }
 
-const afterCadre = () => {
-  addCadreFormDialog.value = false
+const afterPoverty = () => {
+  addPovertyFormDialog.value = false
   selectPermissionDialog.value = false
-  editCadreInfoFormDialog.value = false
+  editPovertyInfoFormDialog.value = false
   deleteDialog.value = false
   selected.value = []
-  fetchCadreLogic()
+  fetchPovertyLogic()
 }
 
-const deleteCadreLogic = async () => {
+const deletePovertyLogic = async () => {
   loading.value = true
-  selected.value.forEach(async (c) => {
-
-    const cadrePosition = c.cadrePosition
-    const cadreId = c.cadreId
-    const { data: result } = await apiDeleteCadre(cadreId)
+  selected.value.forEach(async (p) => {
+    const povertyAssistanceId = p.povertyAssistanceId
+    const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId)
     if (result.code !== 200) {
       console.error(result)
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
-    notify({ type: 'success', title: '成功', text: `权限:${cadrePosition} 删除成功！` })
+    
   })
   setTimeout(() => {
-    afterCadre()
+    notify({ type: 'success', title: '成功', text: `删除成功！` })
+    afterPoverty()
     loading.value = false
   }, 500)
 }
 
-const ImportCadres = () => {
-    notify({ title: '错误', text: '上传文件？', type: 'error' })
-}
-
-onMounted(fetchCadreLogic)
+onMounted(fetchPovertyLogic)
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <AddCadreForm v-model="addCadreFormDialog" 
-     @on-closed="afterCadre" />
- <EditCadreForm 
-  v-model="editCadreInfoFormDialog" :info="editInfo"
-   @on-closed="afterCadre"/>
+    <AddPovertyForm v-model="addPovertyFormDialog" @on-closed="afterPoverty" />
+    <EditPovertyForm
+      v-model="editPovertyInfoFormDialog"
+      :info="editInfo"
+      @on-closed="afterPoverty"
+    />
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -116,7 +123,7 @@ onMounted(fetchCadreLogic)
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
-            @click="deleteCadreLogic"
+            @click="deletePovertyLogic"
             >删除</v-btn
           >
           <v-btn @click="deleteDialog = false">取消</v-btn>
@@ -124,25 +131,19 @@ onMounted(fetchCadreLogic)
       </v-card>
     </v-dialog>
     <section class="menu">
-      <v-btn v-if="has('cadre:select')" prepend-icon="mdi-refresh" @click="fetchCadreLogic"
+      <v-btn v-if="has('poverty_assistance:select')" prepend-icon="mdi-refresh" @click="fetchPovertyLogic"
         >刷新</v-btn
       >
       <v-btn
-        v-if="has('cadre:insert')"
+        v-if="has('poverty_assistance:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
-        @click="addCadreFormDialog = true"
+        @click="addPovertyFormDialog = true"
         >添加</v-btn
       >
+
       <v-btn
-        v-if="has('cadre:insert') "
-        prepend-icon="mdi-card-multiple"
-        color="indigo"
-        @click="ImportCadres"
-        >导入</v-btn
-      >
-      <v-btn
-        v-if="has('cadre:delete')"
+        v-if="has('poverty_assistance:delete')"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
@@ -160,19 +161,13 @@ onMounted(fetchCadreLogic)
           show-select
           return-object
         >
-        <template v-slot:item.operations="{ item }">
+          <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                @click="
-                  () => {
-                    editInfo = item as Cadre
-                    editCadreInfoFormDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                editInfo = JSON.parse(JSON.stringify(item))
+                editPovertyInfoFormDialog = true
+              }
+                ">编辑</v-btn>
             </div>
           </template>
         </v-data-table>

@@ -7,17 +7,18 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AcademicYearSelect: typeof import('./src/components/home/poverty/AcademicYearSelect.vue')['default']
     AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
+    AddPovertyForm: typeof import('./src/components/home/poverty/AddPovertyForm.vue')['default']
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
-    AddStuentCadreForm: typeof import('./src/components/home/cadre/AddStuentCadreForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
-    DSearch: typeof import('vue-devui/search/index.es.js')['Search']
-    DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
     EditCadreForm: typeof import('./src/components/home/cadre/EditCadreForm.vue')['default']
+    EditPovertyForm: typeof import('./src/components/home/poverty/EditPovertyForm.vue')['default']
     EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']
     EditStudentCet: typeof import('./src/components/cet/EditStudentCet.vue')['default']
+    EditStudentPovertyForm: typeof import('./src/components/home/poverty/EditStudentPovertyForm.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     EmployForm: typeof import('./src/components/home/employ/EmployForm.vue')['default']

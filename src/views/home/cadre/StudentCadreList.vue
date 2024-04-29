@@ -2,10 +2,8 @@
 import { ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import AddStudentCadreForm from '@/components/home/cadre/AddStuentCadreForm.vue'
 import EditStudentCadreForm from '@/components/home/cadre/EditStudentCadre.vue'
 import SemesterSelect from '@/components/home/cadre/SemesterSelect.vue'
-
 
 import {
   apiGetStudentCadreList,
@@ -94,9 +92,7 @@ const data = ref<StudentCadreRecord[]>([])
 const CadreLevels = ref<String[]>(getCadreLevers())
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
-const addStudentCadreDialog = ref(false)
 const editStudentCadreFormDialog = ref(false)
-const searchType = ref<number>(0)
 
 const query = reactive({
   search: null,
@@ -110,18 +106,18 @@ const query = reactive({
 })
 const store = useUserStore()
 const editInfo = ref<StudentCadreRecord>({
-  studentCadreId:'',
-  studentId :'',
-  cadreId :'',
-  name :'',
-  gender :'',
-  majorName :'',
-  grade :'',
-  cadrePosition :'',
-  cadreLevel :'',
-  appointmentStartTerm :'',
-  appointmentEndTerm :'',
-  comment :'',
+  studentCadreId: '',
+  studentId: '',
+  cadreId: '',
+  name: '',
+  gender: '',
+  majorName: '',
+  grade: '',
+  cadrePosition: '',
+  cadreLevel: '',
+  appointmentStartTerm: '',
+  appointmentEndTerm: '',
+  comment: ''
 })
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
@@ -156,8 +152,6 @@ const deleteStudentCadreLogic = async () => {
   loading.value = true
   const studentIds = selected.value.map((v) => v.studentCadreId)
   studentIds.forEach(async (id) => {
-    console.log(id)
-
     const { data: result } = await apiDeleteStudentCadre(id)
     if (result.code !== 200) {
       console.error(result.message)
@@ -166,31 +160,26 @@ const deleteStudentCadreLogic = async () => {
     }
   })
   setTimeout(() => {
+    notify({ type: 'success', title: '成功', text: `删除成功！` })
     deleteDialog.value = false
     loading.value = false
+    fetchStudentCadreLogic()
   }, 500)
 }
-
-
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <AddStudentCadreForm
-      v-model="addStudentCadreDialog"
-      @on-closed="()=>{
-        addStudentCadreDialog = false
-        fetchStudentCadreLogic()
-      }"
-    />
     <EditStudentCadreForm
       v-model="editStudentCadreFormDialog"
       :info="editInfo"
-      @on-closed="()=>{
-        editStudentCadreFormDialog = false
-        fetchStudentCadreLogic()
-      }"
+      @on-closed="
+        () => {
+          editStudentCadreFormDialog = false
+          fetchStudentCadreLogic()
+        }
+      "
     />
-    
+
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -231,14 +220,20 @@ const deleteStudentCadreLogic = async () => {
         </v-select>
       </span>
       <span class="w-10 text-indigo">
-        <SemesterSelect v-model="query.appointmentStartTerm" 
-        color="'indigo'"
-        :label="'任职开始学期'" variant="underlined" />
+        <SemesterSelect
+          v-model="query.appointmentStartTerm"
+          color="'indigo'"
+          :label="'任职开始学期'"
+          variant="underlined"
+        />
       </span>
       <span class="w-10 text-indigo">
-        <SemesterSelect v-model="query.appointmentEndTerm" 
-        :color="'indigo'"
-        :label="'任职结束学期'" variant="underlined" />
+        <SemesterSelect
+          v-model="query.appointmentEndTerm"
+          :color="'indigo'"
+          :label="'任职结束学期'"
+          variant="underlined"
+        />
       </span>
 
       <span class="w-15 text-indigo">
@@ -254,9 +249,8 @@ const deleteStudentCadreLogic = async () => {
           variant="underlined"
           hide-details
         >
-        <v-tooltip activator="parent" location="top">以学号/姓名/职位名称搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top">以学号/姓名/职位名称搜索</v-tooltip>
         </v-text-field>
-      
       </span>
       <v-btn
         prepend-icon="mdi-refresh"
@@ -269,15 +263,6 @@ const deleteStudentCadreLogic = async () => {
         @click="fetchStudentCadreLogic"
         >刷新</v-btn
       >
-      <v-btn
-        v-if="has('student_cadre:insert')"
-        prepend-icon="mdi-plus-circle"
-        color="primary"
-        @click="addStudentCadreDialog = true"
-        >添加</v-btn
-      >
-  
- 
 
       <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
@@ -298,19 +283,11 @@ const deleteStudentCadreLogic = async () => {
         >
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                v-if="has('student_cadre:update')"
-                @click="
-                  () => {
-                    editInfo = item as StudentCadreRecord
-                    editStudentCadreFormDialog = true
-                    
-                  }
-                "
-                >编辑</v-btn
-              >
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                editInfo = JSON.parse(JSON.stringify(item))
+                editStudentCadreFormDialog = true
+              }
+                ">编辑</v-btn>
             </div>
           </template>
         </v-data-table-server>

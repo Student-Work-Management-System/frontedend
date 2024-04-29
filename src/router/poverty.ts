@@ -12,7 +12,7 @@ export default {
     {
       path: '/poverty/import',
       name: 'poverty-import',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/poverty/PovertyImportTabs.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '贫困信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/poverty/list',
       name: 'poverty-list',
-      // component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/poverty/StudentPovertyList.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '贫困信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/poverty/manage',
       name: 'poverty-manage',
-      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/poverty/PovertyManage.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '贫困信息管理',

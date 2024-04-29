@@ -2,15 +2,15 @@
 import { ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import AddStudentCadreForm from '@/components/home/cadre/AddStuentCadreForm.vue'
-import EditStudentCadreForm from '@/components/home/cadre/EditStudentCadre.vue'
+import EditStudentPovertyForm from '@/components/home/poverty/EditStudentPovertyForm.vue'
+import AcademicYearSelect from '@/components/home/poverty/AcademicYearSelect.vue'
 
 import {
-  apiGetStudentCadreList,
-  apiDeleteStudentCadre,
-  getCadreLevers,
-  type StudentCadreRecord
-} from '@/api/cadre'
+  apiDeleteStudentPovertyAssistance,
+  getPovertyLevels,
+  apiGetStudentPovertyAssistanceList,
+  type StudentPovertyAssistanceRecord
+} from '@/api/poverty'
 
 import { useUserStore } from '@/stores/user'
 import { notify } from '@kyvg/vue3-notification'
@@ -31,12 +31,6 @@ const headers = [
     key: 'name'
   },
   {
-    title: '性别',
-    align: 'start',
-    sortable: false,
-    key: 'gender'
-  },
-  {
     title: '专业',
     align: 'start',
     sortable: false,
@@ -49,34 +43,28 @@ const headers = [
     key: 'grade'
   },
   {
-    title: '具体职位',
+    title: '贫困类型',
     align: 'start',
     sortable: true,
-    key: 'cadrePosition'
+    key: 'povertyType'
   },
   {
-    title: '职位级别',
+    title: '贫困级别',
     align: 'start',
     sortable: false,
-    key: 'cadreLevel'
+    key: 'povertyLevel'
   },
   {
-    title: '任职开始学期',
+    title: '资助标准',
     align: 'start',
     sortable: false,
-    key: 'appointmentStartTerm'
+    key: 'povertyAssistanceStandard'
   },
   {
-    title: '任职结束学期',
+    title: '认证学年',
     align: 'start',
     sortable: false,
-    key: 'appointmentEndTerm'
-  },
-  {
-    title: '备注',
-    align: 'start',
-    sortable: false,
-    key: 'comment'
+    key: 'assistanceYear'
   },
   {
     title: '操作',
@@ -88,64 +76,43 @@ const headers = [
 
 const loading = ref(false)
 const selected = ref<any[]>([])
-const search = ref(null)
-const data = ref<StudentCadreRecord[]>([])
-const CadreLevels = ref<String[]>(getCadreLevers())
+const data = ref<StudentPovertyAssistanceRecord[]>([])
+const povertyLevels = ref<String[]>(getPovertyLevels())
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
-const addStudentCadreDialog = ref(false)
-const editStudentCadreFormDialog = ref(false)
-const searchType = ref<number>(0)
-const searchTypeList = [
-  {
-    title: '按学号',
-    value: 0
-  },
-  {
-    title: '按姓名',
-    value: 1
-  },
-  {
-    title: '按职位',
-    value: 2
-  }
-]
+const addStudentPovertyDialog = ref(false)
+const editStudentPovertyFormDialog = ref(false)
+
 const query = reactive({
-  studentId: null,
-  name: null,
+  search: null,
   majorId: null,
   grade: null,
-  cadrePosition: null,
-  cadreLevel: null,
-  appointmentStartTerm: null,
-  appointmentEndTerm: null,
+  povertyLevel: null,
+  assistanceYear: null,
   pageNo: 1,
   pageSize: 10
 })
 const store = useUserStore()
-const editInfo = ref<StudentCadreRecord>({
-  studentCadreId:'',
-  studentId :'',
-  cadreId :'',
-  name :'',
-  gender :'',
-  majorName :'',
-  grade :'',
-  cadrePosition :'',
-  cadreLevel :'',
-  appointmentStartTerm :'',
-  appointmentEndTerm :'',
-  comment :'',
+const editInfo = ref<StudentPovertyAssistanceRecord>({
+  studentPovertyAssistanceId: '',
+  studentId: '',
+  povertyAssistanceId: '',
+  name: '',
+  majorName: '',
+  povertyLevel: '',
+  povertyType: '',
+  povertyAssistanceStandard: '',
+  assistanceYear: ''
 })
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
-const fetchStudentCadreLogic = async () => {
+const fetchStudentPovertyLogic = async () => {
   loading.value = true
   if (query.pageSize === -1) query.pageSize = 9999
-  setSearch()
-  const { data: result } = await apiGetStudentCadreList(query)
+
+  const { data: result } = await apiGetStudentPovertyAssistanceList(query)
 
   if (result.code !== 200) {
     console.error(result)
@@ -159,20 +126,20 @@ const fetchStudentCadreLogic = async () => {
   dataLength.value = result.data.totalRow
   deleteDialog.value = false
   loading.value = false
+  console.log(data.value);
+  
 }
-onMounted(fetchStudentCadreLogic)
+onMounted(fetchStudentPovertyLogic)
 
 const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
-  fetchStudentCadreLogic()
+  fetchStudentPovertyLogic()
 }
 
-const deleteStudentCadreLogic = async () => {
+const deleteStudentPovertyLogic = async () => {
   loading.value = true
-  const studentIds = selected.value.map((v) => v.studentCadreId)
-  studentIds.forEach(async (id) => {
-    console.log(id)
-
-    const { data: result } = await apiDeleteStudentCadre(id)
+  const studentPovertyIds = selected.value.map((v) => v.studentPovertyAssistanceId)
+  studentPovertyIds.forEach(async (id) => {
+    const { data: result } = await apiDeleteStudentPovertyAssistance(id)
     if (result.code !== 200) {
       console.error(result.message)
       notify({ type: 'error', title: '错误', text: result.message })
@@ -182,44 +149,33 @@ const deleteStudentCadreLogic = async () => {
   setTimeout(() => {
     deleteDialog.value = false
     loading.value = false
+    notify({ type: 'success', title: '成功', text: `删除成功！` })
+    fetchStudentPovertyLogic()
   }, 500)
-}
-
-const setSearch = () => {
-  query.studentId = null
-  query.cadrePosition = null
-  query.name = null
-  switch (searchType.value) {
-    case 0:
-      query.studentId = search.value == '' ? null : search.value
-      break
-    case 1:
-      query.name = search.value == '' ? null : search.value
-      break
-    case 2:
-      query.cadrePosition = search.value == '' ? null : search.value
-      break
-  }
 }
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <AddStudentCadreForm
-      v-model="addStudentCadreDialog"
-      @on-closed="()=>{
-        addStudentCadreDialog = false
-        fetchStudentCadreLogic()
-      }"
+    <AddStudentPovertyForm
+      v-model="addStudentPovertyDialog"
+      @on-closed="
+        () => {
+          addStudentPovertyDialog = false
+          fetchStudentPovertyLogic()
+        }
+      "
     />
-    <EditStudentCadreForm
-      v-model="editStudentCadreFormDialog"
+    <EditStudentPovertyForm
+      v-model="editStudentPovertyFormDialog"
       :info="editInfo"
-      @on-closed="()=>{
-        editStudentCadreFormDialog = false
-        fetchStudentCadreLogic()
-      }"
+      @on-closed="
+        () => {
+          editStudentPovertyFormDialog = false          
+          fetchStudentPovertyLogic()
+        }
+      "
     />
-    
+
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -231,7 +187,7 @@ const setSearch = () => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
-            @click="deleteStudentCadreLogic"
+            @click="deleteStudentPovertyLogic"
             >删除</v-btn
           >
           <v-btn @click="deleteDialog = false">取消</v-btn>
@@ -248,9 +204,9 @@ const setSearch = () => {
       </span>
       <span class="w-10">
         <v-select
-          label="职位等级"
-          v-model="query.cadreLevel"
-          :items="CadreLevels"
+          label="贫困等级"
+          v-model="query.povertyLevel"
+          :items="povertyLevels"
           class="text-indigo"
           color="indigo"
           hide-details
@@ -259,54 +215,21 @@ const setSearch = () => {
         >
         </v-select>
       </span>
-      <span class="w-10 text-indigo">
-        <v-text-field
-          v-model="query.appointmentStartTerm"
-          color="indigo"
-          :counter="15"
-          clearable
-          label="任职开始学期"
-          placeholder="2xxx-2xxxx_x"
-          :rules="[(v) => /^(2\d{3})-(2\d{3})$/.test(v) || v == null]"
-          variant="underlined"
-          hide-details
-        >
-        </v-text-field>
-      </span>
+      
 
       <span class="w-10 text-indigo">
-        <v-text-field
-          v-model="query.appointmentEndTerm"
+        <AcademicYearSelect
+          v-model="query.assistanceYear"
           color="indigo"
-          :counter="15"
-          clearable
-          placeholder="2xxx-2xxxx_x"
-          label="任职结束学期"
-          :rules="[(v) => /^(2\d{3})-(2\d{3})$/.test(v) || v == null]"
           variant="underlined"
-          hide-details
-        >
-        </v-text-field>
+        />
       </span>
-      <span class="w-10">
-        <v-select
-          label="搜索"
-          v-model="searchType"
-          :items="searchTypeList"
-          item-title="title"
-          item-value="value"
-          class="text-indigo"
-          color="indigo"
-          hide-details
-          variant="underlined"
-        >
-        </v-select>
-      </span>
+
       <span class="w-15 text-indigo">
         <v-text-field
-          v-model="search"
+          v-model="query.search"
           color="indigo"
-          @update:modelValue="fetchStudentCadreLogic"
+          @update:modelValue="fetchStudentPovertyLogic"
           :loading="loading"
           :counter="15"
           clearable
@@ -315,28 +238,22 @@ const setSearch = () => {
           variant="underlined"
           hide-details
         >
+        <v-tooltip activator="parent" location="top">按贫困类型/资助标准搜索</v-tooltip>
         </v-text-field>
+      
       </span>
+
       <v-btn
         prepend-icon="mdi-refresh"
         v-if="
           has('student:select') &&
-          has('student_cadre:select') &&
-          has('cadre:select') &&
+          has('student_poverty_assistance:select') &&
+          has('poverty_assistance:select') &&
           has('major:select')
         "
-        @click="fetchStudentCadreLogic"
+        @click="fetchStudentPovertyLogic"
         >刷新</v-btn
       >
-      <v-btn
-        v-if="has('student_cadre:insert')"
-        prepend-icon="mdi-plus-circle"
-        color="primary"
-        @click="addStudentCadreDialog = true"
-        >添加</v-btn
-      >
-  
- 
 
       <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
@@ -357,20 +274,13 @@ const setSearch = () => {
         >
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                v-if="has('student_cadre:update')"
-                @click="
-                  () => {
-                    editInfo = item as StudentCadreRecord
-                    editStudentCadreFormDialog = true
-                    
-                  }
-                "
-                >编辑</v-btn
-              >
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                editInfo = JSON.parse(JSON.stringify(item))
+                editStudentPovertyFormDialog = true
+              }
+                ">编辑</v-btn>
             </div>
+     
           </template>
         </v-data-table-server>
       </v-card>

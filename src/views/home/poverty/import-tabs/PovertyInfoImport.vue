@@ -4,41 +4,33 @@ import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 
 import {
-  studentcadreheaders,
-  type StudentCadreHeader,
+  povertyheaders,
+  type PovertyHeader,
   HeaderValidChecker,
   AnalyzeFileToTable
 } from '@/misc/table'
 
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
-import { apiAddStudentCadreInfo, apiGetCadreList } from '@/api/cadre'
+import { apiAddPovertyAssistanceInfo } from '@/api/poverty'
 
 import { useUserStore } from '@/stores/user'
 
 const excel = ref<File[]>()
-const jsonData = ref<StudentCadreHeader[]>([])
+const jsonData = ref<PovertyHeader[]>([])
 const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const uploadDialog = ref()
 const loading = ref(false)
-const nilData: StudentCadreHeader = {
-  studentCadreId: '',
-  studentId: '',
-  cadreId: '',
-  appointmentStartTerm: '',
-  appointmentEndTerm: '',
-  comment: '',
-  cadrePosition: '',
-  cadreLevel: ''
+const nilData: PovertyHeader = {
+  povertyAssistanceId: '',
+  povertyLevel: '',
+  povertyType: '',
+  povertyAssistanceStandard: ''
 }
 
 const analyzeHandler = async () => {
   loading.value = true
-  const ret = (await AnalyzeFileToTable(
-    file.value as File,
-    studentcadreheaders,
-    notify
-  )) as StudentCadreHeader[]
+  const ret = (await AnalyzeFileToTable(file.value as File, povertyheaders, notify)) as PovertyHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -55,12 +47,9 @@ const uploadLogic = async () => {
   loading.value = true
   // valid data format before upload
 
-
-
   if (
     !jsonData.value.reduce(
-      (valid, studentcadre) =>
-        !valid ? false : HeaderValidChecker(studentcadre, studentcadreheaders),
+      (valid, poverty) => (!valid ? false : HeaderValidChecker(poverty, povertyheaders)),
       true
     )
   ) {
@@ -69,28 +58,10 @@ const uploadLogic = async () => {
     return
   }
 
-  const { data: result } = await apiGetCadreList()
+  const { data: result } = await apiAddPovertyAssistanceInfo(jsonData.value)
   if (result.code !== 200) {
     console.log(result)
     notify({ title: '错误', text: result.message, type: 'error' })
-    loading.value = false
-    return
-  }
-  const cadrerMap = result.data.reduce((cadrerMap, cadre) => {
-    cadrerMap.set(cadre.cadrePosition + '_' + cadre.cadreLevel, cadre.cadreId)
-    return cadrerMap
-  }, new Map())
-
-  const studentcadres = jsonData.value.map((studentcadre) => ({
-    ...studentcadre,
-    cadreId: cadrerMap.get(studentcadre.cadrePosition + '_' + studentcadre.cadreLevel)
-  }))
-
-  
-  const { data: result2 } = await apiAddStudentCadreInfo(studentcadres)
-  if (result2.code !== 200) {
-    console.log(result2)
-    notify({ title: '错误', text: result2.message, type: 'error' })
     loading.value = false
     return
   }
@@ -119,16 +90,16 @@ const uploadLogic = async () => {
         >解析文件</v-btn
       >
       <v-btn
-        v-if="has('student_cadre:insert')"
+        v-if="has('poverty_assistance:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
         >上传数据</v-btn
       >
-      <v-btn prepend-icon="mdi-download" href="/template/学生任职信息上传模板.xlsx">下载模板</v-btn>
+      <v-btn prepend-icon="mdi-download" href="/template/贫困类型信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="studentcadreheaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="povertyheaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

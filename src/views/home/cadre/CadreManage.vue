@@ -153,18 +153,12 @@ onMounted(fetchCadreLogic)
           return-object
         >
         <template v-slot:item.operations="{ item }">
-            <div>
-              <v-btn
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                @click="
-                  () => {
-                    editInfo = item as Cadre
-                    editCadreInfoFormDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+          <div>
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+                editInfo = JSON.parse(JSON.stringify(item))
+                editCadreInfoFormDialog = true
+              }
+                ">编辑</v-btn>
             </div>
           </template>
         </v-data-table>
