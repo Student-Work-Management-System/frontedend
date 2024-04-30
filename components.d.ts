@@ -22,6 +22,7 @@ declare module 'vue' {
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     EmployForm: typeof import('./src/components/home/employ/EmployForm.vue')['default']
+    EnrollForm: typeof import('./src/components/home/enroll/EnrollForm.vue')['default']
     ExcelTable: typeof import('./src/components/home/ExcelTable.vue')['default']
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']

@@ -16,13 +16,13 @@ const industryChartRef = ref()
 const stats = ref<EmployStats>()
 
 const checkQueryField = () => {
-  if (selectedYear.value == null) {
-    notify({ type: "warn", title: "提示", text: "请至少选择一个年份！" })
+  if (selectedMajor.value == null) {
+    notify({ type: "warn", title: "提示", text: "请至少选择一个专业！" })
     loading.value = false
     return false
   }
-  if (selectedMajor.value == null) {
-    notify({ type: "warn", title: "提示", text: "请至少选择一个专业！" })
+  if (selectedYear.value == null) {
+    notify({ type: "warn", title: "提示", text: "请至少选择一个年份！" })
     loading.value = false
     return false
   }
@@ -30,22 +30,26 @@ const checkQueryField = () => {
 }
 
 const getStatsDataHandler = async () => {
-  loading.value = true
-
   if (!checkQueryField()) return
+
+  loading.value = true
   const { data: result } = await apiStatsEmploy({
     graduationYears: [selectedYear.value as string],
     majorIds: selectedMajor.value === null ? [] : [selectedMajor.value]
   })
   if (result.code !== 200) {
     console.error(result)
-    notify({ title: '错误', text: result.message, type: 'error' })
+    if (result.code === -2004) {
+      notify({ type: "warn", title: "提示", text: "没有数据用于统计！" })
+    } else {
+      console.error(result)
+      notify({ title: '错误', text: result.message, type: 'error' })
+    }
     loading.value = false
     return
   }
-  majorName.value = Object.keys(result.data)[0]
 
-  if (result.data[majorName.value] === undefined) {
+  if (result.data === null) {
     stats.value = {
       graduationStatus: [],
       jobLocation: {},
@@ -56,6 +60,7 @@ const getStatsDataHandler = async () => {
     loading.value = false
     return
   }
+  majorName.value = Object.keys(result.data)[0]
   stats.value = result.data[majorName.value]
   salary.value = stats.value?.salary as string
   stats.value.graduationStatus = Object.keys(stats.value?.graduationStatus).map((key) => ({ type: key, value: stats.value?.graduationStatus[key] }))
@@ -72,7 +77,6 @@ const getStatsDataHandler = async () => {
 
   notify({ title: '成功', text: '获取统计成功！', type: 'success' })
   updateChart()
-  console.log(stats.value)
   loading.value = false
 }
 const exportStatsExeclHandler = async () => {
@@ -143,6 +147,10 @@ const updateChart = () => {
   }
   statusChart?.updateSpec(parseISpec("就业分析", stats.value?.graduationStatus));
   statusChart?.renderAsync();
+  jobIndustryChart?.updateSpec(parseISpec("所处产业", stats.value?.graduationStatus));
+  jobIndustryChart?.renderAsync();
+  jobLocationChart?.updateSpec(parseISpec("工作地点", stats.value?.graduationStatus));
+  jobLocationChart?.renderAsync();
   loading.value = false
 }
 
