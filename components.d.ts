@@ -11,6 +11,7 @@ declare module 'vue' {
     AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
     AddPovertyForm: typeof import('./src/components/home/poverty/AddPovertyForm.vue')['default']
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
+    AddStuentCadreForm: typeof import('./src/components/home/cadre/AddStuentCadreForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
     EditBaseInfoForm: typeof import('./src/components/home/base/EditBaseInfoForm.vue')['default']
