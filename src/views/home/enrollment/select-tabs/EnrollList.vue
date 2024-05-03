@@ -102,6 +102,7 @@ const fetchEnrollLogic = async () => {
     enrollMajor: selectedEnrollMajor.value,
     firstMajor: selectedFirstMajor.value,
     ...pageOptions,
+    enrollMajorId: null
   })
   if (result.code !== 200) {
     console.error(result)

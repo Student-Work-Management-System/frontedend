@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/user';
-import { enrollheaders, type EnrollHeader, AnalyzeFileToTable } from '@/misc/table'
+import { enrollheaders, type EnrollHeader, AnalyzeFileToTable, HeaderValidChecker } from '@/misc/table'
 import { apiAddEnrollment } from '@/api/enroll';
 import { notify } from '@kyvg/vue3-notification'
 
@@ -14,7 +14,9 @@ const nilData: EnrollHeader = {
   enrollSchool: '',
   enrollMajor: '',
   firstMajor: '',
-  score: ''
+  score: '',
+  enrollMajorId: '',
+  enrollTime: ''
 }
 
 const excel = ref<File[]>()
@@ -40,6 +42,15 @@ const analyzeHandler = async () => {
 
 const uploadLogic = async () => {
   loading.value = true
+  // valid data format before upload
+  if (
+    !jsonData.value.
+      reduce((valid, e) => (!valid ? false : HeaderValidChecker(e, enrollheaders)), true)
+  ) {
+    notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
+    loading.value = false
+    return
+  }
   const { data: result } = await apiAddEnrollment(jsonData.value)
   if (result.code !== 200) {
     console.error(result)
@@ -64,7 +75,7 @@ const uploadLogic = async () => {
           label="Excel 文件选择"></v-file-input>
       </span>
       <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-      <v-btn v-if="has('student_employment:insert')" prepend-icon="mdi-upload" color="primary"
+      <v-btn v-if="has('student_enrollment:insert')" prepend-icon="mdi-upload" color="primary"
         @click="uploadDialog = true">上传数据</v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生招生信息上传模板.xlsx">下载模板</v-btn>
     </section>
