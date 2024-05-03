@@ -23,7 +23,7 @@ export default {
     {
       path: '/enrollment/list',
       name: 'enrollment-list',
-      // component: () => import('@/views/home/enrollment/EnrollDataTabs.vue'),
+      component: () => import('@/views/home/enrollment/EnrollDataTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '招生信息统计',

@@ -6,7 +6,7 @@ export default {
     icon: 'mdi-cancel',
     title: '学生处分情况',
     hasPage: false,
-    auth: 'poverty_assistance:select'
+    auth: 'student_punishment:select'
   },
   children: [
     {
@@ -17,7 +17,7 @@ export default {
         icon: 'mdi-plus-box-multiple',
         title: '处分信息录入',
         hasPage: true,
-        auth: 'poverty_assistance:insert'
+        auth: 'student_punishment:insert'
       }
     },
     {
@@ -28,7 +28,7 @@ export default {
         icon: 'mdi-chart-bar',
         title: '处分信息统计',
         hasPage: true,
-        auth: 'poverty_assistance:select'
+        auth: 'student_punishment:select'
       }
     },
     {
@@ -39,7 +39,7 @@ export default {
         icon: 'mdi-cog',
         title: '处分信息管理',
         hasPage: true,
-        auth: 'poverty_assistance:update'
+        auth: 'student_punishment:update'
       }
     }
   ]

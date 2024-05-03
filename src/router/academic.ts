@@ -6,7 +6,7 @@ export default {
     icon: 'mdi-book-open',
     title: '学生学术成果',
     hasPage: false,
-    auth: null
+    auth: 'student_academic_work:select'
   },
   children: [
     {
