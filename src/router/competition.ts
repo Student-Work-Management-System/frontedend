@@ -12,7 +12,7 @@ export default {
     {
       path: '/competition/import',
       name: 'competition-import',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/competition/CompetitionUpload.vue'),
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生获奖上报',
@@ -45,7 +45,7 @@ export default {
     {
       path: '/competition/manage',
       name: 'competition-manage',
-      // component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/competition/CompetitionManageTabs.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '竞赛类别管理',

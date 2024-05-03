@@ -7,6 +7,7 @@ export * from './studentcadre-import-header'
 export * from './enroll-import-header'
 export * from './poverty-import-header'
 export * from './studentpoverty-import-header'
+export * from './competition-import-header'
 
 export interface TableHeader {
   type: string
