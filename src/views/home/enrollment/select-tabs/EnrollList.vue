@@ -76,11 +76,11 @@ const editModel = ref<Enrollment>({
   id: '',
   name: '',
   origin: '',
-  enrollSchool: '',
   enrollMajor: '',
   firstMajor: '',
   score: '',
-  enrollTime: ''
+  enrollTime: '',
+  enrollMajorId: ''
 })
 const search = ref<string | null>('')
 
