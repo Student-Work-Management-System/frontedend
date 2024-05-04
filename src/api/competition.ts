@@ -64,8 +64,8 @@ export async function apiGetStudentOwnCompetition(studentId: string): Promise<Ax
 }
 
 
-export async function apiAddCompetitions(competitionList: Competition[]): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/competition/adds', { competitionList })
+export async function apiAddCompetitions(competitions: Competition[]): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/competition/adds', { competitions })
 }
 
 export async function apiAddCompetition(competition: Competition): Promise<AxiosResponse<Result<null>>> {

@@ -47,9 +47,9 @@ export async function apiAddPovertyAssistance(povertyAssistance: {
 }
 
 export async function apiAddPovertyAssistanceInfo(
-  povertyAssistanceList: PovertyAssistance[]
+  povertyAssistances: PovertyAssistance[]
 ): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/poverty_assistance/adds', { povertyAssistanceList })
+  return http.post('/poverty_assistance/adds', { povertyAssistances })
 }
 
 export async function apiDeletePovertyAssistance(
@@ -107,5 +107,5 @@ export async function apiGetStudentPovertyAssistanceList(query: {
 export async function apiAddStudentPovertyAssistanceInfo(
   insertStudentPovertyAssistanceList: StudentPovertyAssistance[]
 ): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student_poverty_assistance/adds', { list:insertStudentPovertyAssistanceList })
+  return http.post('/student_poverty_assistance/adds', { list: insertStudentPovertyAssistanceList })
 }

@@ -15,8 +15,8 @@ export interface Enrollment {
   enrollTime: string
 }
 
-export function apiAddEnrollment(enrollmentList: Enrollment[]): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/enrollment/adds', { enrollmentList })
+export function apiAddEnrollment(enrollments: Enrollment[]): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/enrollment/adds', { enrollments })
 }
 
 export function apiGetEnrollment(query: {

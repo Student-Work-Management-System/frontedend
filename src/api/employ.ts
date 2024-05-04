@@ -22,8 +22,8 @@ export interface Employ {
 }
 
 
-export function apiAddEmployInfo(employs: Employ[]): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/employment/adds', { insertStudentEmploymentDTOList: employs })
+export function apiAddEmployInfo(studentEmployments: Employ[]): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/employment/adds', { studentEmployments })
 }
 
 export function apiGetEmployList(query: {
