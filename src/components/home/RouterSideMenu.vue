@@ -7,7 +7,6 @@ import { ref } from 'vue'
 const drawer = ref(true)
 const store = useUserStore()
 const authorities = store.getUserData.authorities?.map((a) => a.authority)
-console.log(routes)
 
 const items = computed(() =>
   routes

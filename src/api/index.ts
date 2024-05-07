@@ -13,14 +13,14 @@ http.interceptors.response.use(
       setAuthorizationToken('')
       setTimeout(() => {
         location.reload()
-      }, 500)
+      }, 1000)
     } else if (res.data.code === -210) {
       console.error('用户token过期：', res)
       localStorage.clear()
       setAuthorizationToken('')
       setTimeout(() => {
         location.reload()
-      }, 500)
+      }, 1000)
     }
 
     return res
