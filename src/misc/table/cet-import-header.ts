@@ -67,7 +67,7 @@ export const cetheaders: TableHeader[] = [
     field: 'examType',
     label: '考试类别',
     require: true,
-    options: ['4', '6'],
+    options: ['CET4', 'CET6'],
     validate: (content, oldContent, record, field) => {
       if (content === '') return '考试类别不能为空！'
       if (!/^CET[4|6]$/.test(content)) return '考试类别错误！'
