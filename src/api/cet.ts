@@ -11,6 +11,7 @@ interface StudentCet {
 }
 
 interface CETQuery {
+    name:string | null;
     majorId: string | null;
     grade: string | null;
     score: number | null;

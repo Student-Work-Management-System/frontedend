@@ -24,7 +24,7 @@ declare module 'vue' {
     EditCadreForm: typeof import('./src/components/home/cadre/EditCadreForm.vue')['default']
     EditPovertyForm: typeof import('./src/components/home/poverty/EditPovertyForm.vue')['default']
     EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']
-    EditStudentCet: typeof import('./src/components/cet/EditStudentCet.vue')['default']
+    EditStudentCet: typeof import('./src/components/home/cet/EditStudentCet.vue')['default']
     EditStudentPovertyForm: typeof import('./src/components/home/poverty/EditStudentPovertyForm.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']

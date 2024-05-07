@@ -27,33 +27,6 @@ const updateInfoLogic = async () => {
     <v-card :loading="loading" width="auto" prepend-icon="mdi-pencil" title="修改信息">
       <v-container class="px-8">
         <v-form v-model="form" class="form">
-          <v-text-field
-            v-model="info!.studentCetId"
-            label="学生CET考试编号"
-            class="text-indigo"
-            color="indigo"
-            clearable
-            required
-            :rules="[() => !!info!.studentCetId || '该选项必填！']"
-          >
-            <template v-slot:prepend>
-              <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-            </template>
-          </v-text-field>
-
-          <v-text-field
-            v-model="info!.studentId"
-            label="学号"
-            class="text-indigo"
-            color="indigo"
-            clearable
-            required
-            :rules="[() => !!info!.studentId || '该选项必填！']"
-          >
-            <template v-slot:prepend>
-              <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-            </template>
-          </v-text-field>
 
           <v-text-field
             v-model="info!.score"
@@ -91,6 +64,21 @@ const updateInfoLogic = async () => {
             clearable
             required
             :rules="[() => !!info!.certificateNumber || '该选项必填！']"
+          >
+            <template v-slot:prepend>
+              <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+            </template>
+          </v-text-field>
+
+          <v-text-field
+            v-model="info!.examType"
+            label="考试类别"
+            class="text-indigo"
+            color="indigo"
+            :items="['CET4', 'CET6']"
+            clearable
+            required
+            :rules="[() => !!info!.examType || '该选项必填！']"
           >
             <template v-slot:prepend>
               <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>

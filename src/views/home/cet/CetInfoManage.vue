@@ -6,7 +6,7 @@ import { type StudentCetVO , apiGetAllRecord,apiDeleteStudentCET } from '@/api/c
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-import EditStudentCet from '@/components/cet/EditStudentCet.vue'
+import EditStudentCet from '@/components/home/cet/EditStudentCet.vue'
 
 
 const headers = [
@@ -99,6 +99,7 @@ const fetchStudentLogic = async () => {
   loading.value = true
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
   const { data: result } = await apiGetAllRecord({
+    name: search.value === '' ? null : search.value,
     score: null,
     grade: selectedGrade.value === '' ? null : selectedGrade.value,
     majorId: selectedMajor.value === '' ? null : selectedMajor.value,
@@ -126,22 +127,30 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
 }
 
 const deleteStudentLogic = async () => {
-  loading.value = true
-  const studentCetId = selected.value.map((v) => v.studentCetId)
-  studentCetId.forEach(async (id) => {
-    const { data: result } = await apiDeleteStudentCET(id)
-    if (result.code !== 200) {
-      console.error(result.message)
-      console.log(id)
-      notify({ type: 'error', title: '错误', text: result.message })
-      return
-    }
-  })
+  loading.value = true;
+  const studentCetId = selected.value.map((v) => v.studentCetId);
+  try {
+    await Promise.all(studentCetId.map(async (id) => {
+      const { data: result } = await apiDeleteStudentCET(id);
+      if (result.code !== 200) {
+        console.error(result.message);
+        notify({ type: 'error', title: '错误', text: result.message });
+        throw new Error(result.message); // 抛出错误以终止 Promise.all
+      } else {
+        selected.value = selected.value.filter((v) => v.studentCetId !== id);
+      }
+    }));
+  } catch (error) {
+    // 错误处理
+    loading.value = false;
+    return;
+  }
+
   setTimeout(() => {
-    deleteDialog.value = false
-    loading.value = false
-  }, 500)
-}
+    deleteDialog.value = false;
+    loading.value = false;
+  }, 500);
+};
 
 const afterEditStudent = () => {
   editDialog.value = false
@@ -250,3 +259,4 @@ const afterEditStudent = () => {
   width: 15% !important;
 }
 </style>
+
