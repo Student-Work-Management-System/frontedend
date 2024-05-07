@@ -59,10 +59,15 @@ export interface StudentCompetition {
   rejectReason: string
 }
 
-export async function apiGetStudentOwnCompetition(studentId: string): Promise<AxiosResponse<Result<StudentCompetition[]>>> {
-  return http.get(`/student_competition/get/${studentId}`)
-}
 
+export interface StudentCompetitionUpload {
+  competitionId: string
+  headerId: string
+  evidence: string
+  awardDate: string
+  awardLevel: string
+  members: Memeber[]
+}
 
 export async function apiAddCompetitions(competitions: Competition[]): Promise<AxiosResponse<Result<null>>> {
   return http.post('/competition/adds', { competitions })
@@ -83,3 +88,13 @@ export async function apiUpdateCompetition(competition: Competition): Promise<Ax
 export async function apiDeleteCometition(competitionId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/competition/delete/${competitionId}`)
 }
+
+export async function apiGetStudentOwnCompetition(studentId: string): Promise<AxiosResponse<Result<StudentCompetition[]>>> {
+  return http.get(`/student_competition/get/${studentId}`)
+}
+
+export async function apiAddStudentOwnCompetition(upload: StudentCompetitionUpload): Promise<AxiosResponse<Result<StudentCompetition[]>>> {
+  return http.post('/student_competition/add', upload)
+}
+
+

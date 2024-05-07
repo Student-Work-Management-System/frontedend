@@ -1,56 +1,64 @@
 <script lang="ts" setup>
+import { apiGetStudentOwnCompetition, type StudentCompetition } from '@/api/competition';
+import { apiDownloadFile } from '@/api/file'
 import { useUserStore } from '@/stores/user';
-import { ref } from 'vue'
-
+import { ref, reactive, onMounted } from 'vue'
+import { notify } from '@kyvg/vue3-notification'
 
 const headers = [
   {
-    title: '准考证号',
+    title: '竞赛名称',
     align: 'start',
     sortable: true,
-    key: 'examineeId'
+    key: 'competitionName'
   },
   {
-    title: '身份证号',
+    title: '竞赛性质',
+    align: 'start',
+    sortable: false,
+    key: 'competitionNature'
+  },
+  {
+    title: '竞赛级别',
+    align: 'start',
+    sortable: false,
+    key: 'competitionLevel'
+  },
+  {
+    title: '填报人',
+    align: 'start',
+    sortable: false,
+    key: 'headerInfo'
+  },
+  {
+    title: '团队成员',
+    align: 'start',
+    sortable: false,
+    key: 'members'
+  },
+  {
+    title: '奖项级别',
+    align: 'start',
+    sortable: false,
+    key: 'awardLevel'
+  },
+  {
+    title: '获奖日期',
     align: 'start',
     sortable: true,
-    key: 'id'
+    key: 'awardDate'
   },
   {
-    title: '姓名',
-    align: 'start',
-    sortable: true,
-    key: 'name'
-  },
-  {
-    title: '生源地',
+    title: '审核状态',
     align: 'start',
     sortable: false,
-    key: 'origin'
+    key: 'reviewState'
   },
   {
-    title: '招生年份',
+    title: '审核备注',
     align: 'start',
     sortable: false,
-    key: 'enrollTime'
-  },
-  {
-    title: '录取专业',
-    align: 'start',
-    sortable: false,
-    key: 'enrollMajor'
-  },
-  {
-    title: '第一志愿专业',
-    align: 'start',
-    sortable: false,
-    key: 'firstMajor'
-  },
-  {
-    title: '高考分数',
-    align: 'start',
-    sortable: false,
-    key: 'score'
+    key: 'rejectReason'
   },
   {
     title: '操作',
@@ -62,53 +70,121 @@ const headers = [
 
 const loading = ref(false)
 
-const deleteDialog = ref(false)
 const selected = ref<any[]>([])
-const search = ref('')
-
+const data = ref<any[]>([])
+const addDialog = ref(false)
 
 const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
-const deleteStudentCompetitionLogic = () => { }
-const fetchStudentCompetitionLogic = () => {
+const pageOptions = reactive({
+  pageSize: 10,
+  pageNo: 1
+})
+
+const fetchStudentCompetitionLogic = async () => {
+  const { data: result } = await apiGetStudentOwnCompetition(store.getUserData.username)
+  if (result.code !== 200) {
+    console.error(result)
+    notify({ type: 'error', title: '错误', text: result.message })
+    loading.value = false
+    return
+  }
+  data.value = result.data.map(item => ({
+    ...item,
+    headerInfo: item.headerId + item.headerName,
+    members: item.members.map((m) => m.studentId + m.realName)
+  }))
+  loading.value = false
+}
+onMounted(fetchStudentCompetitionLogic)
+
+const downloadEvidence = async (filename: string) => {
+  loading.value = true
+  const { data: result } = await apiDownloadFile(filename)
+  notify({ title: '成功', text: '下载已开始！', type: 'success' })
+  const url = URL.createObjectURL(result);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename.split('-').slice(1).join('');
+  a.click();
+  URL.revokeObjectURL(url);
+  loading.value = false
+  loading.value = false
+}
+
+
+const afterLogic = () => {
+  addDialog.value = false
+  fetchStudentCompetitionLogic()
+}
+
+const checkStateColor = (state: string): "indigo" | "green" | "error" => {
+  switch (state) {
+    case "审核中":
+      return "indigo"
+    case "已通过":
+      return "green"
+    default:
+      return "error"
+  }
+}
+const checkStateIcon = (state: string): string => {
+  switch (state) {
+    case "审核中":
+      return "mdi-progress-clock"
+    case "已通过":
+      return "mdi-progress-check"
+    default:
+      return "mdi-progress-close"
+  }
 }
 
 </script>
+
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteStudentCompetitionLogic" />
+    <CompetitionStudentAddForm v-model="addDialog" v-model:user-id="store.getUserData.username" @on-closed="afterLogic" />
     <section class="menu">
-      <span class="w-20 text-indigo">
-        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentCompetitionLogic" :loading="loading"
-          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
-          <v-tooltip activator="parent" location="top">以准考证号、姓名、身份证号、生源地搜索</v-tooltip>
-        </v-text-field>
-      </span>
-      <v-btn prepend-icon="mdi-refresh" @click="fetchStudentCompetitionLogic">刷新</v-btn>
+      <v-btn prepend-icon="mdi-refresh" @click="fetchStudentCompetitionLogic"> 刷新 </v-btn>
+      <v-btn v-if="has('student_competition:insert')" prepend-icon="mdi-plus-circle" color="primary"
+        @click="addDialog = true">添加</v-btn>
 
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
+
 
     <section class="pa-4 w-100">
       <v-card>
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
+        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading"
+          v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize" show-select return-object>
+          <template v-slot:item.headerInfo="{ item }">
+            <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">
+              {{ item.headerInfo }}
+            </v-chip>
+          </template>
+          <template v-slot:item.members="{ item }">
+            <v-chip class="mr-1" prepend-icon="mdi-account" v-for="( member, id ) in item.members" :key="id">
+              {{ member }}
+            </v-chip>
+          </template>
+          <template v-slot:item.reviewState="{ item }">
+            <v-chip class="mr-1" :prepend-icon="checkStateIcon(item.reviewState)"
+              :color="checkStateColor(item.reviewState)">
+              {{ item.reviewState }}
+            </v-chip>
+          </template>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editModel = JSON.parse(JSON.stringify(item))
-                editDialog = true
-              }
-                ">编辑</v-btn>
+              <v-btn color="indigo" prepend-icon="mdi-download" variant="link"
+                @click="downloadEvidence(item.evidence)">证明材料</v-btn>
             </div>
           </template>
-        </v-data-table-server>
+        </v-data-table>
       </v-card>
     </section>
+
   </v-card>
 </template>
 
@@ -127,5 +203,9 @@ const fetchStudentCompetitionLogic = () => {
 .file {
   overflow: hidden;
   width: 26%;
+}
+
+.w-20 {
+  width: 15% !important;
 }
 </style>

@@ -13,10 +13,16 @@ declare module 'vue' {
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
     AddStuentCadreForm: typeof import('./src/components/home/cadre/AddStuentCadreForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
+    AwardLevelSelect: typeof import('./src/components/home/competition/AwardLevelSelect.vue')['default']
     CompetitionLevelSelect: typeof import('./src/components/home/competition/CompetitionLevelSelect.vue')['default']
     CompetitionLeveSelect: typeof import('./src/components/home/competition/CompetitionLeveSelect.vue')['default']
     CompetitionNatureSelect: typeof import('./src/components/home/competition/CompetitionNatureSelect.vue')['default']
+    CompetitionSelect: typeof import('./src/components/home/competition/CompetitionSelect.vue')['default']
+    CompetitionsSelect: typeof import('./src/components/home/competition/CompetitionsSelect.vue')['default']
+    CompetitionStudentAddForm: typeof import('./src/components/home/competition/CompetitionStudentAddForm.vue')['default']
+    CompetitionStudentForm: typeof import('./src/components/home/competition/CompetitionStudentForm.vue')['default']
     CompetitonForm: typeof import('./src/components/home/competition/CompetitonForm.vue')['default']
+    DateSelect: typeof import('./src/components/home/DateSelect.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
     DSearch: typeof import('vue-devui/search/index.es.js')['Search']
     DTree: typeof import('vue-devui/tree/index.es.js')['Tree']
@@ -35,6 +41,9 @@ declare module 'vue' {
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
     MajorForm: typeof import('./src/components/home/system/MajorForm.vue')['default']
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
+    MultiInputChips: typeof import('./src/components/home/MultiInputChips.vue')['default']
+    MultiInputPeopleChips: typeof import('./src/components/home/MultiInputPeopleChips.vue')['default']
+    MultiInputUserChips: typeof import('./src/components/home/MultiInputUserChips.vue')['default']
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -43,5 +52,8 @@ declare module 'vue' {
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
     SemesterSelect: typeof import('./src/components/home/cadre/SemesterSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vMoel: typeof import('vue-devui/moel/index.es.js')['MoelDirective']
   }
 }
