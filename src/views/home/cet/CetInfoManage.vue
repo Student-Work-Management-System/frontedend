@@ -7,6 +7,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
 import EditStudentCet from '@/components/home/cet/EditStudentCet.vue'
+import CETYearSelect from '@/components/home/cet/CETYearSelect.vue'
 
 
 const headers = [
@@ -47,7 +48,7 @@ const headers = [
     key: 'score'
   },
   {
-    title: '考试日期',
+    title: '学期',
     align: 'start',
     sortable: false,
     key: 'examDate'
@@ -74,6 +75,9 @@ const headers = [
 const loading = ref(false)
 const selected = ref<any[]>([])
 const search = ref('')
+const examDate = ref('')
+const examType = ref('')
+const examTypes = ref(['CET4','CET6'])
 const data = ref<StudentCetVO[]>([])
 const dataLength = ref<number>(0)
 const selectedMajor = ref<string>('')
@@ -103,8 +107,8 @@ const fetchStudentLogic = async () => {
     score: null,
     grade: selectedGrade.value === '' ? null : selectedGrade.value,
     majorId: selectedMajor.value === '' ? null : selectedMajor.value,
-    examDate: null,
-    examType: null,
+    examDate: examDate.value === '' ? null : examDate.value,
+    examType: examType.value === '' ? null : examType.value,
     ...pageOptions
   })
   if (result.code !== 200) {
@@ -190,6 +194,27 @@ const afterEditStudent = () => {
       <span class="w-20">
         <GradeSelect v-model="selectedGrade" variant="underlined" />
       </span>
+
+      <span class="w-20 text-indigo">
+        <CETYearSelect
+          v-model="examDate"
+          color="indigo"
+          variant="underlined"
+        />
+      </span>
+
+      <v-select
+          label="考试类别"
+          v-model="examType"
+          :items="['CET4', 'CET6']"
+          class="text-indigo"
+          color="indigo"
+          hide-details
+          clearable
+          variant="underlined"
+        >
+      </v-select>
+
       <span class="w-20 text-indigo">
         <v-text-field
           v-model="search"
@@ -203,7 +228,7 @@ const afterEditStudent = () => {
           variant="underlined"
           hide-details
         >
-          <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top">以姓名搜索</v-tooltip>
         </v-text-field>
       </span>
       <v-btn prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>

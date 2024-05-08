@@ -43,11 +43,11 @@ export const cetheaders: TableHeader[] = [
   {
     type: 'string',
     field: 'examDate',
-    label: '考试日期',
+    label: '学期',
     require: true,
     options: null,
     validate: (content, oldContent, record, field) => {
-      if (content === '') return '考试日期不能为空！'
+      if (content === '') return '学期不能为空！'
       return '' // return empty string if there is no error
     }
   },

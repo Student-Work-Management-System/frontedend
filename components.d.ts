@@ -52,6 +52,7 @@ declare module 'vue' {
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
     SemesterSelect: typeof import('./src/components/home/cadre/SemesterSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
+    YearSelect: typeof import('./src/components/home/cet/YearSelect.vue')['default']
   }
   export interface ComponentCustomProperties {
     vMoel: typeof import('vue-devui/moel/index.es.js')['MoelDirective']
