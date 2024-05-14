@@ -26,7 +26,7 @@ const submitSelectHandler = () => {
 
 </script>
 <template>
-  <v-text-field :label="props.label" v-model="showModelText" :variant="props.variant"
+  <v-text-field :label="props.label" color="indigo" class="text-indigo" v-model="showModelText" :variant="props.variant"
     prepend-inner-icon="mdi-calendar-range" readonly hide-details clearable @click="dialog = true"
     @click:clear="model = null">
     <template v-slot:prepend>
