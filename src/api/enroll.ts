@@ -19,7 +19,7 @@ export function apiAddEnrollment(enrollments: Enrollment[]): Promise<AxiosRespon
   return http.post('/enrollment/adds', { enrollments })
 }
 
-export function apiGetEnrollment(query: {
+export async function apiGetEnrollment(query: {
   name: string | null
   enrollTime: string | null
   examineeId: string | null
@@ -34,11 +34,11 @@ export function apiGetEnrollment(query: {
   return http.post('/enrollment/gets', query)
 }
 
-export function apiUpdateEnrollment(enroll: Enrollment): Promise<AxiosResponse<Result<null>>> {
+export async function apiUpdateEnrollment(enroll: Enrollment): Promise<AxiosResponse<Result<null>>> {
   return http.put('/enrollment/update', enroll)
 }
 
-export function apiDeleteEnrollment(enrollId: string): Promise<AxiosResponse<Result<null>>> {
+export async function apiDeleteEnrollment(enrollId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/enrollment/delete/${enrollId}`)
 }
 
@@ -48,14 +48,14 @@ export interface EnrollStats {
   regionScores: any
 }
 
-export function apiStatsEnroll(query: {
+export async function apiStatsEnroll(query: {
   enrollmentYears: string[] | null
   majorIds: string[] | null
 }): Promise<AxiosResponse<Result<{ [key: string]: EnrollStats }>>> {
   return http.post('/enrollment/stat', query)
 }
 
-export function apiDownloadStatsEnroll(query: {
+export async function apiDownloadStatsEnroll(query: {
   enrollmentYears: string[] | null
   majorIds: string[] | null
 }): Promise<AxiosResponse<Blob>> {
