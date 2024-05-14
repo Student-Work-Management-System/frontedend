@@ -137,6 +137,7 @@ const fetchStudentLogic = async () => {
   data.value = result.data.records
   dataLength.value = result.data.totalRow
 
+  selected.value = []
   deleteDialog.value = false
   loading.value = false
 }
@@ -149,18 +150,17 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
 const deleteStudentLogic = async () => {
   loading.value = true
   const studentIds = selected.value.map((v) => v.studentId)
-  studentIds.forEach(async (id) => {
+  let reqs = studentIds.map(id => (async (id) => {
     const { data: result } = await apiDeleteStudent(id)
     if (result.code !== 200) {
       console.error(result.message)
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
-  })
-  setTimeout(() => {
-    afterStudent()
-    loading.value = false
-  }, 500)
+  })(id))
+  await Promise.all(reqs)
+  afterStudent()
+  loading.value = false
 }
 
 const afterStudent = () => {

@@ -56,7 +56,7 @@ const has = (authority: string) => {
 }
 const editPovertyInfoFormDialog = ref(false)
 const editInfo = ref<PovertyAssistance>({
-povertyAssistanceId: '',
+  povertyAssistanceId: '',
   povertyLevel: '',
   povertyType: '',
   povertyAssistanceStandard: ''
@@ -70,6 +70,7 @@ const fetchPovertyLogic = async () => {
     notify({ title: '错误', text: result.message, type: 'error' })
     return
   }
+  selected.value = []
   data.value = result.data
   loading.value = false
 }
@@ -85,7 +86,7 @@ const afterPoverty = () => {
 
 const deletePovertyLogic = async () => {
   loading.value = true
-  selected.value.forEach(async (p) => {
+  let reqs = selected.value.map(p => (async (p) => {
     const povertyAssistanceId = p.povertyAssistanceId
     const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId)
     if (result.code !== 200) {
@@ -93,13 +94,12 @@ const deletePovertyLogic = async () => {
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
-    
-  })
-  setTimeout(() => {
-    notify({ type: 'success', title: '成功', text: `删除成功！` })
-    afterPoverty()
-    loading.value = false
-  }, 500)
+  })(p))
+
+  await Promise.all(reqs)
+  notify({ type: 'success', title: '成功', text: `删除成功！` })
+  afterPoverty()
+  loading.value = false
 }
 
 onMounted(fetchPovertyLogic)
@@ -107,60 +107,27 @@ onMounted(fetchPovertyLogic)
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddPovertyForm v-model="addPovertyFormDialog" @on-closed="afterPoverty" />
-    <EditPovertyForm
-      v-model="editPovertyInfoFormDialog"
-      :info="editInfo"
-      @on-closed="afterPoverty"
-    />
+    <EditPovertyForm v-model="editPovertyInfoFormDialog" :info="editInfo" @on-closed="afterPoverty" />
     <v-dialog width="500" v-model="deleteDialog">
-      <v-card
-        prepend-icon="mdi-delete"
-        title="删除选择"
-        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
-      >
+      <v-card prepend-icon="mdi-delete" title="删除选择" :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`">
         <v-card-actions class="mx-auto">
-          <v-btn
-            :loading="loading"
-            :disabled="selected.length === 0"
-            color="error"
-            @click="deletePovertyLogic"
-            >删除</v-btn
-          >
+          <v-btn :loading="loading" :disabled="selected.length === 0" color="error" @click="deletePovertyLogic">删除</v-btn>
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <section class="menu">
-      <v-btn v-if="has('poverty_assistance:select')" prepend-icon="mdi-refresh" @click="fetchPovertyLogic"
-        >刷新</v-btn
-      >
-      <v-btn
-        v-if="has('poverty_assistance:insert')"
-        prepend-icon="mdi-plus-circle"
-        color="primary"
-        @click="addPovertyFormDialog = true"
-        >添加</v-btn
-      >
+      <v-btn v-if="has('poverty_assistance:select')" prepend-icon="mdi-refresh" @click="fetchPovertyLogic">刷新</v-btn>
+      <v-btn v-if="has('poverty_assistance:insert')" prepend-icon="mdi-plus-circle" color="primary"
+        @click="addPovertyFormDialog = true">添加</v-btn>
 
-      <v-btn
-        v-if="has('poverty_assistance:delete')"
-        prepend-icon="mdi-delete"
-        color="error"
-        @click="deleteDialog = true"
-        >删除</v-btn
-      >
+      <v-btn v-if="has('poverty_assistance:delete')" prepend-icon="mdi-delete" color="error"
+        @click="deleteDialog = true">删除</v-btn>
     </section>
 
     <section class="pa-4 d-inline-block h-100 w-100">
       <v-card>
-        <v-data-table
-          v-model="selected"
-          :headers="headers"
-          :items="data"
-          :loading="loading"
-          show-select
-          return-object
-        >
+        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
@@ -180,10 +147,12 @@ onMounted(fetchPovertyLogic)
 .v-card {
   align-items: start;
 }
+
 .menu {
   padding: 1rem 1rem 0 1rem;
 }
-.menu > * {
+
+.menu>* {
   margin-right: 0.5rem;
 }
 </style>

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { apiUpdateStudentCadreInfo, apiGetCadreList,type StudentCadreRecord, type Cadre } from '@/api/cadre'
+import { apiUpdateStudentCadreInfo, apiGetCadreList, type StudentCadreRecord, type Cadre } from '@/api/cadre'
 import { watchEffect } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { ref ,onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 import { reactive } from 'vue'
 
 
@@ -51,6 +51,7 @@ const fetchCadreList = async () => {
     return
   }
   cadres.value = result.data
+  selected.value = []
 }
 
 watchEffect(() => {
@@ -75,65 +76,37 @@ onMounted(() => {
       <v-window-item :value="1">
         <v-card width="auto" prepend-icon="mdi-account-edit" :title="sname + '的任职信息'">
           <v-container>
-           
-              <v-form v-model="form" class="px-8 ">
-              <v-text-field
-                label="学号"
-                v-model="studentCadreInfo.studentId"
-                :counter="20"
-                readonly 
-                :rules="[() => !!studentCadreInfo.studentId || '该选项必填！']"
-              >
+
+            <v-form v-model="form" class="px-8 ">
+              <v-text-field label="学号" v-model="studentCadreInfo.studentId" :counter="20" readonly
+                :rules="[() => !!studentCadreInfo.studentId || '该选项必填！']">
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
                 </template>
               </v-text-field>
 
-              <v-autocomplete
-                label="职位"
-                v-model="studentCadreInfo.cadreId"
-                :items="cadres"
-                :item-props="itemProps"
-                item-value="value"
-                item-title="cadrePosition"
-                :rules="[() => !!studentCadreInfo.cadreId || '该选项必填！']"
-              >
+              <v-autocomplete label="职位" v-model="studentCadreInfo.cadreId" :items="cadres" :item-props="itemProps"
+                item-value="value" item-title="cadrePosition" :rules="[() => !!studentCadreInfo.cadreId || '该选项必填！']">
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
                 </template>
               </v-autocomplete>
 
-              <SemesterSelect
-                class="mb-1"
-                  v-model="studentCadreInfo.appointmentStartTerm"
-                  label="任职开始学期"
-                  variant="filled"
-                >
+              <SemesterSelect class="mb-1" v-model="studentCadreInfo.appointmentStartTerm" label="任职开始学期"
+                variant="filled">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </SemesterSelect>
-          
+              </SemesterSelect>
 
-          
-   
-      
-              <SemesterSelect
-              class="mb-1"
-                  v-model="studentCadreInfo.appointmentEndTerm"
-                  label="任职结束学期"
-             
-                  variant="filled"
-                >
+
+
+
+
+              <SemesterSelect class="mb-1" v-model="studentCadreInfo.appointmentEndTerm" label="任职结束学期" variant="filled">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
-                </SemesterSelect>
-          
+              </SemesterSelect>
 
-              <v-text-field
-                label="备注"
-                v-model="studentCadreInfo.comment"
-                :counter="20"
-                required
-        
-              >
+
+              <v-text-field label="备注" v-model="studentCadreInfo.comment" :counter="20" required>
                 <template v-slot:prepend>
                   <v-icon size="smaller" icon="mdi-format-color-highlight"></v-icon>
                 </template>
@@ -142,13 +115,7 @@ onMounted(() => {
           </v-container>
           <v-divider></v-divider>
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn
-              :disabled="!form"
-              text="确定"
-              color="indigo"
-              @click="updateInfoLogic"
-              variant="plain"
-            ></v-btn>
+            <v-btn :disabled="!form" text="确定" color="indigo" @click="updateInfoLogic" variant="plain"></v-btn>
             <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
           </v-container>
         </v-card>
@@ -164,9 +131,7 @@ onMounted(() => {
 </style>
 
 <style scoped>
-
-
-.form > * {
+.form>* {
   margin-bottom: 0.5rem;
 }
 

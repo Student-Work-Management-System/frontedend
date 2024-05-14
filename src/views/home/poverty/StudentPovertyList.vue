@@ -122,12 +122,13 @@ const fetchStudentPovertyLogic = async () => {
     return
   }
 
+  selected.value = []
   data.value = result.data.records
   dataLength.value = result.data.totalRow
   deleteDialog.value = false
   loading.value = false
   console.log(data.value);
-  
+
 }
 onMounted(fetchStudentPovertyLogic)
 
@@ -138,58 +139,41 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
 const deleteStudentPovertyLogic = async () => {
   loading.value = true
   const studentPovertyIds = selected.value.map((v) => v.studentPovertyAssistanceId)
-  studentPovertyIds.forEach(async (id) => {
+
+  let reqs = studentPovertyIds.map(id => (async (id) => {
     const { data: result } = await apiDeleteStudentPovertyAssistance(id)
     if (result.code !== 200) {
       console.error(result.message)
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
-  })
-  setTimeout(() => {
-    deleteDialog.value = false
-    loading.value = false
-    notify({ type: 'success', title: '成功', text: `删除成功！` })
-    fetchStudentPovertyLogic()
-  }, 500)
+  })(id))
+  await Promise.all(reqs)
+
+  deleteDialog.value = false
+  loading.value = false
+  notify({ type: 'success', title: '成功', text: `删除成功！` })
+  fetchStudentPovertyLogic()
 }
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <AddStudentPovertyForm
-      v-model="addStudentPovertyDialog"
-      @on-closed="
-        () => {
-          addStudentPovertyDialog = false
-          fetchStudentPovertyLogic()
-        }
-      "
-    />
-    <EditStudentPovertyForm
-      v-model="editStudentPovertyFormDialog"
-      :info="editInfo"
-      @on-closed="
-        () => {
-          editStudentPovertyFormDialog = false          
-          fetchStudentPovertyLogic()
-        }
-      "
-    />
+    <AddStudentPovertyForm v-model="addStudentPovertyDialog" @on-closed="() => {
+      addStudentPovertyDialog = false
+      fetchStudentPovertyLogic()
+    }
+      " />
+    <EditStudentPovertyForm v-model="editStudentPovertyFormDialog" :info="editInfo" @on-closed="() => {
+      editStudentPovertyFormDialog = false
+      fetchStudentPovertyLogic()
+    }
+      " />
 
     <v-dialog width="500" v-model="deleteDialog">
-      <v-card
-        prepend-icon="mdi-delete"
-        title="删除选择"
-        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
-      >
+      <v-card prepend-icon="mdi-delete" title="删除选择" :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`">
         <v-card-actions class="mx-auto">
-          <v-btn
-            :loading="loading"
-            :disabled="selected.length === 0"
-            color="error"
-            @click="deleteStudentPovertyLogic"
-            >删除</v-btn
-          >
+          <v-btn :loading="loading" :disabled="selected.length === 0" color="error"
+            @click="deleteStudentPovertyLogic">删除</v-btn>
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
@@ -203,75 +187,39 @@ const deleteStudentPovertyLogic = async () => {
         <GradeSelect v-model="query.grade" variant="underlined" />
       </span>
       <span class="w-10">
-        <v-select
-          label="贫困等级"
-          v-model="query.povertyLevel"
-          :items="povertyLevels"
-          class="text-indigo"
-          color="indigo"
-          hide-details
-          clearable
-          variant="underlined"
-        >
+        <v-select label="贫困等级" v-model="query.povertyLevel" :items="povertyLevels" class="text-indigo" color="indigo"
+          hide-details clearable variant="underlined">
         </v-select>
       </span>
-      
+
 
       <span class="w-10 text-indigo">
-        <AcademicYearSelect
-          v-model="query.assistanceYear"
-          color="indigo"
-          variant="underlined"
-        />
+        <AcademicYearSelect v-model="query.assistanceYear" color="indigo" variant="underlined" />
       </span>
 
       <span class="w-15 text-indigo">
-        <v-text-field
-          v-model="query.search"
-          color="indigo"
-          @update:modelValue="fetchStudentPovertyLogic"
-          :loading="loading"
-          :counter="15"
-          clearable
-          label="搜索"
-          prepend-inner-icon="mdi-magnify"
-          variant="underlined"
-          hide-details
-        >
-        <v-tooltip activator="parent" location="top">按贫困类型/资助标准搜索</v-tooltip>
+        <v-text-field v-model="query.search" color="indigo" @update:modelValue="fetchStudentPovertyLogic"
+          :loading="loading" :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined"
+          hide-details>
+          <v-tooltip activator="parent" location="top">按贫困类型/资助标准搜索</v-tooltip>
         </v-text-field>
-      
+
       </span>
 
-      <v-btn
-        prepend-icon="mdi-refresh"
-        v-if="
-          has('student:select') &&
-          has('student_poverty_assistance:select') &&
-          has('poverty_assistance:select') &&
-          has('major:select')
-        "
-        @click="fetchStudentPovertyLogic"
-        >刷新</v-btn
-      >
+      <v-btn prepend-icon="mdi-refresh" v-if="has('student:select') &&
+        has('student_poverty_assistance:select') &&
+        has('poverty_assistance:select') &&
+        has('major:select')
+        " @click="fetchStudentPovertyLogic">刷新</v-btn>
 
       <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
 
     <section class="pa-4 h-100 w-100">
       <v-card>
-        <v-data-table-server
-          v-model="selected"
-          :headers="headers"
-          :items="data"
-          :items-length="dataLength"
-          :loading="loading"
-          v-model:page="query.pageNo"
-          v-model:items-per-page="query.pageSize"
-          @update:options="loadItems"
-          show-select
-          return-object
-        >
+        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+          :loading="loading" v-model:page="query.pageNo" v-model:items-per-page="query.pageSize"
+          @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
@@ -280,7 +228,7 @@ const deleteStudentPovertyLogic = async () => {
               }
                 ">编辑</v-btn>
             </div>
-     
+
           </template>
         </v-data-table-server>
       </v-card>
@@ -295,12 +243,15 @@ const deleteStudentPovertyLogic = async () => {
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
-.menu > * {
+
+.menu>* {
   margin-right: 0.5rem;
 }
+
 .w-10 {
   width: 10% !important;
 }
+
 .w-15 {
   width: 15% !important;
 }

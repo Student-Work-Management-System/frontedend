@@ -97,6 +97,7 @@ const fetchUserLogic = async () => {
     return
   }
   // success
+  selected.value = []
   data.value = result.data
   loading.value = false
 }
@@ -110,9 +111,9 @@ const editUserRoleBtnHandler = () => {
   editUserRoleFormDialog.value = true
 }
 
-const deleteUserLogic = () => {
+const deleteUserLogic = async () => {
   loading.value = true
-  selected.value.forEach(async (u) => {
+  let reqs = selected.value.map(u => (async (u) => {
     const uid = u.uid
     const { data: result } = await apiDeleteUser(uid)
     if (result.code !== 200) {
@@ -121,11 +122,11 @@ const deleteUserLogic = () => {
       return
     }
     notify({ type: 'success', title: '成功', text: `用户:${uid} 角色删除成功！` })
-  })
-  setTimeout(() => {
-    afterUser()
-    loading.value = false
-  }, 500)
+  })(u))
+
+  await Promise.all(reqs)
+  afterUser()
+  loading.value = false
 }
 
 const afterUser = () => {
@@ -172,9 +173,9 @@ const afterUser = () => {
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn prepend-icon="mdi-pencil" color="indigo已通过" @click="() => {
-                  editInfo = item as UserRecord
-                  editUserInfoFormDialog = true
-                }
+                editInfo = item as UserRecord
+                editUserInfoFormDialog = true
+              }
                 ">编辑</v-btn>
             </div>
           </template>

@@ -40,24 +40,24 @@ const EditUserLogic = async () => {
   }
   loading.value = true
   console.log(props.selectedUsers)
-  props.selectedUsers.forEach((uid) => {
+  let reqs = props.selectedUsers.map((uid) => {
     apiUpdateUserRole({
       uid,
       roles: selected.value.map((r) => r.rid)
     }).then(({ data: result }) => {
       if (result.code !== 200) {
         console.error(result)
-        notify({ type: 'error', title: '错误', text: result.message })
+        notify({ type: 'error', title: '错误', text: `用户: ${uid} ` + result.message })
         loading.value = false
         return
       }
       notify({ type: 'success', title: '成功', text: `用户:${uid} 角色设置成功！` })
     })
   })
-  setTimeout(() => {
-    loading.value = false
-    emit('onClosed')
-  }, 500)
+
+  await Promise.all(reqs)
+  loading.value = false
+  emit('onClosed')
 }
 
 const fetchRoleList = async () => {
@@ -68,6 +68,7 @@ const fetchRoleList = async () => {
     return
   }
   items.value = result.data.map((r) => ({ rid: r.rid, text: r.roleName }))
+  selected.value = []
 }
 
 onMounted(() => {
@@ -80,30 +81,14 @@ onMounted(() => {
     <v-card :loading="loading" width="auto" prepend-icon="mdi-script" title="选择角色">
       <v-container class="w-100">
         <v-row align="center" justify="start">
-          <v-col
-            v-for="(selection, i) in selections"
-            :key="selection.text"
-            class="py-1 pe-0"
-            cols="auto"
-          >
-            <v-chip
-              color="indigo"
-              :disabled="loading"
-              closable
-              @click:close="selected.splice(i, 1)"
-            >
+          <v-col v-for="(selection, i) in selections" :key="selection.text" class="py-1 pe-0" cols="auto">
+            <v-chip color="indigo" :disabled="loading" closable @click:close="selected.splice(i, 1)">
               {{ selection.text }}
             </v-chip>
           </v-col>
 
           <v-col v-if="!allSelected" cols="12">
-            <v-text-field
-              ref="searchField"
-              v-model="search"
-              label="搜索"
-              hide-details
-              single-line
-            ></v-text-field>
+            <v-text-field ref="searchField" v-model="search" label="搜索" hide-details single-line></v-text-field>
           </v-col>
         </v-row>
 
@@ -111,12 +96,8 @@ onMounted(() => {
 
         <v-list>
           <template v-for="item in categories">
-            <v-list-item
-              v-if="!selected.includes(item)"
-              :key="item.text"
-              :disabled="loading"
-              @click="selected.push(item)"
-            >
+            <v-list-item v-if="!selected.includes(item)" :key="item.text" :disabled="loading"
+              @click="selected.push(item)">
               <v-list-item-title>{{ item.text }}</v-list-item-title>
             </v-list-item>
           </template>
@@ -126,13 +107,7 @@ onMounted(() => {
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn
-            :disabled="!selected.length"
-            :loading="loading"
-            color="indigo"
-            variant="text"
-            @click="EditUserLogic"
-          >
+          <v-btn :disabled="!selected.length" :loading="loading" color="indigo" variant="text" @click="EditUserLogic">
             提交
           </v-btn>
           <v-btn variant="text" @click="model = false"> 取消 </v-btn>
@@ -143,7 +118,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.form > * {
+.form>* {
   margin-bottom: 0.5rem;
 }
 </style>

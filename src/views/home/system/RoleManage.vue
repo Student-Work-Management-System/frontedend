@@ -64,6 +64,7 @@ const fetchRoleLogic = async () => {
     notify({ title: '错误', text: result.message, type: 'error' })
     return
   }
+  selected.value = []
   data.value = result.data
   loading.value = false
 }
@@ -78,20 +79,21 @@ const afterRole = () => {
 
 const deleteRolerLogic = async () => {
   loading.value = true
-  selected.value.forEach(async (r) => {
+
+  let reqs = selected.value.map(r => (async (r) => {
     const rid = r.rid
     const { data: result } = await apiDeleteRole(rid)
     if (result.code !== 200) {
       console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
+      notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
       return
     }
     notify({ type: 'success', title: '成功', text: `角色:${rid} 角色删除成功！` })
-  })
-  setTimeout(() => {
-    afterRole()
-    loading.value = false
-  }, 500)
+  })(r))
+
+  await Promise.all(reqs)
+  loading.value = false
+  afterRole()
 }
 
 const editRoleBtnHandler = () => {
@@ -107,53 +109,20 @@ onMounted(fetchRoleLogic)
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddRoleForm v-model="addRoleFormDialog" :role-info="editRoleInfo" @on-closed="afterRole" />
-    <SelectPermission
-      v-model="selectPermissionDialog"
-      :rid-list="selectedIds"
-      :permissions="selectedPermissions"
-      @on-closed="afterRole"
-    />
-    <DeleteDialog
-      v-model="deleteDialog"
-      v-model:length="selected.length"
-      @delete="deleteRolerLogic"
-    />
+    <SelectPermission v-model="selectPermissionDialog" :rid-list="selectedIds" :permissions="selectedPermissions"
+      @on-closed="afterRole" />
+    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteRolerLogic" />
     <section class="menu">
-      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic"
-        >刷新</v-btn
-      >
-      <v-btn
-        v-if="has('role:insert')"
-        prepend-icon="mdi-plus-circle"
-        color="primary"
-        @click="addRoleFormDialog = true"
-        >添加</v-btn
-      >
-      <v-btn
-        v-if="has('role_permission:insert') && has('role_permission:delete')"
-        prepend-icon="mdi-card-multiple"
-        color="indigo"
-        @click="editRoleBtnHandler"
-        >设置权限</v-btn
-      >
-      <v-btn
-        v-if="has('role:delete')"
-        prepend-icon="mdi-delete"
-        color="error"
-        @click="deleteDialog = true"
-        >删除</v-btn
-      >
+      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic">刷新</v-btn>
+      <v-btn v-if="has('role:insert')" prepend-icon="mdi-plus-circle" color="primary"
+        @click="addRoleFormDialog = true">添加</v-btn>
+      <v-btn v-if="has('role_permission:insert') && has('role_permission:delete')" prepend-icon="mdi-card-multiple"
+        color="indigo" @click="editRoleBtnHandler">设置权限</v-btn>
+      <v-btn v-if="has('role:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
     <section class="pa-4 d-inline-block w-100">
       <v-card>
-        <v-data-table
-          v-model="selected"
-          :headers="headers"
-          :items="data"
-          :loading="loading"
-          show-select
-          return-object
-        >
+        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
         </v-data-table>
       </v-card>
     </section>
@@ -164,10 +133,12 @@ onMounted(fetchRoleLogic)
 .v-card {
   align-items: start;
 }
+
 .menu {
   padding: 1rem 1rem 0 1rem;
 }
-.menu > * {
+
+.menu>* {
   margin-right: 0.5rem;
 }
 </style>

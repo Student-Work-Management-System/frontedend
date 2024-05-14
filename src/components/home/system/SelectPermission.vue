@@ -77,27 +77,28 @@ const onSearch = (value: any) => {
   treeRef.value!.treeFactory.searchTree(value, { isFilter: true })
 }
 
-const editPermissionLogic = () => {
+const editPermissionLogic = async () => {
   loading.value = true
   const nodes: IInnerTreeNode[] = treeRef.value!.treeFactory.getCheckedNodes()
   const permissions = nodes.filter((n) => n.isLeaf).map((n) => n.id)
   console.log(permissions)
-  props.ridList.forEach(async (rid) => {
+  let reqs = props.ridList.map(riq => (async (rid) => {
     const { data: result } = await apiUpdateRolePermissions({
       rid,
       permissions: permissions as string[]
     })
     if (result.code !== 200) {
       console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
+      notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
       return
     }
     notify({ type: 'success', title: '成功', text: `角色:${rid} 权限更新！` })
-  })
-  setTimeout(() => {
-    loading.value = false
-    emits('onClosed')
-  }, 500)
+  })(riq))
+
+  await Promise.all(reqs)
+
+  loading.value = false
+  emits('onClosed')
 }
 
 watch(model, () => {

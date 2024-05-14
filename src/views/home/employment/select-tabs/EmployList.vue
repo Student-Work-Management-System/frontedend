@@ -119,20 +119,20 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
 const deleteEmployLogic = async () => {
   loading.value = true
 
-  selected.value.forEach(async (e) => {
+  let reqs = selected.value.map(e => (async (e) => {
     const eid = e.studentEmploymentId
     const { data: result } = await apiDeleteEmploy(eid)
     if (result.code !== 200) {
       console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
+      notify({ type: 'error', title: '错误', text: `就业信息:${eid}, ` + result.message })
       return
     }
     notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
-  })
-  setTimeout(() => {
-    afterEditHandler()
-    loading.value = false
-  }, 500)
+  })(e))
+
+  await Promise.all(reqs)
+  afterEditHandler()
+  loading.value = false
 
 }
 
@@ -159,6 +159,7 @@ const fetchEmployLogic = async () => {
     deleteDialog.value = false
     return
   }
+  selected.value = []
   data.value = result.data.records
   dataLength.value = result.data.totalRow
   loading.value = false
