@@ -5,7 +5,7 @@ import { apiAddStudentOwnCompetition, type Competition } from '@/api/competition
 import { apiUploadFile } from '@/api/file'
 import CompetitionsSelect from '@/components/home/competition/CompetitionsSelect.vue'
 const dialog = defineModel<boolean>()
-const userId = defineModel<string>('userId', { required: true })
+const header = defineModel<{ username: string, realName: string }>('header', { required: true })
 const emits = defineEmits(['onClosed'])
 
 const loading = ref(false)
@@ -16,13 +16,19 @@ const selectCompetition = ref<Competition>()
 const showMultiChips = computed(() => selectCompetition.value?.competitionNature !== undefined && selectCompetition.value?.competitionNature === '团队')
 
 const awardDate = ref<Date>(new Date())
-const awardLevel = ref('')
+const awardLevel = ref<string | null>(null)
 
-const chips = ref<{ username: string, realname: string }[]>([])
-
+const chips = ref<{ username: string, realName: string }[]>([{ username: header.value.username, realName: header.value.realName }])
 const nextStepHandler = () => {
-  if (isNaN(Number(userId.value))) {
+  if (isNaN(Number(header.value.username))) {
     notify({ type: 'warn', title: '提示', text: "当前用户无法使用上报！" })
+    return
+  }
+
+  const first = chips.value[0]
+  if (JSON.stringify(first) !== JSON.stringify({ username: header.value.username, realName: header.value.realName })) {
+    notify({ type: 'warn', title: '提示', text: '首位团队成员必须为填报人！' })
+    loading.value = false
     return
   }
   step.value++
@@ -38,13 +44,14 @@ const submitHandler = async () => {
   }
 
   let link = result.data;
+
   const { data: result2 } = await apiAddStudentOwnCompetition({
     competitionId: selectCompetition.value?.competitionId as string,
-    headerId: userId.value,
+    headerId: header.value.username,
     evidence: link,
     awardDate: awardDate.value.toISOString().split('T')[0],
-    awardLevel: awardLevel.value,
-    members: chips.value.map((c, idx) => ({ studentId: c.username, realName: c.realname, order: idx + 1 }))
+    awardLevel: awardLevel.value as string,
+    members: chips.value.map((c, idx) => ({ studentId: c.username, realName: c.realName, order: idx + 1 }))
   })
   if (result2.code !== 200) {
     notify({ type: 'error', title: '错误', text: result2.message })
@@ -64,7 +71,7 @@ const submitHandler = async () => {
         <v-window-item :value="1">
           <v-container class="px-8">
             <v-form v-model="form" class="form text-indigo">
-              <v-text-field label="填报人学号" color="indigo" v-model="userId" prepend-inner-icon="mdi-head" readonly
+              <v-text-field label="填报人学号" color="indigo" v-model="header.username" prepend-inner-icon="mdi-head" readonly
                 hide-details>
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
@@ -93,8 +100,8 @@ const submitHandler = async () => {
 
           <v-container class="w-100 d-flex justify-space-evenly">
             <v-btn :disabled="!form || selectCompetition === undefined || selectCompetition?.competitionNature === '团队' &&
-              chips.length <= 0" text="下一步" :loading="loading" color="indigo" variant="plain"
-              @click="nextStepHandler"></v-btn>
+              chips.length <= 0 || awardLevel === null || awardLevel!.length <= 0" text="下一步" :loading="loading"
+              color="indigo" variant="plain" @click="nextStepHandler"></v-btn>
             <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false)"></v-btn>
           </v-container>
         </v-window-item>
@@ -105,8 +112,7 @@ const submitHandler = async () => {
           </v-container>
           <v-divider></v-divider>
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn :disabled="!form || selectCompetition === null || selectCompetition?.competitionNature === '团队' &&
-              chips.length <= 0 || files!.length <= 0" text="提交" :loading="loading" color="indigo" variant="plain"
+            <v-btn :disabled="files!.length <= 0" text="提交" :loading="loading" color="indigo" variant="plain"
               @click="submitHandler"></v-btn>
             <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false)"></v-btn>
           </v-container>

@@ -1,8 +1,7 @@
-<script lang="ts" setup>
-import { apiGetStudentOwnCompetition } from '@/api/competition';
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
+import { useUserStore } from '@/stores/user'
 import { apiDownloadFile } from '@/api/file'
-import { useUserStore } from '@/stores/user';
-import { ref, reactive, onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 
 const headers = [
@@ -66,41 +65,58 @@ const headers = [
     sortable: false,
     key: 'operations'
   }
-]
+];
 
 const loading = ref(false)
+const auditDialog = ref(false)
 
+const search = ref('')
 const selected = ref<any[]>([])
+const selectedGrade = ref<string | null>(null)
+const selectMajor = ref<string | null>(null)
+const selectStartDate = ref<Date | null>(null)
+const selectEndDate = ref<Date | null>(null)
+
 const data = ref<any[]>([])
-const addDialog = ref(false)
-
-const store = useUserStore()
-const has = (authority: string) => {
-  return store.hasAuthorized(authority)
-}
-
+const dataLength = ref(0)
 const pageOptions = reactive({
   pageSize: 10,
   pageNo: 1
 })
 
-const fetchStudentCompetitionLogic = async () => {
-  const { data: result } = await apiGetStudentOwnCompetition(store.getUserData.username)
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
-    loading.value = false
-    return
-  }
-  selected.value = []
-  data.value = result.data.map(item => ({
-    ...item,
-    headerInfo: item.headerId + item.headerName,
-    members: item.members.map((m) => m.studentId + m.realName)
-  }))
-  loading.value = false
+const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
+  fetchStudentCompetitionLogic()
 }
-onMounted(fetchStudentCompetitionLogic)
+
+const store = useUserStore()
+const has = (permission: string) => {
+  return store.hasAuthorized(permission)
+}
+
+const fetchStudentCompetitionLogic = async () => { }
+
+
+const checkStateColor = (state: string): "indigo" | "green" | "error" => {
+  switch (state) {
+    case "审核中":
+      return "indigo"
+    case "已通过":
+      return "green"
+    default:
+      return "error"
+  }
+}
+
+const checkStateIcon = (state: string): string => {
+  switch (state) {
+    case "审核中":
+      return "mdi-progress-clock"
+    case "已通过":
+      return "mdi-progress-check"
+    default:
+      return "mdi-progress-close"
+  }
+}
 
 const downloadEvidence = async (filename: string) => {
   loading.value = true
@@ -116,57 +132,46 @@ const downloadEvidence = async (filename: string) => {
   loading.value = false
 }
 
-
-const afterLogic = () => {
-  addDialog.value = false
-  fetchStudentCompetitionLogic()
-}
-
-const checkStateColor = (state: string): "indigo" | "green" | "error" => {
-  switch (state) {
-    case "审核中":
-      return "indigo"
-    case "已通过":
-      return "green"
-    default:
-      return "error"
-  }
-}
-const checkStateIcon = (state: string): string => {
-  switch (state) {
-    case "审核中":
-      return "mdi-progress-clock"
-    case "已通过":
-      return "mdi-progress-check"
-    default:
-      return "mdi-progress-close"
-  }
-}
-
 </script>
-
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <CompetitionStudentAddForm v-model="addDialog" v-model:header="store.getUserData" @on-closed="afterLogic" />
     <section class="menu">
-      <v-btn prepend-icon="mdi-refresh" @click="fetchStudentCompetitionLogic"> 刷新 </v-btn>
-      <v-btn v-if="has('student_competition:insert')" prepend-icon="mdi-plus-circle" color="primary"
-        @click="addDialog = true">添加</v-btn>
-
+      <span class="w-15">
+        <GradeSelect v-model="selectedGrade" variant="underlined" />
+      </span>
+      <span class="w-15">
+        <MajorSelect v-model="selectMajor" variant="underlined" />
+      </span>
+      <span class="w-15">
+        <DateSelect label="开始日期" variant="underlined" v-model="selectStartDate" />
+      </span>
+      <span class="w-15">
+        <DateSelect label="结束日期" variant="underlined" v-model="selectEndDate" />
+      </span>
+      <span class="w-20 text-indigo">
+        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentCompetitionLogic" :loading="loading"
+          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+          <v-tooltip activator="parent" location="top">以填报学生姓名、学号、生源地搜索</v-tooltip>
+        </v-text-field>
+      </span>
+      <v-btn v-if="has('student_competition_claim:select')" prepend-icon="mdi-refresh"
+        @click="fetchStudentCompetitionLogic">刷新</v-btn>
+      <v-btn v-if="has('student_competition_claim:update')" prepend-icon="mdi-eye" color="primary"
+        @click="auditDialog = true">审核</v-btn>
     </section>
-
 
     <section class="pa-4 w-100">
       <v-card>
-        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading"
-          v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize" show-select return-object>
+        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
+          @update:options="loadItems" show-select return-object>
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">
               {{ item.headerInfo }}
             </v-chip>
           </template>
           <template v-slot:item.members="{ item }">
-            <v-chip class="mr-1" prepend-icon="mdi-account" v-for="(  member, id  ) in  item.members " :key="id">
+            <v-chip class="mr-1" prepend-icon="mdi-account" v-for="( member, id ) in item.members" :key="id">
               {{ member }}
             </v-chip>
           </template>
@@ -182,10 +187,9 @@ const checkStateIcon = (state: string): string => {
                 @click="downloadEvidence(item.evidence)">证明材料</v-btn>
             </div>
           </template>
-        </v-data-table>
+        </v-data-table-server>
       </v-card>
     </section>
-
   </v-card>
 </template>
 
@@ -201,12 +205,11 @@ const checkStateIcon = (state: string): string => {
   margin-right: 0.5rem;
 }
 
-.file {
-  overflow: hidden;
-  width: 26%;
-}
-
 .w-20 {
   width: 15% !important;
+}
+
+.w-15 {
+  width: 10% !important;
 }
 </style>

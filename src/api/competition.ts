@@ -19,6 +19,7 @@ export interface Memeber {
 }
 
 export interface StudentCompetition {
+  studentCompetitionId: string
   competitionName: string
   /**
    * 竞赛性质： 团队/单人
@@ -69,6 +70,7 @@ export interface StudentCompetitionUpload {
   members: Memeber[]
 }
 
+
 export async function apiAddCompetitions(competitions: Competition[]): Promise<AxiosResponse<Result<null>>> {
   return http.post('/competition/adds', { competitions })
 }
@@ -93,8 +95,49 @@ export async function apiGetStudentOwnCompetition(studentId: string): Promise<Ax
   return http.get(`/student_competition/get/${studentId}`)
 }
 
-export async function apiAddStudentOwnCompetition(upload: StudentCompetitionUpload): Promise<AxiosResponse<Result<StudentCompetition[]>>> {
+export async function apiAddStudentOwnCompetition(upload: StudentCompetitionUpload): Promise<AxiosResponse<Result<null>>> {
   return http.post('/student_competition/add', upload)
+}
+
+export async function apiGetStudentAuditCompetition(
+  query: {
+    search: string | null
+    grade: string | null
+    majorId: string | null
+    startDate: string | null
+    endDate: string | null
+    pageNo: number
+    pageSize: number
+  }
+): Promise<AxiosResponse<Result<RecordsPage<StudentCompetition>>>> {
+  return http.post('/student_competition/gets', query)
+}
+
+export async function apiAuditStudentCompetition(audit: {
+  studentCompetitionId: string,
+  reviewState: "已通过" | "已拒绝",
+  rejectReason: string | null
+}): Promise<AxiosResponse<Result<null>>> {
+  return http.put('/student_competition/audit', audit)
+}
+
+// 好像没有必要删除审核？
+// export async function apiDeleteStudentCompetition(): Promise<AxiosResponse<Result<null>>> {
+//   return http.delete()
+// }
+
+export async function apiGetAllStudentCompetition(
+  query: {
+    search: string | null
+    grade: string | null
+    majorId: string | null
+    startDate: string | null
+    endDate: string | null
+    pageNo: number
+    pageSize: number
+  }
+): Promise<AxiosResponse<Result<RecordsPage<StudentCompetition>>>> {
+  return http.post('/student_competition/gets/pass', query)
 }
 
 

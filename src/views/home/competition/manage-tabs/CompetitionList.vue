@@ -61,7 +61,7 @@ const has = (permission: string) => {
 }
 
 const deleteLogic = async () => {
-  selected.value.forEach(async (e) => {
+  let reqs = selected.value.map(e => (async (e) => {
     const cid = e.competitionId
     const { data: result } = await apiDeleteCometition(cid)
     if (result.code !== 200) {
@@ -70,11 +70,11 @@ const deleteLogic = async () => {
       return
     }
     notify({ type: 'success', title: '成功', text: `就业信息:${cid} 删除成功！` })
-  })
-  setTimeout(() => {
-    afterEdit()
-    loading.value = false
-  }, 500)
+  })(e))
+
+  await Promise.all(reqs)
+  afterEdit()
+  loading.value = false
 }
 
 const fetchCompetitionLogic = async () => {
@@ -89,6 +89,7 @@ const fetchCompetitionLogic = async () => {
     deleteDialog.value = false
     return
   }
+  selected.value = []
   data.value = result.data.records
   dataLength.value = result.data.totalRow
   loading.value = false

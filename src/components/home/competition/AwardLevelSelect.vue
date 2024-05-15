@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
 
-const model = defineModel<string>()
+const model = defineModel<string | null>()
 const props = withDefaults(
   defineProps<{
     label: string,

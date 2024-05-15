@@ -23,7 +23,7 @@ export default {
     {
       path: '/competition/review',
       name: 'competition-review',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/competition/CompetitionAudit.vue'),
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/competition/list',
       name: 'competition-list',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/competition/CompetitionData.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '获奖情况统计',
