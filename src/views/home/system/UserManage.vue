@@ -172,7 +172,7 @@ const afterUser = () => {
 
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo已通过" @click="() => {
+              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 editInfo = item as UserRecord
                 editUserInfoFormDialog = true
               }
