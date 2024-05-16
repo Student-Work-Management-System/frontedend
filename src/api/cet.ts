@@ -21,15 +21,20 @@ interface CETQuery {
     pageSize: number;
 }
 
+interface CETS {
+    score: number;
+        examDate: string;
+        certificateNumber: string;
+        examType: string;
+}
+
 interface StudentCetVO {
     studentCetId: string;
     studentId: string;
     name: string;
     majorName: string;
-    score: number;
-    examDate: string;
-    certificateNumber: string;
-    examType: string;
+    grade:string;
+    cets:CETS[]
 }
 
 interface UpdateStudentCetDTO {

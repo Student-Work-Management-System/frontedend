@@ -2,7 +2,7 @@
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import { ref } from 'vue'
-import { type StudentCetVO, apiGetAllRecord, apiDeleteStudentCET } from '@/api/cet'
+import { type StudentCetVO , apiGetAllRecord,apiDeleteStudentCET } from '@/api/cet'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
@@ -11,12 +11,12 @@ import CETYearSelect from '@/components/home/cet/CETYearSelect.vue'
 
 
 const headers = [
-  {
+    {
     title: '编号',
     align: 'start',
     sortable: false,
     key: 'studentCetId'
-  },
+    },
   {
     title: '学号',
     align: 'start',
@@ -74,36 +74,47 @@ const headers = [
 ]
 const loading = ref(false)
 const selected = ref<any[]>([])
-const search = ref('')
+const name = ref('')
 const examDate = ref('')
 const examType = ref('')
-const examTypes = ref(['CET4', 'CET6'])
-const data = ref<StudentCetVO[]>([])
+const data = ref<any[]>([]);
 const dataLength = ref<number>(0)
 const selectedMajor = ref<string>('')
 const selectedGrade = ref<string>('')
 const deleteDialog = ref(false)
 const editDialog = ref(false)
-const modifyInfo = ref<StudentCetVO>({
-  studentCetId: '',
-  studentId: '',
-  name: '',
-  majorName: '',
-  score: 0,
-  examDate: '',
-  certificateNumber: '',
-  examType: '',
+const modifyInfo = ref({
+    studentCetId: '',
+    studentId: '',
+    name: '',
+    majorName: '',
+    score: 0,
+    examDate: '',
+    certificateNumber: '',
+    examType: '',
 })
 const pageOptions = reactive({
   pageSize: 10,
   pageNo: 1
 })
 
-const fetchStudentLogic = async () => {
+const debounce = (fn:Function,delay:number = 1000) => {
+  let t:any = null;
+	return function(){
+		if(t !== null){
+			clearTimeout(t);
+		}
+		t = setTimeout(() => {
+			fn();
+		},delay);
+	}
+}
+
+const fetchStudentLogic = debounce(async () => {
   loading.value = true
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
   const { data: result } = await apiGetAllRecord({
-    name: search.value === '' ? null : search.value,
+    name:name.value === '' ? null : name.value,
     score: null,
     grade: selectedGrade.value === '' ? null : selectedGrade.value,
     majorId: selectedMajor.value === '' ? null : selectedMajor.value,
@@ -118,13 +129,25 @@ const fetchStudentLogic = async () => {
     deleteDialog.value = false
     return
   }
-  selected.value = []
-  data.value = result.data.records
+  
+  data.value = result.data.records.map(record => {
+    return {
+        studentCetId: record.studentCetId,
+        studentId: record.studentId,
+        name: record.name,
+        grade:record.grade,
+        majorName: record.majorName,
+        score: record.cets[0].score,
+        examDate: record.cets[0].examDate,
+        certificateNumber: record.cets[0].certificateNumber,
+        examType: record.cets[0].examType
+    };
+});
   dataLength.value = result.data.totalRow
-
   deleteDialog.value = false
   loading.value = false
-}
+})
+
 onMounted(fetchStudentLogic)
 
 const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
@@ -151,9 +174,12 @@ const deleteStudentLogic = async () => {
     return;
   }
 
-  deleteDialog.value = false;
-  loading.value = false;
+  setTimeout(() => {
+    deleteDialog.value = false;
+    loading.value = false;
+  }, 500);
 };
+
 
 const afterEditStudent = () => {
   editDialog.value = false
@@ -163,15 +189,29 @@ const afterEditStudent = () => {
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <v-dialog width="500" v-model="deleteDialog">
-      <v-card prepend-icon="mdi-delete" title="删除选择" :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`">
+      <v-card
+        prepend-icon="mdi-delete"
+        title="删除选择"
+        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
+      >
         <v-card-actions class="mx-auto">
-          <v-btn :loading="loading" :disabled="selected.length === 0" color="error" @click="deleteStudentLogic">删除</v-btn>
+          <v-btn
+            :loading="loading"
+            :disabled="selected.length === 0"
+            color="error"
+            @click="deleteStudentLogic"
+            >删除</v-btn
+          >
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <EditStudentCet v-model="editDialog" v-model:info="modifyInfo" @on-closed="afterEditStudent" />
+    <EditStudentCet
+      v-model="editDialog"
+      v-model:info="modifyInfo"
+      @on-closed="afterEditStudent"
+    />
     <section class="menu">
       <span class="w-20">
         <MajorSelect v-model="selectedMajor" variant="underlined" />
@@ -181,16 +221,38 @@ const afterEditStudent = () => {
       </span>
 
       <span class="w-20 text-indigo">
-        <CETYearSelect v-model="examDate" color="indigo" variant="underlined" />
+        <CETYearSelect
+          v-model="examDate"
+          color="indigo"
+          variant="underlined"
+        />
       </span>
 
-      <v-select label="考试类别" v-model="examType" :items="['CET4', 'CET6']" class="text-indigo" color="indigo" hide-details
-        clearable variant="underlined">
+      <v-select
+          label="考试类别"
+          v-model="examType"
+          :items="['CET4', 'CET6']"
+          class="text-indigo"
+          color="indigo"
+          hide-details
+          clearable
+          variant="underlined"
+        >
       </v-select>
 
       <span class="w-20 text-indigo">
-        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentLogic" :loading="loading"
-          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+        <v-text-field
+          v-model="name"
+          color="indigo"
+          @update:modelValue="fetchStudentLogic"
+          :loading="loading"
+          :counter="15"
+          clearable
+          label="搜索"
+          prepend-inner-icon="mdi-magnify"
+          variant="underlined"
+          hide-details
+        >
           <v-tooltip activator="parent" location="top">以姓名搜索</v-tooltip>
         </v-text-field>
       </span>
@@ -200,16 +262,31 @@ const afterEditStudent = () => {
     </section>
     <section class="pa-4 w-100">
       <v-card>
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
+        <v-data-table-server
+          v-model="selected"
+          :headers="headers"
+          :items="data"
+          :items-length="dataLength"
+          :loading="loading"
+          v-model:page="pageOptions.pageNo"
+          v-model:items-per-page="pageOptions.pageSize"
+          @update:options="loadItems"
+          show-select
+          return-object
+        >
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                modifyInfo = { ...item }
-                editDialog = true
-              }
-                ">编辑</v-btn>
+              <v-btn
+                prepend-icon="mdi-pencil"
+                color="indigo"
+                @click="
+                  () => {
+                    modifyInfo = { ...item }
+                    editDialog = true
+                  }
+                "
+                >编辑</v-btn
+              >
             </div>
           </template>
         </v-data-table-server>
@@ -225,13 +302,10 @@ const afterEditStudent = () => {
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
-
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
-
 .w-20 {
   width: 15% !important;
 }
 </style>
-
