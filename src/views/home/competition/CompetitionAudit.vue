@@ -12,6 +12,12 @@ const has = (permission: string) => {
 
 const headers = [
   {
+    title: '竞赛上报ID',
+    align: 'start',
+    sortable: true,
+    key: 'studentCompetitionId'
+  },
+  {
     title: '竞赛名称',
     align: 'start',
     sortable: true,

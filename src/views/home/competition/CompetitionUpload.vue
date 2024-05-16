@@ -148,6 +148,12 @@ const checkStateIcon = (state: string): string => {
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <CompetitionStudentAddForm v-model="addDialog" v-model:header="store.getUserData" @on-closed="afterLogic" />
+
+    <div class="pt-6 px-4">
+      <v-alert text="团队类型竞赛比赛只需要队长填写即可。" title="提示：" type="info" color="indigo" variant="outlined"></v-alert>
+    </div>
+
+
     <section class="menu">
       <v-btn prepend-icon="mdi-refresh" @click="fetchStudentCompetitionLogic"> 刷新 </v-btn>
       <v-btn v-if="has('student_competition:insert')" prepend-icon="mdi-plus-circle" color="primary"

@@ -2,9 +2,24 @@
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { apiDownloadFile } from '@/api/file'
+import { apiGetPassStudentCompetition, apiDeleteStudentCompetition } from '@/api/competition'
+
 import { notify } from '@kyvg/vue3-notification'
+import DeleteDialog from '@/components/home/DeleteDialog.vue'
 
 const headers = [
+  {
+    title: '竞赛上报ID',
+    align: 'start',
+    sortable: true,
+    key: 'studentCompetitionId'
+  },
+  {
+    title: '获奖学生',
+    align: 'start',
+    sortable: false,
+    key: 'headerInfo'
+  },
   {
     title: '竞赛名称',
     align: 'start',
@@ -22,18 +37,6 @@ const headers = [
     align: 'start',
     sortable: false,
     key: 'competitionLevel'
-  },
-  {
-    title: '填报人',
-    align: 'start',
-    sortable: false,
-    key: 'headerInfo'
-  },
-  {
-    title: '团队成员',
-    align: 'start',
-    sortable: false,
-    key: 'members'
   },
   {
     title: '奖项级别',
@@ -68,7 +71,7 @@ const headers = [
 ];
 
 const loading = ref(false)
-const auditDialog = ref(false)
+const deleteDialog = ref(false)
 
 const search = ref('')
 const selected = ref<any[]>([])
@@ -93,7 +96,50 @@ const has = (permission: string) => {
   return store.hasAuthorized(permission)
 }
 
-const fetchStudentCompetitionLogic = async () => { }
+const deleteLogic = async () => {
+  let scids = selected.value.map(e => e.studentCompetitionId)
+  scids = [...new Set(scids)]
+  let reqs = scids.map(scid => (async () => {
+    const { data: result } = await apiDeleteStudentCompetition(scid)
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: `竞赛记录:${scid}, ` + result.message })
+      return
+    }
+    notify({ type: 'success', title: '成功', text: `竞赛记录:${scid} 删除成功！` })
+  })())
+
+  await Promise.all(reqs)
+  fetchStudentCompetitionLogic()
+  deleteDialog.value = false
+  loading.value = false
+}
+
+const fetchStudentCompetitionLogic = async () => {
+  const { data: result } = await apiGetPassStudentCompetition(
+    {
+      search: search.value?.length ? search.value : null,
+      grade: selectedGrade.value,
+      majorId: selectMajor.value,
+      startDate: selectStartDate.value ? selectStartDate.value.toISOString().split('T')[0] : null,
+      endDate: selectEndDate.value ? selectEndDate.value.toISOString().split('T')[0] : null,
+      ...pageOptions
+    }
+  )
+  if (result.code !== 200) {
+    console.error(result)
+    notify({ type: 'error', title: '错误', text: result.message })
+    loading.value = false
+    return
+  }
+  dataLength.value = result.data.totalRow
+  data.value = result.data.records.flatMap(item => item.awards.map(award => ({
+    ...award,
+    headerInfo: item.studentId + item.studentName,
+  })))
+  selected.value = []
+  loading.value = false
+}
 
 
 const checkStateColor = (state: string): "indigo" | "green" | "error" => {
@@ -135,6 +181,13 @@ const downloadEvidence = async (filename: string) => {
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
+    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
+
+    <div class="pt-6 px-4">
+      <v-alert text="如果删除任何一条团队类型的竞赛记录，相同团队中学生对应记录(相同竞赛上报ID)也会被删除！" title="提示：" type="warning"
+        variant="outlined"></v-alert>
+    </div>
+
     <section class="menu">
       <span class="w-15">
         <GradeSelect v-model="selectedGrade" variant="underlined" />
@@ -151,13 +204,13 @@ const downloadEvidence = async (filename: string) => {
       <span class="w-20 text-indigo">
         <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentCompetitionLogic" :loading="loading"
           :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
-          <v-tooltip activator="parent" location="top">以填报学生姓名、学号、生源地搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top">以填报学生姓名、学号</v-tooltip>
         </v-text-field>
       </span>
       <v-btn v-if="has('student_competition_claim:select')" prepend-icon="mdi-refresh"
         @click="fetchStudentCompetitionLogic">刷新</v-btn>
-      <v-btn v-if="has('student_competition_claim:update')" prepend-icon="mdi-eye" color="primary"
-        @click="auditDialog = true">审核</v-btn>
+      <v-btn v-if="has('student_competition_claim:update')" prepend-icon="mdi-delete" color="error"
+        @click="deleteDialog = true">删除</v-btn>
     </section>
 
     <section class="pa-4 w-100">

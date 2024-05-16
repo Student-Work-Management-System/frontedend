@@ -70,6 +70,12 @@ export interface StudentCompetitionUpload {
   members: Memeber[]
 }
 
+export interface StudentCompetitionPass {
+  studentId: string
+  studentName: string
+  awards: StudentCompetition[]
+}
+
 
 export async function apiAddCompetitions(competitions: Competition[]): Promise<AxiosResponse<Result<null>>> {
   return http.post('/competition/adds', { competitions })
@@ -121,12 +127,11 @@ export async function apiAuditStudentCompetition(audit: {
   return http.put('/student_competition/audit', audit)
 }
 
-// 好像没有必要删除审核？
-// export async function apiDeleteStudentCompetition(): Promise<AxiosResponse<Result<null>>> {
-//   return http.delete()
-// }
+export async function apiDeleteStudentCompetition(studentCompetitionId: string): Promise<AxiosResponse<Result<null>>> {
+  return http.delete(`/student_competition/delete/${studentCompetitionId}`)
+}
 
-export async function apiGetAllStudentCompetition(
+export async function apiGetPassStudentCompetition(
   query: {
     search: string | null
     grade: string | null
@@ -136,7 +141,7 @@ export async function apiGetAllStudentCompetition(
     pageNo: number
     pageSize: number
   }
-): Promise<AxiosResponse<Result<RecordsPage<StudentCompetition>>>> {
+): Promise<AxiosResponse<Result<RecordsPage<StudentCompetitionPass>>>> {
   return http.post('/student_competition/gets/pass', query)
 }
 
