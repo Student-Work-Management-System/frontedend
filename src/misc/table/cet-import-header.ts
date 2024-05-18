@@ -1,11 +1,11 @@
 import { type TableHeader } from '.'
 export interface CetHeader {
-    [key: string]: any
-    studentId: string
-    score: number
-    examDate: string
-    certificateNumber: string
-    examType: string
+  [key: string]: any
+  studentId: string
+  score: string
+  examDate: string
+  certificateNumber: string
+  examType: string
 }
 
 export function CetHeaderChecker(Cet: CetHeader): boolean {
@@ -36,7 +36,7 @@ export const cetheaders: TableHeader[] = [
     require: true,
     options: null,
     validate: (content, oldContent, record, field) => {
-      if (content === '') return '成绩不能为空！'
+      if (isNaN(Number(content))) return '成绩必须为数字！'
       return '' // return empty string if there is no error
     }
   },
@@ -74,5 +74,5 @@ export const cetheaders: TableHeader[] = [
       return ''
     }
   },
-  
+
 ]

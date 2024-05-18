@@ -12,7 +12,7 @@ export default {
     {
       path: '/cet/import',
       name: 'cet-import',
-       component: () => import('@/views/home/cet/CetInfoImport.vue'),
+      component: () => import('@/views/home/cet/CetInfoImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: 'CET等级成绩录入',
@@ -23,10 +23,10 @@ export default {
     {
       path: '/cet/list',
       name: 'cet-list',
-       component: () => import('@/views/home/cet/CetInfoManage.vue'),
+      component: () => import('@/views/home/cet/CetInfoDataTabs.vue'),
       meta: {
-        icon: 'mdi-cog',
-        title: 'CET等级成绩信息',
+        icon: 'mdi-chart-bar',
+        title: 'CET等级成绩统计',
         hasPage: true,
         auth: 'student_cet:select'
       }
