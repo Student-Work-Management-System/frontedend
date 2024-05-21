@@ -11,10 +11,9 @@ export interface StudentCet {
 }
 
 export interface CETQuery {
-  name: string | null
+  search: string | null
   majorId: string | null
   grade: string | null
-  score: number | null
   examDate: string | null
   examType: string | null
   pageNo: number
@@ -71,10 +70,6 @@ export async function apiGetAllRecord(cetQuery: CETQuery): Promise<AxiosResponse
   return http.post('/cet/gets', cetQuery)
 }
 
-export async function apiGetOptionalExamDate(): Promise<AxiosResponse<Result<null>>> {
-  return http.get('/cet/gets/optional_exam_date')
-}
-
 export async function apiUpdateStudentCET(studentCet: UpdateStudentCetDTO): Promise<AxiosResponse<Result<null>>> {
   return http.put('/cet/update', studentCet)
 }
@@ -84,15 +79,15 @@ export async function apiDeleteStudentCET(studentCETId: string): Promise<AxiosRe
 }
 
 export async function apiCetStats(query: {
-  examTimes: string[]
-  majorIds: string[]
-}): Promise<AxiosResponse<Result<null>>> {
+  examTimes: string[] | null
+  majorIds: string[] | null
+}): Promise<AxiosResponse<Result<any>>> {
   return http.post('/cet/stat', query)
 }
 
-// export async function apiCetDownloadStatExcel(query: {
-//   examTimes: string[]
-//   majorIds: string[]
-// }): Promise<AxiosResponse<Result<{ [key: string]: EnrollStats }>>> {
-//   return http.post('/cet/stat', query)
-// }
+export async function apiCetDownloadStatExcel(query: {
+  examTimes: string[] | null
+  majorIds: string[] | null
+}): Promise<AxiosResponse<Blob>> {
+  return http.post('/cet/download', query, { responseType: 'blob' })
+}

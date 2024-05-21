@@ -7,7 +7,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
 import EditStudentCet from '@/components/home/cet/EditStudentCet.vue'
-import CETYearSelect from '@/components/home/cet/CETYearSelect.vue'
+import SemesterSelect from '@/components/home/SemesterSelect.vue'
 
 
 const headers = [
@@ -74,7 +74,7 @@ const headers = [
 ]
 const loading = ref(false)
 const selected = ref<any[]>([])
-const name = ref('')
+const search = ref<string | null>(null)
 const examDate = ref<string | null>(null)
 const examType = ref<string | null>(null)
 const data = ref<any[]>([]);
@@ -103,8 +103,7 @@ const fetchStudentLogic = async () => {
   loading.value = true
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
   const { data: result } = await apiGetAllRecord({
-    name: name.value === '' ? null : name.value,
-    score: null,
+    search: search.value,
     grade: selectedGrade.value,
     majorId: selectedMajor.value,
     examDate: examDate.value,
@@ -184,7 +183,7 @@ const afterEditStudent = () => {
       </span>
 
       <span class="w-20 text-indigo">
-        <CETYearSelect v-model="examDate" color="indigo" variant="underlined" />
+        <SemesterSelect v-model="examDate" color="indigo" variant="underlined" />
       </span>
 
       <span class="w-20">
@@ -194,7 +193,7 @@ const afterEditStudent = () => {
       </span>
 
       <span class="w-20 text-indigo">
-        <v-text-field v-model="name" color="indigo" @update:modelValue="fetchStudentLogic" :loading="loading"
+        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentLogic" :loading="loading"
           :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
           <v-tooltip activator="parent" location="top">以姓名、学号、证书编号搜索</v-tooltip>
         </v-text-field>
