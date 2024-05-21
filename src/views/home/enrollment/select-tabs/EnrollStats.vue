@@ -54,7 +54,7 @@ const getStatsDataHandler = async () => {
     loading.value = false
     return
   }
-  console.log(result)
+
   majorName.value = Object.keys(result.data)[0]
   stats.value = result.data[majorName.value]
   stats.value.enrollmentState = [{
@@ -71,12 +71,10 @@ const getStatsDataHandler = async () => {
   const originTotal = stats.value.origin?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
   stats.value.origin = stats.value.origin.map((item: { key: string, value: number }) => ({ ...item, value: item.value * 100 / originTotal, number: item.value }))
 
+  console.log(stats.value.regionScores)
   stats.value.regionScores = Object.keys(stats.value.regionScores)
     .map((key) => ({ type: key, value: stats.value?.regionScores[key] }))
-    .reduce((ret: any[], pItem: { type: string, value: any }) =>
-      ret.concat(Object.keys(pItem.value).map((key) => ({ type: pItem.type, level: key, value: pItem.value[key] })))
-      , [])
-
+    .flatMap(pItem => Object.keys(pItem.value).map((key) => ({ type: pItem.type, level: key, value: pItem.value[key] })))
 
   notify({ title: '成功', text: '获取统计成功！', type: 'success' })
   updateChart()
@@ -148,10 +146,6 @@ const parseBarISpec = (title: string, data: { type: string, level: string, value
     easing: 'linear'
   },
   legends: [{ visible: true, position: 'middle', orient: 'bottom' }],
-  animationAppear: {
-    duration: 500,
-    oneByOne: true
-  },
   axes: [
     {
       orient: 'left',
