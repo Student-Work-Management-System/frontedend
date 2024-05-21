@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import EditStudentCadreForm from '@/components/home/cadre/EditStudentCadre.vue'
-import SemesterSelect from '@/components/home/cadre/SemesterSelect.vue'
+import SemesterSelect from '@/components/home/SemesterSelect.vue'
 
 import {
   apiGetStudentCadreList,

@@ -53,7 +53,7 @@ declare module 'vue' {
     RouterSideMenu: typeof import('./src/components/home/RouterSideMenu.vue')['default']
     RouterView: typeof import('vue-router')['RouterView']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
-    SemesterSelect: typeof import('./src/components/home/cadre/SemesterSelect.vue')['default']
+    SemesterSelect: typeof import('./src/components/home/SemesterSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
     YearSelect: typeof import('./src/components/home/cet/YearSelect.vue')['default']
   }
