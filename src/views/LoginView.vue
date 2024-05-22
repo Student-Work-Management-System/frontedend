@@ -35,9 +35,8 @@ const loginHandler = async () => {
   store.updateUser(result.data)
   setAuthorizationToken(result.data.token)
   if (remember.value) {
-    localStorage.setItem('user-cache', btoa(encodeURIComponent(JSON.stringify(result.data))))
-    localStorage.setItem('user-cache-expired-at',
-      btoa(encodeURIComponent((Date.now() + 7 * 24 * 60 * 60).toString())))
+    localStorage.setItem('user-cache', JSON.stringify(result.data))
+    localStorage.setItem('user-cache-expired-at', (Date.now() + 7 * 24 * 60 * 60).toString())
   }
   loadingForm.value = false
   notify({ title: '提示', text: '登录成功！', type: 'success' })
@@ -54,8 +53,8 @@ const checkLoginCacheHandler = () => {
     return
   }
 
-  const cacheJson = JSON.parse(decodeURIComponent(atob(userCache)))
-  const expiredAt = parseInt(decodeURIComponent(atob(userCacheExpiredAt)))
+  const cacheJson = JSON.parse(userCache)
+  const expiredAt = parseInt(userCacheExpiredAt)
   if (Date.now() > expiredAt) {
     localStorage.clear()
     setAuthorizationToken('')
