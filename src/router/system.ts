@@ -28,7 +28,7 @@ export default {
         icon: 'mdi-account-cog',
         title: '用户账号管理',
         hasPage: true,
-        auth: 'user:select'
+        auth: 'user:update'
       }
     },
     {
@@ -39,7 +39,7 @@ export default {
         icon: 'mdi-credit-card-edit',
         title: '角色权限管理',
         hasPage: true,
-        auth: 'role_permission:select'
+        auth: 'role_permission:update'
       }
     }
   ]

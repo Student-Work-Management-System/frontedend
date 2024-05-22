@@ -98,6 +98,7 @@ const deleteLogic = async () => {
       <span class="w-20 text-indigo">
         <v-text-field v-model="collegeName" color="indigo" variant="outlined" label="学院名称" hide-details></v-text-field>
       </span>
+      <!-- 假的 uwu -->
       <v-btn color="primary" text="修改" @click="updateCollegeNameHandler"></v-btn>
     </section>
     <section class="menu">
@@ -116,7 +117,7 @@ const deleteLogic = async () => {
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('major:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 formType = 'edit'
                 editInfo = item
                 majorFormDialog = true
