@@ -209,7 +209,7 @@ const downloadEvidence = async (filename: string) => {
       </span>
       <v-btn v-if="has('student_competition_claim:select')" prepend-icon="mdi-refresh"
         @click="fetchStudentCompetitionLogic">刷新</v-btn>
-      <v-btn v-if="has('student_competition_claim:update')" prepend-icon="mdi-delete" color="error"
+      <v-btn v-if="has('student_competition_claim:delete')" prepend-icon="mdi-delete" color="error"
         @click="deleteDialog = true">删除</v-btn>
     </section>
 
@@ -236,8 +236,8 @@ const downloadEvidence = async (filename: string) => {
           </template>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn color="indigo" prepend-icon="mdi-download" variant="link"
-                @click="downloadEvidence(item.evidence)">证明材料</v-btn>
+              <v-btn v-if="has('student_competition:select') && has('file:download')" color="indigo"
+                prepend-icon="mdi-download" variant="link" @click="downloadEvidence(item.evidence)">证明材料</v-btn>
             </div>
           </template>
         </v-data-table-server>

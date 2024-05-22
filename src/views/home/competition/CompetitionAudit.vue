@@ -241,8 +241,8 @@ const checkStateIcon = (state: string): string => {
           </template>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn color="indigo" prepend-icon="mdi-download" variant="link"
-                @click="downloadEvidence(item.evidence)">证明材料</v-btn>
+              <v-btn v-if="has('student_competition:select') && has('file:download')" color="indigo"
+                prepend-icon="mdi-download" variant="link" @click="downloadEvidence(item.evidence)">证明材料</v-btn>
             </div>
           </template>
         </v-data-table-server>

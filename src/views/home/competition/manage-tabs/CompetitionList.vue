@@ -133,7 +133,7 @@ const afterEdit = () => {
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo"
+              <v-btn v-if="has('competition:update')" prepend-icon="mdi-pencil" color="indigo"
                 @click="formType = 'edit', editInfo = JSON.parse(JSON.stringify(item)), formDialog = true">编辑</v-btn>
             </div>
           </template>
