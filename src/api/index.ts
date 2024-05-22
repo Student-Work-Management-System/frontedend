@@ -7,14 +7,14 @@ const http = axios.create({
 
 http.interceptors.response.use(
   (res) => {
-    if (res.data.code === -201) {
+    if (res.data.code === -1001) {
       console.error('用户权限不足：', res)
       localStorage.clear()
       setAuthorizationToken('')
       setTimeout(() => {
         location.reload()
       }, 1000)
-    } else if (res.data.code === -210) {
+    } else if (res.data.code === -1006) {
       console.error('用户token过期：', res)
       localStorage.clear()
       setAuthorizationToken('')

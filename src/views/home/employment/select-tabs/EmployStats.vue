@@ -39,12 +39,7 @@ const getStatsDataHandler = async () => {
   })
   if (result.code !== 200) {
     console.error(result)
-    if (result.code === -2004) {
-      notify({ type: "warn", title: "提示", text: "没有数据用于统计！" })
-    } else {
-      console.error(result)
-      notify({ title: '错误', text: result.message, type: 'error' })
-    }
+    notify({ title: '错误', text: result.message, type: 'error' })
     loading.value = false
     return
   }

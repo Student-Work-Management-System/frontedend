@@ -34,12 +34,8 @@ const getStatsDataHandler = async () => {
     majorIds: selectedMajor.value === null ? [] : [selectedMajor.value]
   })
   if (result.code !== 200) {
-    if (result.code === -2004) {
-      notify({ type: "warn", title: "提示", text: "没有数据返回！" })
-    } else {
-      console.error(result)
-      notify({ title: '错误', text: result.message, type: 'error' })
-    }
+    console.error(result)
+    notify({ title: '错误', text: result.message, type: 'error' })
     loading.value = false
     return
   }
