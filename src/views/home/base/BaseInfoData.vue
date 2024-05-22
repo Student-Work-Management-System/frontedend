@@ -6,6 +6,7 @@ import { type Student, apiGetStudentList, apiDeleteStudent } from '@/api/student
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
+import { useUserStore } from '@/stores/user'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 
@@ -118,6 +119,12 @@ const pageOptions = reactive({
   pageNo: 1
 })
 
+// 检验用户权限用的
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
+
 const fetchStudentLogic = async () => {
   loading.value = true
   if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
@@ -187,9 +194,9 @@ const afterStudent = () => {
           <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
         </v-text-field>
       </span>
-      <v-btn prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>
+      <v-btn v-if="has('student:select')" prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>
 
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn v-if="has('student:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
     <section class="pa-4 w-100">
       <v-card>
@@ -198,7 +205,7 @@ const afterStudent = () => {
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('student:delete')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 modifyInfo = { ...item }
                 editDialog = true
               }
