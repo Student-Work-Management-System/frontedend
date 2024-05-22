@@ -9,6 +9,7 @@ const loading = ref(false)
 const selectedMajor = ref<string | null>(null)
 const selectedTerm = ref<string | null>(null)
 const majorName = ref('')
+import { useUserStore } from '@/stores/user'
 
 const stats = ref<any>({
   cet4: {},
@@ -19,6 +20,11 @@ const cet4ParticipateChartRef = ref()
 const cet6ParticipateChartRef = ref()
 const scoreChartRef = ref()
 
+// 检验用户权限用的
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
 
 const parsePieISpec = (title: string, data: { type: string, value: any }[]): ISpec => ({
   type: 'pie',
@@ -200,8 +206,10 @@ const updateChart = () => {
       <span class="w-20">
         <MajorSelect v-model="selectedMajor" variant="underlined" />
       </span>
-      <v-btn prepend-icon="mdi-poll" color="indigo" :loading="loading" @click="getStatsDataHandler">统计分析</v-btn>
-      <v-btn prepend-icon="mdi-export" :loading="loading" @click="exportStatsExeclHandler">导出表格</v-btn>
+      <v-btn v-if="has('student_cet:select')" prepend-icon="mdi-poll" color="indigo" :loading="loading"
+        @click="getStatsDataHandler">统计分析</v-btn>
+      <v-btn v-if="has('student_cet:select') && has('file:download')" prepend-icon="mdi-export" :loading="loading"
+        @click="exportStatsExeclHandler">导出表格</v-btn>
     </section>
     <v-card :loading="loading" class="chart-container pt-8">
       <span class="d-flex justify-space-evenly">

@@ -97,7 +97,8 @@ const uploadLogic = async () => {
           label="Excel 文件选择"></v-file-input>
       </span>
       <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-      <v-btn prepend-icon="mdi-upload" color="primary" @click="uploadDialog = true">上传数据</v-btn>
+      <v-btn v-if="has('student_cet:insert')" prepend-icon="mdi-upload" color="primary"
+        @click="uploadDialog = true">上传数据</v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生CET等级成绩上传模版.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">

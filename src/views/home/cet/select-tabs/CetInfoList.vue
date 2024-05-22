@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { apiGetAllRecord, apiDeleteStudentCET } from '@/api/cet'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
 import { reactive } from 'vue'
 import EditStudentCet from '@/components/home/cet/EditStudentCet.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
@@ -98,6 +99,11 @@ const pageOptions = reactive({
   pageNo: 1
 })
 
+// 检验用户权限用的
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
 
 const fetchStudentLogic = async () => {
   loading.value = true
@@ -198,9 +204,10 @@ const afterEditStudent = () => {
           <v-tooltip activator="parent" location="top">以姓名、学号、证书编号搜索</v-tooltip>
         </v-text-field>
       </span>
-      <v-btn prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>
+      <v-btn v-if="has('student_cet:select')" prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>
 
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn v-if="has('student_cet:delete')" prepend-icon="mdi-delete" color="error"
+        @click="deleteDialog = true">删除</v-btn>
     </section>
     <section class="pa-4 w-100">
       <v-card>
@@ -209,7 +216,7 @@ const afterEditStudent = () => {
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('student_cet:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 modifyInfo = { ...item }
                 editDialog = true
               }
