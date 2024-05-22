@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { VChart, type ISpec } from '@visactor/vchart';
+import { useUserStore } from '@/stores/user';
 import { notify } from '@kyvg/vue3-notification'
 import { apiDownloadStatsEnroll, apiStatsEnroll, type EnrollStats } from '@/api/enroll';
 
@@ -181,6 +182,10 @@ const updateChart = () => {
   loading.value = false
 }
 
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
 </script>
 
 <template>
@@ -193,8 +198,10 @@ const updateChart = () => {
         <GradeSelect v-model="selectedYear" label="招生年份" variant="underlined" />
       </span>
 
-      <v-btn prepend-icon="mdi-poll" color="indigo" :loading="loading" @click="getStatsDataHandler">统计分析</v-btn>
-      <v-btn prepend-icon="mdi-export" :loading="loading" @click="exportStatsExeclHandler">导出表格</v-btn>
+      <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-poll" color="indigo" :loading="loading"
+        @click="getStatsDataHandler">统计分析</v-btn>
+      <v-btn v-if="has('enrollment:select') && has('file:download')" prepend-icon="mdi-export" :loading="loading"
+        @click="exportStatsExeclHandler">导出表格</v-btn>
     </section>
     <v-card :loading="loading" class="chart-container pt-8">
       <span class="d-flex justify-space-evenly">

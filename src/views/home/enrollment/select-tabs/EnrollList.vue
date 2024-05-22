@@ -1,5 +1,6 @@
 <script lang="ts"  setup>
 import { ref, reactive } from 'vue'
+import { useUserStore } from '@/stores/user';
 import { apiGetEnrollment, apiDeleteEnrollment, type Enrollment } from '@/api/enroll'
 import { notify } from '@kyvg/vue3-notification'
 import EnrollForm from '@/components/home/enroll/EnrollForm.vue';
@@ -140,6 +141,10 @@ const deleteEnrollLogic = async () => {
   loading.value = false
 }
 
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -161,9 +166,10 @@ const deleteEnrollLogic = async () => {
           <v-tooltip activator="parent" location="top">以准考证号、姓名、身份证号、生源地搜索</v-tooltip>
         </v-text-field>
       </span>
-      <v-btn prepend-icon="mdi-refresh" @click="fetchEnrollLogic">刷新</v-btn>
+      <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-refresh" @click="fetchEnrollLogic">刷新</v-btn>
 
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn v-if="has('enrollment:delete')" prepend-icon="mdi-delete" color="error"
+        @click="deleteDialog = true">删除</v-btn>
     </section>
 
     <section class="pa-4 w-100">
@@ -173,7 +179,7 @@ const deleteEnrollLogic = async () => {
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('enrollment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 editModel = JSON.parse(JSON.stringify(item))
                 editDialog = true
               }
