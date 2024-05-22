@@ -102,26 +102,13 @@ const uploadLogic = async () => {
     <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
     <section class="menu">
       <span class="file text-indigo">
-        <v-file-input
-          v-model="excel"
-          color="indigo"
-          variant="underlined"
-          hide-details
-          free-select
+        <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          label="Excel 文件选择"
-        ></v-file-input>
+          label="Excel 文件选择"></v-file-input>
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
-      <v-btn
-        v-if="has('student_poverty_assistance:insert')"
-        prepend-icon="mdi-upload"
-        color="primary"
-        @click="uploadDialog = true"
-        >上传数据</v-btn
-      >
+      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
+      <v-btn v-if="has('student_poverty_assistance:insert')" prepend-icon="mdi-upload" color="primary"
+        @click="uploadDialog = true">上传数据</v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生贫困信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
@@ -138,7 +125,7 @@ const uploadLogic = async () => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu > * {
+.menu>* {
   margin-right: 0.5rem;
 }
 

@@ -28,7 +28,7 @@ export default {
         icon: 'mdi-chart-bar',
         title: '贫困信息统计',
         hasPage: true,
-        auth: 'poverty_assistance:select'
+        auth: 'student_poverty_assistance:select'
       }
     },
     {
