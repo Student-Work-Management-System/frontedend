@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { VChart, type ISpec } from '@visactor/vchart';
 import { notify } from '@kyvg/vue3-notification'
 import { apiStatsEmploy, apiDownloadStatsEmploy, type EmployStats } from '@/api/employ'
+import { useUserStore } from '@/stores/user';
 
 const loading = ref(false)
 const selectedMajor = ref<string | null>(null)
@@ -27,6 +28,11 @@ const checkQueryField = () => {
     return false
   }
   return true
+}
+
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
 }
 
 const getStatsDataHandler = async () => {
@@ -160,8 +166,10 @@ const updateChart = () => {
         <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
       </span>
 
-      <v-btn prepend-icon="mdi-poll" color="indigo" :loading="loading" @click="getStatsDataHandler">统计分析</v-btn>
-      <v-btn prepend-icon="mdi-export" :loading="loading" @click="exportStatsExeclHandler">导出表格</v-btn>
+      <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-poll" color="indigo" :loading="loading"
+        @click="getStatsDataHandler">统计分析</v-btn>
+      <v-btn v-if="has('student_employment:select') && has('file:download')" prepend-icon="mdi-export" :loading="loading"
+        @click="exportStatsExeclHandler">导出表格</v-btn>
     </section>
     <v-card :loading="loading" class="chart-container">
       <h1 v-if="salary.length > 0" class="text-indigo ma-8 text-weigh-black font-weight-medium">平均月薪：{{ salary }}</h1>

@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { type Employ, apiGetEmployList, apiDeleteEmploy } from '@/api/employ'
 import { notify } from '@kyvg/vue3-notification'
+import { useUserStore } from '@/stores/user';
 import EmployForm from '@/components/home/employ/EmployForm.vue'
 
 const headers = [
@@ -116,6 +117,11 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
   fetchEmployLogic()
 }
 
+const store = useUserStore()
+const has = (authority: string) => {
+  return store.hasAuthorized(authority)
+}
+
 const deleteEmployLogic = async () => {
   loading.value = true
 
@@ -187,9 +193,10 @@ onMounted(fetchEmployLogic)
           <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
         </v-text-field>
       </span>
-      <v-btn prepend-icon="mdi-refresh" @click="fetchEmployLogic">刷新</v-btn>
+      <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-refresh" @click="fetchEmployLogic">刷新</v-btn>
 
-      <v-btn prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn v-if="has('student_employment:delete')" prepend-icon="mdi-delete" color="error"
+        @click="deleteDialog = true">删除</v-btn>
     </section>
 
     <section class="pa-4 w-100">
@@ -199,7 +206,7 @@ onMounted(fetchEmployLogic)
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('student_employment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 editModel = JSON.parse(JSON.stringify(item))
                 editDialog = true
               }
