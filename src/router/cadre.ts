@@ -28,7 +28,7 @@ export default {
         icon: 'mdi-chart-bar',
         title: '职位信息统计',
         hasPage: true,
-        auth: 'cadre:select'
+        auth: 'student_cadre:select'
       }
     },
     {

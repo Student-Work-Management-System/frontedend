@@ -121,7 +121,7 @@ onMounted(fetchCadreLogic)
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="('cadre:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
                 editInfo = JSON.parse(JSON.stringify(item))
                 editCadreInfoFormDialog = true
               }

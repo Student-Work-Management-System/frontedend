@@ -11,32 +11,32 @@ export interface Cadre {
 
 // 学生职位任期
 export interface StudentCadre {
-  studentCadreId:string 
+  studentCadreId: string
   studentId: string
   cadreId: string
-  appointmentStartTerm :string
-  appointmentEndTerm :string
+  appointmentStartTerm: string
+  appointmentEndTerm: string
   comment: string
 }
 
 // 学生职位任期列表相关数据
 export interface StudentCadreRecord {
-  studentCadreId:string
-  studentId :string
-  cadreId :string
-  name :string
-  gender :string
-  majorName :string
-  grade :string
-  cadrePosition :string
-  cadreLevel :string
-  appointmentStartTerm :string
-  appointmentEndTerm :string
-  comment :string
+  studentCadreId: string
+  studentId: string
+  cadreId: string
+  name: string
+  gender: string
+  majorName: string
+  grade: string
+  cadrePosition: string
+  cadreLevel: string
+  appointmentStartTerm: string
+  appointmentEndTerm: string
+  comment: string
 }
 
 // 职位等级
-export  function getCadreLevers(): string[] {
+export function getCadreLevers(): string[] {
   return ['校级', '院级', '班级']
 }
 
@@ -44,18 +44,16 @@ export async function apiGetCadreList(): Promise<AxiosResponse<Result<Cadre[]>>>
   return http.get('/cadre/gets')
 }
 export async function apiGetStudentCadreList(query: {
-  studentId: string | null
-  name: string  | null
+  search: string | null
   majorId: string | null
   grade: string | null
-  cadrePosition: string | null
   cadreLevel: string | null
   appointmentStartTerm: string | null
   appointmentEndTerm: string | null
   pageNo: number
   pageSize: number
 }): Promise<AxiosResponse<Result<RecordsPage<StudentCadreRecord>>>> {
-  return http.post('/student_cadre/gets',query)
+  return http.post('/student_cadre/gets', query)
 }
 
 export async function apiAddCadre(cadre: {
