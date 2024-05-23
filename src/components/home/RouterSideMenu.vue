@@ -13,9 +13,10 @@ const items = computed(() =>
     .filter((r) => (r.meta.auth === null ? true : authorities?.includes(r.meta.auth)))
     .map((r) => ({
       ...r,
-      children: r.children.filter((item) =>
-        item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
-      )
+      children: r.children
+        .filter((item) =>
+          item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
+        )
     }))
 )
 </script>

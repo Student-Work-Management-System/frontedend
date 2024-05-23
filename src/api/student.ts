@@ -16,6 +16,7 @@ export interface Student {
   grade: string
   classNo: string
   politicsStatus: string
+  enabled: boolean
 }
 
 export async function apiAddStudentBaseInfo(
@@ -30,6 +31,7 @@ export function apiGetStudentList(query: {
   grade: string | null
   pageNo: number
   pageSize: number
+  enabled: boolean
 }): Promise<AxiosResponse<Result<RecordsPage<Student>>>> {
   return http.post('/student/gets', query)
 }
@@ -40,4 +42,8 @@ export function apiDeleteStudent(studentId: string): Promise<AxiosResponse<Resul
 
 export function apiUpdateStudent(info: Student): Promise<AxiosResponse<Result<null>>> {
   return http.put('/student/update', info)
+}
+
+export function apiRecoverDeleteStudent(studentId: string): Promise<AxiosResponse<Result<null>>> {
+  return http.put(`/student/recovery/${studentId}`)
 }

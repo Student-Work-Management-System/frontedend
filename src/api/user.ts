@@ -1,5 +1,5 @@
 import http from '.'
-import type { Result, RecordsPage } from '.'
+import type { Result } from '.'
 import { type AxiosResponse } from 'axios'
 import { type Role } from './role'
 
@@ -26,6 +26,7 @@ export interface UserRecord {
   email: string
   createdAt: string
   roles: Role[]
+  enabled: boolean
 }
 
 export function userDataCheck(obj: Object): UserData {
@@ -55,12 +56,13 @@ export async function apiLogout(): Promise<AxiosResponse<Result<null>>> {
   return http.delete('/user/logout')
 }
 
-export async function apiGetUserList(params: {
+export async function apiGetUserList(query: {
   keyword?: string
+  enabled: boolean | null
   pageNo: number
   pageSize: number
 }): Promise<AxiosResponse<Result<UserRecord[]>>> {
-  return http.get('/user/gets', { params })
+  return http.post('/user/gets', query)
 }
 
 export async function apiAddUser(user: {
@@ -105,4 +107,8 @@ export async function apiUpdatePassword(body: {
   code: string
 }): Promise<AxiosResponse<Result<null>>> {
   return http.post('/user/updatePassword', body)
+}
+
+export async function apiRecoverDeteteUser(userId: string): Promise<AxiosResponse<Result<null>>> {
+  return http.put(`/user/recovery/${userId}`)
 }

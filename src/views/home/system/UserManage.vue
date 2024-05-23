@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { apiDeleteUser, apiGetUserList, type UserRecord } from '@/api/user'
+import { apiDeleteUser, apiGetUserList, apiRecoverDeteteUser, type UserRecord } from '@/api/user'
 import { notify } from '@kyvg/vue3-notification'
 import { reactive } from 'vue'
 import { onMounted } from 'vue'
@@ -8,6 +8,7 @@ import AddUserForm from '@/components/home/system/AddUserForm.vue'
 import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
 import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
+import EnabledSelect from '@/components/home/EnabledSelect.vue'
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 
@@ -65,6 +66,7 @@ const editInfo = ref<UserRecord>({
   realName: '',
   email: '',
   createdAt: '',
+  enabled: true,
   roles: []
 })
 const addUserFormDialog = ref(false)
@@ -72,6 +74,7 @@ const editUserRoleFormDialog = ref(false)
 const editUserInfoFormDialog = ref(false)
 const deleteDialog = ref(false)
 const selectedUids = computed(() => selected.value.map((u) => u.uid))
+const selectedEnabled = ref(true)
 
 const pageOptions = reactive({
   pageSize: 10,
@@ -87,6 +90,7 @@ const fetchUserLogic = async () => {
   loading.value = true
   const { data: result } = await apiGetUserList({
     keyword: search.value,
+    enabled: selectedEnabled.value,
     pageNo: pageOptions.pageNum,
     pageSize: pageOptions.pageSize
   })
@@ -137,6 +141,21 @@ const afterUser = () => {
   selected.value = []
   fetchUserLogic()
 }
+
+const recoverUser = async (id: string) => {
+  loading.value = true
+  const { data: result } = await apiRecoverDeteteUser(id)
+  if (result.code !== 200) {
+    console.error(result)
+    notify({ type: 'error', title: '错误', text: result.message })
+    loading.value = false
+    return
+  }
+  notify({ type: 'success', title: '成功', text: "恢复成功！" })
+  loading.value = false
+  afterUser()
+  return
+}
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -145,6 +164,10 @@ const afterUser = () => {
     <EditUserInfoForm v-model="editUserInfoFormDialog" :info="editInfo" @on-closed="afterUser" />
     <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteUserLogic" />
     <section class="menu">
+      <span class="w-20">
+        <EnabledSelect v-model="selectedEnabled" label="账户状态" variant="underlined" />
+      </span>
+
       <span class="w-20 text-indigo">
         <v-text-field v-model="search" @update:modelValue="fetchUserLogic" :loading="loading" :counter="15" clearable
           label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
@@ -172,11 +195,13 @@ const afterUser = () => {
 
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn v-if="has('user:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              <v-btn v-if="has('user:update:all')" prepend-icon="mdi-pencil" color="indigo" class="mr-2" @click="() => {
                 editInfo = item as UserRecord
                 editUserInfoFormDialog = true
               }
                 ">编辑</v-btn>
+              <v-btn v-if="has('user:update:all') && !item.enabled" prepend-icon="mdi-refresh" color="warning"
+                variant="plain" @click="recoverUser(item.uid)">恢复删除</v-btn>
             </div>
           </template>
         </v-data-table>
