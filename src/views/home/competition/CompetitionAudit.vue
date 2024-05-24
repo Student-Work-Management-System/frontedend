@@ -218,18 +218,18 @@ const checkStateIcon = (state: string): string => {
         @click="auditDialog = true">审核</v-btn>
     </section>
 
-    <section class="pa-4 w-100">
-      <v-card>
+    <section class="pa-4 w-100 h-100">
+      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
           :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
           @update:options="loadItems" show-select return-object>
           <template v-slot:item.headerInfo="{ item }">
-            <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">
+            <v-chip class="mr-1" color="primary">
               {{ item.headerInfo }}
             </v-chip>
           </template>
           <template v-slot:item.members="{ item }">
-            <v-chip class="mr-1" prepend-icon="mdi-account" v-for="( member, id ) in item.members" :key="id">
+            <v-chip class="mr-1" v-for="( member, id ) in item.members" :key="id">
               {{ member }}
             </v-chip>
           </template>

@@ -220,8 +220,8 @@ const recoverStudent = async (id: string) => {
 
       <v-btn v-if="has('student:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
-    <section class="pa-4 w-100">
-      <v-card>
+    <section class="pa-4 w-100 h-100">
+      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
           :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
           @update:options="loadItems" show-select return-object>

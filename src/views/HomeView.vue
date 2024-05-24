@@ -13,6 +13,7 @@ import { setAuthorizationToken } from '@/api'
 
 const loading = ref(true)
 const dialog = ref(false)
+const drawer = ref(true)
 
 const finishLoading = () => {
   // check permission
@@ -54,13 +55,17 @@ onMounted(finishLoading)
 
   <v-card :loading="loading">
     <v-layout>
-      <RouterSideMenu />
+      <RouterSideMenu v-model="drawer" />
       <v-main style="width: 100vw; height: 100vh; display: flex; flex-direction: column">
         <div class="nav">
           <v-card elevation="4" class="pb-1 w-100">
-            <v-card-title class="d-flex justify-space-between align-center" style="height: 5vh">
+            <v-card-title class="d-flex justify-space-between align-center" style="height: 6vh">
               <span>
-                <RouterBreadcrumb />
+                <RouterBreadcrumb>
+                  <v-icon size="small" class="mr-2" :color="drawer ? 'indigo' : 'black'"
+                    :icon="drawer ? 'mdi-menu-open' : 'mdi-menu'" variant="text" @click="drawer = !drawer">
+                  </v-icon>
+                </RouterBreadcrumb>
               </span>
               <span>
                 <v-btn variant="text" :loading="loading" prepend-icon="mdi-account">
@@ -94,6 +99,7 @@ onMounted(finishLoading)
 .contain {
   flex: 1;
   width: 100%;
+  height: 90vh;
   padding: 0 1rem 0.5rem 1rem;
 }
 </style>

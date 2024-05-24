@@ -174,49 +174,47 @@ onMounted(fetchEmployLogic)
 
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEmployLogic" />
-    <EmployForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
-    <section class="menu">
-      <span class="w-20">
-        <MajorSelect v-model="selectedMajor" variant="underlined" />
-      </span>
-      <span class="w-20">
-        <GradeSelect v-model="selectedGrade" variant="underlined" />
-      </span>
-      <span class="w-20">
-        <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
-      </span>
-      <span class="w-20 text-indigo">
-        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEmployLogic" :loading="loading"
-          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
-          <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
-        </v-text-field>
-      </span>
-      <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-refresh" @click="fetchEmployLogic">刷新</v-btn>
+  <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEmployLogic" />
+  <EmployForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
+  <section class="menu">
+    <span class="w-20">
+      <MajorSelect v-model="selectedMajor" variant="underlined" />
+    </span>
+    <span class="w-20">
+      <GradeSelect v-model="selectedGrade" variant="underlined" />
+    </span>
+    <span class="w-20">
+      <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
+    </span>
+    <span class="w-20 text-indigo">
+      <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEmployLogic" :loading="loading" :counter="15"
+        clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+        <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
+      </v-text-field>
+    </span>
+    <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-refresh" @click="fetchEmployLogic">刷新</v-btn>
 
-      <v-btn v-if="has('student_employment:delete')" prepend-icon="mdi-delete" color="error"
-        @click="deleteDialog = true">删除</v-btn>
-    </section>
+    <v-btn v-if="has('student_employment:delete')" prepend-icon="mdi-delete" color="error"
+      @click="deleteDialog = true">删除</v-btn>
+  </section>
 
-    <section class="pa-4 w-100">
-      <v-card>
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
-          <template v-slot:item.operations="{ item }">
-            <div>
-              <v-btn v-if="has('student_employment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editModel = JSON.parse(JSON.stringify(item))
-                editDialog = true
-              }
-                ">编辑</v-btn>
-            </div>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </section>
-  </v-card>
+  <section class="pa-4 w-100 h-100">
+    <v-card height="81%" style="overflow: hidden; overflow-y: auto;">
+      <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+        :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems" show-select return-object>
+        <template v-slot:item.operations="{ item }">
+          <div>
+            <v-btn v-if="has('student_employment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              editModel = JSON.parse(JSON.stringify(item))
+              editDialog = true
+            }
+              ">编辑</v-btn>
+          </div>
+        </template>
+      </v-data-table-server>
+    </v-card>
+  </section>
 </template>
 <style scoped>
 .menu {

@@ -162,8 +162,8 @@ const checkStateIcon = (state: string): string => {
     </section>
 
 
-    <section class="pa-4 w-100">
-      <v-card>
+    <section class="pa-4 w-100 h-100">
+      <v-card height="75%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading"
           v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize" show-select return-object>
           <template v-slot:item.headerInfo="{ item }">

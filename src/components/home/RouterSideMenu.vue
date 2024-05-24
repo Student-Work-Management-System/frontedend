@@ -2,9 +2,8 @@
 import { routes } from '@/router'
 import { useUserStore } from '@/stores/user'
 import { computed } from 'vue'
-import { ref } from 'vue'
 
-const drawer = ref(true)
+const model = defineModel<boolean>()
 const store = useUserStore()
 const authorities = store.getUserData.authorities?.map((a) => a.authority)
 
@@ -22,7 +21,7 @@ const items = computed(() =>
 </script>
 
 <template>
-  <v-navigation-drawer color="#001529" theme="dark" v-model="drawer" permanent>
+  <v-navigation-drawer color="#001529" theme="dark" v-model="model" permanent>
     <v-list-item class="logo">
       <template v-slot:append>
         <v-img :width="235" src="logo2.png" />

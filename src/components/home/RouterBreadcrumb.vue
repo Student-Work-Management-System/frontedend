@@ -22,6 +22,7 @@ watch(route, updateCrumbs, { immediate: true })
 </script>
 
 <template>
+  <slot></slot>
   <span v-for="(item, index) in crumbs" :key="index">
     <router-link :class="['link', index == crumbs.length - 1 ? 'last' : '']" :to="item.href">{{
       item.title
@@ -38,17 +39,19 @@ watch(route, updateCrumbs, { immediate: true })
   text-decoration: none;
   color: #a5a5a5;
 }
+
 .link:hover {
   color: #3f51b5;
   background-color: rgba(0, 0, 0, 0.06);
 }
+
 .divider {
   font-size: large;
   padding: 0 0.25rem;
   color: rgba(0, 0, 0, 0.45);
 }
+
 .last {
   color: #3f51b5;
   border-bottom: #3f51b5 1px solid;
-}
-</style>
+}</style>

@@ -120,8 +120,8 @@ onMounted(fetchRoleLogic)
         color="indigo" @click="editRoleBtnHandler">设置权限</v-btn>
       <v-btn v-if="has('role:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
     </section>
-    <section class="pa-4 d-inline-block w-100">
-      <v-card>
+    <section class="pa-4 w-100 h-100">
+      <v-card height="92%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
         </v-data-table>
       </v-card>

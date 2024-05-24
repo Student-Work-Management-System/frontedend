@@ -105,48 +105,41 @@ const afterEdit = () => {
 
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
-    <CompetitionForm v-model="formDialog" v-model:type="formType" v-model:info="editInfo" @on-closed="afterEdit" />
-    <section class="menu">
-      <span>
-        <v-btn v-if="has('competition:select')" prepend-icon="mdi-refresh" @click="fetchCompetitionLogic">刷新</v-btn>
-        <v-btn v-if="has('competition:insert')" prepend-icon="mdi-plus-circle" color="primary" @click="() => {
-          formType = 'add'
-          editInfo = {
-            competitionId: '',
-            competitionName: '',
-            competitionNature: null,
-            competitionLevel: null
-          }
-          formDialog = true
-        }
-          ">添加</v-btn>
-        <v-btn v-if="has('competition:delete')" prepend-icon="mdi-delete" color="error"
-          @click="deleteDialog = true">删除</v-btn>
-      </span>
-    </section>
-    <section class="pa-4 d-inline-block w-100">
-      <v-card>
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
-          <template v-slot:item.operations="{ item }">
-            <div>
-              <v-btn v-if="has('competition:update')" prepend-icon="mdi-pencil" color="indigo"
-                @click="formType = 'edit', editInfo = JSON.parse(JSON.stringify(item)), formDialog = true">编辑</v-btn>
-            </div>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </section>
-  </v-card>
+  <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
+  <CompetitionForm v-model="formDialog" v-model:type="formType" v-model:info="editInfo" @on-closed="afterEdit" />
+  <section class="menu">
+    <v-btn v-if="has('competition:select')" prepend-icon="mdi-refresh" @click="fetchCompetitionLogic">刷新</v-btn>
+    <v-btn v-if="has('competition:insert')" prepend-icon="mdi-plus-circle" color="primary" @click="() => {
+      formType = 'add'
+      editInfo = {
+        competitionId: '',
+        competitionName: '',
+        competitionNature: null,
+        competitionLevel: null
+      }
+      formDialog = true
+    }
+      ">添加</v-btn>
+    <v-btn v-if="has('competition:delete')" prepend-icon="mdi-delete" color="error"
+      @click="deleteDialog = true">删除</v-btn>
+  </section>
+
+  <section class="pa-4 w-100 h-100">
+    <v-card height="80%" style="overflow: hidden; overflow-y: auto;">
+      <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+        :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems" show-select return-object>
+        <template v-slot:item.operations="{ item }">
+          <div>
+            <v-btn v-if="has('competition:update')" prepend-icon="mdi-pencil" color="indigo"
+              @click="formType = 'edit', editInfo = JSON.parse(JSON.stringify(item)), formDialog = true">编辑</v-btn>
+          </div>
+        </template>
+      </v-data-table-server>
+    </v-card>
+  </section>
 </template>
 <style scoped>
-.v-card {
-  align-items: start;
-}
-
 .menu {
   width: 100%;
   display: flex;
@@ -154,11 +147,11 @@ const afterEdit = () => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu span>* {
+.menu>* {
   margin-right: 0.5rem;
 }
 
 .w-20 {
-  width: 20% !important;
+  width: 15% !important;
 }
 </style>

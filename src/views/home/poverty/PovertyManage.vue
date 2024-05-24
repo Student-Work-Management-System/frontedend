@@ -126,7 +126,7 @@ onMounted(fetchPovertyLogic)
     </section>
 
     <section class="pa-4 d-inline-block h-100 w-100">
-      <v-card>
+      <v-card height="92%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>

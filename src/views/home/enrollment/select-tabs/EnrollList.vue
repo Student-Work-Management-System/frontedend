@@ -147,49 +147,46 @@ const has = (authority: string) => {
 }
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEnrollLogic" />
-    <EnrollForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
-    <section class="menu">
-      <span class="w-20">
-        <GradeSelect label="招生年份" v-model="selectedYear" variant="underlined" />
-      </span>
-      <span class="w-20">
-        <MajorSelect label="录取专业" v-model="selectedEnrollMajor" variant="underlined" />
-      </span>
-      <span class="w-20">
-        <MajorSelect label="第一志愿专业" v-model="selectedFirstMajor" variant="underlined" />
-      </span>
-      <span class="w-20 text-indigo">
-        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEnrollLogic" :loading="loading"
-          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
-          <v-tooltip activator="parent" location="top">以准考证号、姓名、身份证号、生源地搜索</v-tooltip>
-        </v-text-field>
-      </span>
-      <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-refresh" @click="fetchEnrollLogic">刷新</v-btn>
+  <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEnrollLogic" />
+  <EnrollForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
+  <section class="menu">
+    <span class="w-20">
+      <GradeSelect label="招生年份" v-model="selectedYear" variant="underlined" />
+    </span>
+    <span class="w-20">
+      <MajorSelect label="录取专业" v-model="selectedEnrollMajor" variant="underlined" />
+    </span>
+    <span class="w-20">
+      <MajorSelect label="第一志愿专业" v-model="selectedFirstMajor" variant="underlined" />
+    </span>
+    <span class="w-20 text-indigo">
+      <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEnrollLogic" :loading="loading" :counter="15"
+        clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+        <v-tooltip activator="parent" location="top">以准考证号、姓名、身份证号、生源地搜索</v-tooltip>
+      </v-text-field>
+    </span>
+    <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-refresh" @click="fetchEnrollLogic">刷新</v-btn>
 
-      <v-btn v-if="has('enrollment:delete')" prepend-icon="mdi-delete" color="error"
-        @click="deleteDialog = true">删除</v-btn>
-    </section>
+    <v-btn v-if="has('enrollment:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+  </section>
 
-    <section class="pa-4 w-100">
-      <v-card>
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
-          <template v-slot:item.operations="{ item }">
-            <div>
-              <v-btn v-if="has('enrollment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editModel = JSON.parse(JSON.stringify(item))
-                editDialog = true
-              }
-                ">编辑</v-btn>
-            </div>
-          </template>
-        </v-data-table-server>
-      </v-card>
-    </section>
-  </v-card>
+  <section class="pa-4 w-100 h-100">
+    <v-card height="116%" style="overflow: hidden; overflow-y: auto; ">
+      <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
+        :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems" show-select return-object>
+        <template v-slot:item.operations="{ item }">
+          <div>
+            <v-btn v-if="has('enrollment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
+              editModel = JSON.parse(JSON.stringify(item))
+              editDialog = true
+            }
+              ">编辑</v-btn>
+          </div>
+        </template>
+      </v-data-table-server>
+    </v-card>
+  </section>
 </template>
 
 <style scoped>

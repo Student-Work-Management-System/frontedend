@@ -224,7 +224,7 @@ const deleteStudentCadreLogic = async () => {
     </section>
 
     <section class="pa-4 h-100 w-100">
-      <v-card>
+      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
           :loading="loading" v-model:page="query.pageNo" v-model:items-per-page="query.pageSize"
           @update:options="loadItems" show-select return-object>

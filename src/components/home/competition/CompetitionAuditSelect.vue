@@ -15,7 +15,7 @@ const props = withDefaults(
     | 'solo-filled'
     | undefined
   }>(), { label: "审核结果" })
-const items = ['已通过', '已拒绝'];
+const items = ['通过', '拒绝'];
 </script>
 
 <template>

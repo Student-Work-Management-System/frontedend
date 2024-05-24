@@ -112,8 +112,8 @@ const deleteLogic = async () => {
         <v-btn v-if="has('major:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
       </span>
     </section>
-    <section class="pa-4 d-inline-block w-100">
-      <v-card>
+    <section class="pa-4 w-100 h-100">
+      <v-card height="81%" style="overflow: hidden; overflow-y: auto; ">
         <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>

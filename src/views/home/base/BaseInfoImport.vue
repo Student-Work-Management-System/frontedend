@@ -27,7 +27,8 @@ const nilData: BaseHeader = {
   majorName: '',
   majorId: '',
   grade: '',
-  classNo: ''
+  classNo: '',
+  enabled: true,
 }
 
 const analyzeHandler = async () => {
