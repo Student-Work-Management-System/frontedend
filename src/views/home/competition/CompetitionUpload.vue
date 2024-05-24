@@ -143,6 +143,20 @@ const checkStateIcon = (state: string): string => {
   }
 }
 
+// js 写响应式
+const tableHeight = ref(0)
+const tableDom = ref<HTMLElement | null>(null)
+const fixHeight = () => {
+  const offsetTop = tableDom.value?.offsetTop as number
+  const windowHeight = window.screen.height as number
+  const totalHeight = document.body.clientHeight
+  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.77 - padding
+}
+onMounted(() => {
+  fixHeight()
+  window.onresize = fixHeight
+})
 </script>
 
 <template>
@@ -162,9 +176,9 @@ const checkStateIcon = (state: string): string => {
     </section>
 
 
-    <section class="pa-4 w-100 h-100">
-      <v-card height="75%" style="overflow: hidden; overflow-y: auto; ">
-        <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading"
+    <section class="pa-4 w-100" ref="tableDom">
+      <v-card>
+        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
           v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize" show-select return-object>
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">

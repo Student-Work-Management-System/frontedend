@@ -189,6 +189,21 @@ const checkStateIcon = (state: string): string => {
   }
 }
 
+// js 写响应式
+const tableHeight = ref(0)
+const tableDom = ref<HTMLElement | null>(null)
+const fixHeight = () => {
+  const offsetTop = tableDom.value?.offsetTop as number
+  const windowHeight = window.screen.height as number
+  const totalHeight = document.body.clientHeight
+  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
+}
+onMounted(() => {
+  fixHeight()
+  window.onresize = fixHeight
+})
+
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -218,11 +233,11 @@ const checkStateIcon = (state: string): string => {
         @click="auditDialog = true">审核</v-btn>
     </section>
 
-    <section class="pa-4 w-100 h-100">
-      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-          @update:options="loadItems" show-select return-object>
+    <section class="pa-4 w-100" ref="tableDom">
+      <v-card>
+        <v-data-table-server v-model="selected" :height="tableHeight" :headers="headers" :items="data"
+          :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
+          v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" color="primary">
               {{ item.headerInfo }}

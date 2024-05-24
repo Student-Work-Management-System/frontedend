@@ -156,6 +156,21 @@ const recoverUser = async (id: string) => {
   afterUser()
   return
 }
+
+// js 写响应式
+const tableHeight = ref(0)
+const tableDom = ref<HTMLElement | null>(null)
+const fixHeight = () => {
+  const offsetTop = tableDom.value?.offsetTop as number
+  const windowHeight = window.screen.height as number
+  const totalHeight = document.body.clientHeight
+  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.80 - padding
+}
+onMounted(() => {
+  fixHeight()
+  window.onresize = fixHeight
+})
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -183,30 +198,28 @@ const recoverUser = async (id: string) => {
         <v-btn v-if="has('user:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
       </span>
     </section>
-    <section class="pa-4 w-100 h-100">
-      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
-        <v-card>
-          <v-data-table v-model="selected" :headers="headers" :items="data" :loading="loading" :page="pageOptions.pageNum"
-            :items-per-page="pageOptions.pageSize" show-select return-object>
-            <template v-slot:item.roles="{ item }">
-              <v-chip class="mr-1" color="indigo" :key="index" v-for="(r, index) in (item as UserRecord).roles">
-                {{ r.roleName }}
-              </v-chip>
-            </template>
+    <section class="pa-4 w-100" ref="tableDom">
+      <v-card>
+        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
+          :page="pageOptions.pageNum" :items-per-page="pageOptions.pageSize" show-select return-object>
+          <template v-slot:item.roles="{ item }">
+            <v-chip class="mr-1" color="indigo" :key="index" v-for="(r, index) in (item as UserRecord).roles">
+              {{ r.roleName }}
+            </v-chip>
+          </template>
 
-            <template v-slot:item.operations="{ item }">
-              <div>
-                <v-btn v-if="has('user:update:all')" prepend-icon="mdi-pencil" color="indigo" class="mr-2" @click="() => {
-                  editInfo = item as UserRecord
-                  editUserInfoFormDialog = true
-                }
-                  ">编辑</v-btn>
-                <v-btn v-if="has('user:update:all') && !item.enabled" prepend-icon="mdi-refresh" color="warning"
-                  variant="plain" @click="recoverUser(item.uid)">恢复删除</v-btn>
-              </div>
-            </template>
-          </v-data-table>
-        </v-card>
+          <template v-slot:item.operations="{ item }">
+            <div>
+              <v-btn v-if="has('user:update:all')" prepend-icon="mdi-pencil" color="indigo" class="mr-2" @click="() => {
+                editInfo = item as UserRecord
+                editUserInfoFormDialog = true
+              }
+                ">编辑</v-btn>
+              <v-btn v-if="has('user:update:all') && !item.enabled" prepend-icon="mdi-refresh" color="warning"
+                variant="plain" @click="recoverUser(item.uid)">恢复删除</v-btn>
+            </div>
+          </template>
+        </v-data-table>
       </v-card>
     </section>
   </v-card>

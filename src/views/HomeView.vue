@@ -86,7 +86,7 @@ onMounted(finishLoading)
   </v-card>
 </template>
 
-<style setup>
+<style scoped>
 .logo {
   padding: 4px 16px 4px 13px !important;
 }
@@ -99,7 +99,7 @@ onMounted(finishLoading)
 .contain {
   flex: 1;
   width: 100%;
-  height: 90vh;
+  height: 91vh;
   padding: 0 1rem 0.5rem 1rem;
 }
 </style>

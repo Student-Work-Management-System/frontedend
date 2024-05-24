@@ -155,6 +155,21 @@ const deleteStudentPovertyLogic = async () => {
   notify({ type: 'success', title: '成功', text: `删除成功！` })
   fetchStudentPovertyLogic()
 }
+
+// js 写响应式
+const tableHeight = ref(0)
+const tableDom = ref<HTMLElement | null>(null)
+const fixHeight = () => {
+  const offsetTop = tableDom.value?.offsetTop as number
+  const windowHeight = window.screen.height as number
+  const totalHeight = document.body.clientHeight
+  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
+}
+onMounted(() => {
+  fixHeight()
+  window.onresize = fixHeight
+})
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
@@ -216,11 +231,11 @@ const deleteStudentPovertyLogic = async () => {
         @click="deleteDialog = true">删除</v-btn>
     </section>
 
-    <section class="pa-4 h-100 w-100">
-      <v-card height="90%" style="overflow: hidden; overflow-y: auto; ">
-        <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-          :loading="loading" v-model:page="query.pageNo" v-model:items-per-page="query.pageSize"
-          @update:options="loadItems" show-select return-object>
+    <section class="pa-4 w-100" ref="tableDom">
+      <v-card>
+        <v-data-table-server v-model="selected" :headers="headers" :height="tableHeight" :items="data"
+          :items-length="dataLength" :loading="loading" v-model:page="query.pageNo"
+          v-model:items-per-page="query.pageSize" @update:options="loadItems" show-select return-object>
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn v-if="has('student_poverty_assistance:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {

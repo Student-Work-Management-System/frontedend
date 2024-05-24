@@ -1,5 +1,5 @@
 <script lang="ts"  setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user';
 import { apiGetEnrollment, apiDeleteEnrollment, type Enrollment } from '@/api/enroll'
 import { notify } from '@kyvg/vue3-notification'
@@ -145,6 +145,22 @@ const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
+
+
+// js 写响应式
+const tableHeight = ref(0)
+const tableDom = ref<HTMLElement | null>(null)
+const fixHeight = () => {
+  const offsetTop = tableDom.value?.offsetTop as number
+  const windowHeight = window.screen.height as number
+  const totalHeight = document.body.clientHeight
+  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.69 - padding
+}
+onMounted(() => {
+  fixHeight()
+  window.onresize = fixHeight
+})
 </script>
 <template>
   <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEnrollLogic" />
@@ -170,11 +186,11 @@ const has = (authority: string) => {
     <v-btn v-if="has('enrollment:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
   </section>
 
-  <section class="pa-4 w-100 h-100">
-    <v-card height="116%" style="overflow: hidden; overflow-y: auto; ">
-      <v-data-table-server v-model="selected" :headers="headers" :items="data" :items-length="dataLength"
-        :loading="loading" v-model:page="pageOptions.pageNo" v-model:items-per-page="pageOptions.pageSize"
-        @update:options="loadItems" show-select return-object>
+  <section class="pa-4 w-100" ref="tableDom">
+    <v-card>
+      <v-data-table-server v-model="selected" :headers="headers" :height="tableHeight" :items="data"
+        :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
+        v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
         <template v-slot:item.operations="{ item }">
           <div>
             <v-btn v-if="has('enrollment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {

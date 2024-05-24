@@ -12,7 +12,7 @@ const tab = ref(null)
       <v-tab :value="1">数据管理</v-tab>
       <v-tab :value="2">数据导入</v-tab>
     </v-tabs>
-    <v-window v-model="tab" class="container">
+    <v-window v-model="tab">
       <v-window-item :value="1">
         <CompetitionList />
       </v-window-item>
@@ -22,11 +22,3 @@ const tab = ref(null)
     </v-window>
   </v-card>
 </template>
-
-<style scoped>
-.container {
-  flex: 1;
-  width: 100%;
-  height: 90vh;
-}
-</style>
