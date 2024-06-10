@@ -107,5 +107,5 @@ export async function apiGetStudentPovertyAssistanceList(query: {
 export async function apiAddStudentPovertyAssistanceInfo(
   insertStudentPovertyAssistanceList: StudentPovertyAssistance[]
 ): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student_poverty_assistance/adds', { list: insertStudentPovertyAssistanceList })
+  return http.post('/student_poverty_assistance/adds', { studentPovertyAssistances: insertStudentPovertyAssistanceList })
 }
