@@ -14,8 +14,15 @@ http.interceptors.response.use(
       // setTimeout(() => {
       //   location.reload()
       // }, 1000)
-    } else if (res.data.code === -1006) {
+    } else if (res.data.code === -1005) {
       console.error('用户token过期：', res)
+      localStorage.clear()
+      setAuthorizationToken('')
+      setTimeout(() => {
+        location.reload()
+      }, 1000)
+    } else if (res.data.code === -1006) {
+      console.error('用户已被禁用', res)
       localStorage.clear()
       setAuthorizationToken('')
       setTimeout(() => {

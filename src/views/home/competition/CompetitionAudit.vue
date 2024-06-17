@@ -66,12 +66,6 @@ const headers = [
     key: 'reviewState'
   },
   {
-    title: '审核备注',
-    align: 'start',
-    sortable: false,
-    key: 'rejectReason'
-  },
-  {
     title: '操作',
     align: 'start',
     sortable: false,

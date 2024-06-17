@@ -27,6 +27,11 @@ const checkQueryField = () => {
   }
   return true
 }
+
+function toFixDot2(num: number): number {
+  return Number(num.toFixed(2));
+}
+
 const getStatsDataHandler = async () => {
   if (!checkQueryField()) return
   loading.value = true
@@ -47,7 +52,7 @@ const getStatsDataHandler = async () => {
       enrollmentState: {},
       regionScores: {},
     }
-    notify({ type: "warn", title: "提示", text: "没有数据返回！" })
+    notify({ type: "warn", title: "提示", text: "无数据返回，请上传数据后重试！" })
     loading.value = false
     return
   }
@@ -57,16 +62,16 @@ const getStatsDataHandler = async () => {
   stats.value.enrollmentState = [{
     type: "第一志愿录取",
     number: stats.value.enrollmentState["第一志愿录取人数"],
-    value: stats.value.enrollmentState["第一志愿录取人数"] * 100 / stats.value.enrollmentState["总录取人数"]
+    value: toFixDot2(stats.value.enrollmentState["第一志愿录取人数"] * 100 / stats.value.enrollmentState["总录取人数"])
   }, {
     type: "第一志愿未录取",
     number: stats.value.enrollmentState["总录取人数"] - stats.value.enrollmentState["第一志愿录取人数"],
-    value: 100 - (stats.value.enrollmentState["第一志愿录取人数"] * 100 / stats.value.enrollmentState["总录取人数"])
+    value: 100 - toFixDot2((stats.value.enrollmentState["第一志愿录取人数"] * 100 / stats.value.enrollmentState["总录取人数"]))
   },
   ]
   stats.value.origin = Object.keys(stats.value.origin).map((key) => ({ type: key, value: stats.value?.origin[key] }))
   const originTotal = stats.value.origin?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
-  stats.value.origin = stats.value.origin.map((item: { key: string, value: number }) => ({ ...item, value: item.value * 100 / originTotal, number: item.value }))
+  stats.value.origin = stats.value.origin.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / originTotal), number: item.value }))
 
   console.log(stats.value.regionScores)
   stats.value.regionScores = Object.keys(stats.value.regionScores)

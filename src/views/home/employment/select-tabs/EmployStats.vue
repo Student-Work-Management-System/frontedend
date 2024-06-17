@@ -35,6 +35,11 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
+function toFixDot2(num: number): number {
+  return Number(num.toFixed(2));
+
+}
+
 const getStatsDataHandler = async () => {
   if (!checkQueryField()) return
 
@@ -57,13 +62,13 @@ const getStatsDataHandler = async () => {
       jobIndustry: {},
       salary: "0"
     }
-    notify({ type: "warn", title: "提示", text: "没有数据返回！" })
+    notify({ type: "warn", title: "提示", text: "无数据返回，请上传数据后重试！" })
     loading.value = false
     return
   }
   majorName.value = Object.keys(result.data)[0]
   stats.value = result.data[majorName.value]
-  salary.value = stats.value?.salary as string
+  salary.value = Number(stats.value?.salary).toFixed(2)
   stats.value.graduationStatus = Object.keys(stats.value?.graduationStatus).map((key) => ({ type: key, value: stats.value?.graduationStatus[key] }))
   stats.value.jobLocation = Object.keys(stats.value?.jobLocation).map((key) => ({ type: key, value: stats.value?.jobLocation[key] }))
   stats.value.jobIndustry = Object.keys(stats.value?.jobIndustry).map((key) => ({ type: key, value: stats.value?.jobIndustry[key] }))
@@ -72,9 +77,9 @@ const getStatsDataHandler = async () => {
   const localtionTotal = stats.value.jobLocation?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
   const industryTotal = stats.value.jobIndustry?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
 
-  stats.value.graduationStatus = stats.value.graduationStatus.map((item: { key: string, value: number }) => ({ ...item, value: item.value * 100 / statusTotal, number: item.value }))
-  stats.value.jobLocation = stats.value.jobLocation.map((item: { key: string, value: number }) => ({ ...item, value: item.value * 100 / localtionTotal, number: item.value }))
-  stats.value.jobIndustry = stats.value.jobIndustry.map((item: { key: string, value: number }) => ({ ...item, value: item.value * 100 / industryTotal, number: item.value }))
+  stats.value.graduationStatus = stats.value.graduationStatus.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / statusTotal), number: item.value }))
+  stats.value.jobLocation = stats.value.jobLocation.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / localtionTotal), number: item.value }))
+  stats.value.jobIndustry = stats.value.jobIndustry.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / industryTotal), number: item.value }))
 
   notify({ title: '成功', text: '获取统计成功！', type: 'success' })
   updateChart()
@@ -148,9 +153,9 @@ const updateChart = () => {
   }
   statusChart?.updateSpec(parseISpec("就业分析", stats.value?.graduationStatus));
   statusChart?.renderAsync();
-  jobIndustryChart?.updateSpec(parseISpec("所处产业", stats.value?.graduationStatus));
+  jobIndustryChart?.updateSpec(parseISpec("所处产业", stats.value?.jobIndustry));
   jobIndustryChart?.renderAsync();
-  jobLocationChart?.updateSpec(parseISpec("工作地点", stats.value?.graduationStatus));
+  jobLocationChart?.updateSpec(parseISpec("工作地点", stats.value?.jobLocation));
   jobLocationChart?.renderAsync();
   loading.value = false
 }

@@ -101,6 +101,11 @@ const checkQueryField = () => {
   return true
 }
 
+function toFixDot2(num: number): number {
+  return Number(num.toFixed(2));
+
+}
+
 const getStatsDataHandler = async () => {
   if (!checkQueryField()) return
   loading.value = true
@@ -121,7 +126,7 @@ const getStatsDataHandler = async () => {
       cet6: {},
       score: {},
     }
-    notify({ type: "warn", title: "提示", text: "没有数据返回！" })
+    notify({ type: "warn", title: "提示", text: "无数据返回，请上传数据后重试！" })
     loading.value = false
     return
   }
@@ -136,12 +141,12 @@ const getStatsDataHandler = async () => {
   const cet6 = stats.value["CET6情况统计"]
 
   stats.value.cet4.state = [
-    { type: "通过人数", value: cet4["通过人数"] * 100 / cet4["总参与人数"], number: cet4["通过人数"] },
-    { type: "未通过人数", value: (cet4["总参与人数"] - cet4["通过人数"]) * 100 / cet4["总参与人数"], number: cet4["总参与人数"] - cet4["通过人数"] }
+    { type: "通过人数", value: toFixDot2(cet4["通过人数"] * 100 / cet4["总参与人数"]), number: cet4["通过人数"] },
+    { type: "未通过人数", value: toFixDot2((cet4["总参与人数"] - cet4["通过人数"]) * 100 / cet4["总参与人数"]), number: cet4["总参与人数"] - cet4["通过人数"] }
   ]
   stats.value.cet6.state = [
-    { type: "通过人数", value: cet6["通过人数"] * 100 / cet6["总参与人数"], number: cet6["通过人数"] },
-    { type: "未通过人数", value: (cet6["总参与人数"] - cet6["通过人数"]) * 100 / cet6["总参与人数"], number: cet6["总参与人数"] - cet6["通过人数"] }
+    { type: "通过人数", value: toFixDot2(cet6["通过人数"] * 100 / cet6["总参与人数"]), number: cet6["通过人数"] },
+    { type: "未通过人数", value: toFixDot2((cet6["总参与人数"] - cet6["通过人数"]) * 100 / cet6["总参与人数"]), number: cet6["总参与人数"] - cet6["通过人数"] }
   ]
 
   stats.value.score = [{ type: "CET4最高分", value: cet4["最高分"] }, { type: "CET6最高分", value: cet6["最高分"] }]
@@ -150,6 +155,10 @@ const getStatsDataHandler = async () => {
   updateChart()
   loading.value = false
 
+}
+
+function toFixDot2(num: number): number {
+  return Number(num.toFixed(2));
 }
 
 const exportStatsExeclHandler = async () => {
