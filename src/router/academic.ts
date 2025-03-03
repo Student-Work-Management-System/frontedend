@@ -12,7 +12,7 @@ export default {
     {
       path: '/academic/import',
       name: 'academic-import',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生成果上报',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/academic/review',
       name: 'academic-review',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/academic/list',
       name: 'academic-list',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '学术成果统计',
@@ -45,7 +45,7 @@ export default {
     {
       path: '/academic/manage',
       name: 'academic-manage',
-      // component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '学术成果管理',

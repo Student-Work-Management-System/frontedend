@@ -12,10 +12,9 @@ const items = computed(() =>
     .filter((r) => (r.meta.auth === null ? true : authorities?.includes(r.meta.auth)))
     .map((r) => ({
       ...r,
-      children: r.children
-        .filter((item) =>
-          item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
-        )
+      children: r.children.filter((item) =>
+        item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
+      )
     }))
 )
 </script>
@@ -28,12 +27,25 @@ const items = computed(() =>
       </template>
     </v-list-item>
     <v-list density="compact" nav open-strategy="single">
-      <v-list-group v-for="(item, index) in items" base-color="#147ddf" color="#fff" :key="index" :value="item.name">
+      <v-list-group
+        v-for="(item, index) in items"
+        base-color="#147ddf"
+        color="#fff"
+        :key="index"
+        :value="item.name"
+      >
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" :prepend-icon="item.meta.icon" :title="item.meta.title" />
         </template>
-        <v-list-item class="back" v-for="(chitem, chindex) in item.children" :key="index + '-' + chindex"
-          :prepend-icon="chitem.meta.icon" :title="chitem.meta.title" :value="chitem.name" :to="chitem.path" />
+        <v-list-item
+          class="back"
+          v-for="(chitem, chindex) in item.children"
+          :key="index + '-' + chindex"
+          :prepend-icon="chitem.meta.icon"
+          :title="chitem.meta.title"
+          :value="chitem.name"
+          :to="chitem.path"
+        />
       </v-list-group>
     </v-list>
   </v-navigation-drawer>

@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 import HomeView from '@/views/HomeView.vue'
@@ -18,7 +18,7 @@ import status from './status'
 import system from './system'
 import enrollment from './enrollment'
 
-export const routes = [
+export const routes: RouteRecordRaw[] = [
   base,
   cadre,
   employment,

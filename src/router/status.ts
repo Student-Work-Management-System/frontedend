@@ -12,7 +12,7 @@ export default {
     {
       path: '/status/import',
       name: 'status-import',
-      // component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/base/BaseInfoImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '学籍信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/status/list',
       name: 'status-list',
-      // component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '学籍信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/status/manage',
       name: 'status-manage',
-      // component: () => import('@/views/home/base/BaseInfoManage.vue'),
+      component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '学籍信息管理',
