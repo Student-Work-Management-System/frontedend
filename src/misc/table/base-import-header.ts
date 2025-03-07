@@ -1,5 +1,5 @@
 import { type TableHeader } from '.'
-import { type Student } from '@/api/student'
+import { type Student } from '@/model/studentModel'
 export interface BaseHeader extends Student {
   [key: string]: any
 }
@@ -73,10 +73,10 @@ export const baseheaders: TableHeader[] = [
     field: 'politicsStatus',
     label: '政治面貌',
     require: true,
-    options: ['群众', '共青团员', '中共党员'],
+    options: ['群众', '共青团员', '中共党员(预备)', '中共党员'],
     validate: (content, oldContent, record, field) => {
       if (content === '') return '政治面貌不能为空！'
-      if (!['群众', '共青团员', '中共党员'].includes(content)) return '政治面貌错误！'
+      if (!['群众', '共青团员', '中共党员(预备)', '中共党员'].includes(content)) return '政治面貌错误！'
       return ''
     }
   },
@@ -94,6 +94,21 @@ export const baseheaders: TableHeader[] = [
         )
       )
         return '手机号格式错误！'
+      return ''
+    }
+  },
+  {
+    type: 'string',
+    field: 'email',
+    label: '邮箱',
+    require: true,
+    options: null,
+    validate: (content, oldContent, record, field) => {
+      if (content == '') return '邮箱不能为空！'
+      if (
+        !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(content)
+      )
+        return '邮箱格式错误'
       return ''
     }
   },
@@ -137,6 +152,20 @@ export const baseheaders: TableHeader[] = [
     type: 'string',
     field: 'classNo',
     label: '班级号',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'headTeacherName',
+    label: '班主任姓名',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'headTeacherPhone',
+    label: '班主任联系方式',
     require: false,
     options: null
   }

@@ -7,19 +7,20 @@ import { onMounted } from 'vue'
 const model = defineModel<string>()
 const props = withDefaults(
   defineProps<{
-    label: string,
+    label: string
     variant?:
-    | 'filled'
-    | 'underlined'
-    | 'outlined'
-    | 'plain'
-    | 'solo'
-    | 'solo-inverted'
-    | 'solo-filled'
-    | undefined
-  }>(), { label: "专业" })
+      | 'filled'
+      | 'underlined'
+      | 'outlined'
+      | 'plain'
+      | 'solo'
+      | 'solo-inverted'
+      | 'solo-filled'
+      | undefined
+  }>(),
+  { label: '专业' }
+)
 const items = ref<Major[]>([])
-
 const loading = ref(true)
 const getMajorListLogic = async () => {
   loading.value = true
@@ -31,12 +32,25 @@ const getMajorListLogic = async () => {
   items.value = result.data
   loading.value = false
 }
-onMounted(getMajorListLogic)
+onMounted(() => {
+  getMajorListLogic()
+})
 </script>
 
 <template>
-  <v-select v-model="model" :loading="loading" class="text-indigo" color="indigo" :label="props.label" :items="items"
-    item-title="majorName" item-value="majorId" :variant="props.variant" hide-details clearable>
+  <v-select
+    v-model="model"
+    :loading="loading"
+    class="text-indigo"
+    color="indigo"
+    :label="props.label"
+    :items="items"
+    item-title="majorName"
+    item-value="majorId"
+    :variant="props.variant"
+    hide-details
+    clearable
+  >
     <template v-slot:prepend>
       <slot></slot>
     </template>

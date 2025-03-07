@@ -1,23 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-
-export interface Student {
-  studentId: string
-  idNumber: string
-  name: string
-  gender: string
-  nativePlace: string
-  postalCode: string
-  phone: string
-  nation: string
-  majorName: string
-  majorId: string
-  grade: string
-  classNo: string
-  politicsStatus: string
-  enabled: boolean
-}
+import { type Student, type StudentQuery } from '@/model/studentModel'
 
 export async function apiAddStudentBaseInfo(
   students: Student[]
@@ -25,14 +9,7 @@ export async function apiAddStudentBaseInfo(
   return http.post('/student/adds', { students })
 }
 
-export function apiGetStudentList(query: {
-  search: string
-  majorId: string | null
-  grade: string | null
-  pageNo: number
-  pageSize: number
-  enabled: boolean
-}): Promise<AxiosResponse<Result<RecordsPage<Student>>>> {
+export function apiGetStudentList(query: StudentQuery): Promise<AxiosResponse<Result<RecordsPage<Student>>>> {
   return http.post('/student/gets', query)
 }
 
@@ -46,4 +23,8 @@ export function apiUpdateStudent(info: Student): Promise<AxiosResponse<Result<nu
 
 export function apiRecoverDeleteStudent(studentId: string): Promise<AxiosResponse<Result<null>>> {
   return http.put(`/student/recovery/${studentId}`)
+}
+
+export function apiValidateHeadTeacherExists(headTeacherUsername: string): Promise<AxiosResponse<Result<null>>> {
+  return http.get(`/student/validate_teacher_existed/${headTeacherUsername}`)
 }
