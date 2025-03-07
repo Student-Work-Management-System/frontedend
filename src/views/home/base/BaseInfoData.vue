@@ -174,6 +174,7 @@ const has = (authority: string) => {
 
 const fetchStudentLogic = async () => {
   loading.value = true
+  if (studentQuery.value.pageSize == -1) studentQuery.value.pageSize = 9999
   const { data: result } = await apiGetStudentList(studentQuery.value)
   if (result.code !== 200) {
     console.error(result)
