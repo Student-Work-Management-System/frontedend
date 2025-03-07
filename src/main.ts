@@ -10,13 +10,17 @@ import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from 'vuetify'
 import { pl, zhHans } from 'vuetify/locale'
 import * as components from 'vuetify/components'
+import * as labComponents from "vuetify/labs/components";
 import * as directives from 'vuetify/directives'
 // notification
 import Notifications from '@kyvg/vue3-notification'
 import VueExcelEditor from 'vue3-excel-editor'
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    ...labComponents
+  },
   directives,
   locale: {
     locale: 'zhHans',

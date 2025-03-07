@@ -138,56 +138,32 @@ const modifyInfo = ref<Student>({
   enabled: true
 })
 // 查询参数
-const selectedEnabled = ref(true)
-const selectedMajor = ref<string | null>(null)
-const selectedGrade = ref<string | null>(null)
-const selectGender = ref<string | null>(null)
-const selectNation = ref<string | null>(null)
-const selectPoliticsStatus = ref<string | null>(null)
-const selectPostalCode = ref<string | null>(null)
-const selectClassNo = ref<string | null>(null)
-const selectDormitory = ref<string | null>(null)
-const selectBirthdate = ref<string | null>(null)
-const selectHouseholdRegistration = ref<string | null>(null)
-const selectHouseholdType = ref<string | null>(null)
-const selectAddress = ref<string | null>(null)
-const selectAdmissionBatch = ref<string | null>(null)
-const selectNativePlace = ref<string | null>(null)
-const selectHighSchool = ref<string | null>(null)
-const selectTotalExamScore = ref<string | null>(null)
-const selectForeignLanguage = ref<string | null>(null)
-const selectForeignScore = ref<string | null>(null)
-const selectHobbies = ref<string | null>(null)
-const selectOtherNotes = ref<string | null>(null)
-const selectExamId = ref<string | null>(null)
-const pageNo = ref<number>(1)
-const pageSize = ref<number>(10)
 const studentQuery = ref<StudentQuery>({
-  search: search.value,
-  grade: selectedGrade.value,
-  majorId: selectedMajor.value,
-  gender: selectGender.value,
-  nation: selectNation.value,
-  politicsStatus: selectPoliticsStatus.value,
-  postalCode: selectPostalCode.value,
-  classNo: selectClassNo.value,
-  dormitory: selectDormitory.value,
-  birthdate: selectBirthdate.value,
-  householdRegistration: selectHouseholdRegistration.value,
-  householdType: selectHouseholdType.value,
-  address: selectAddress.value,
-  examId: selectExamId.value,
-  admissionBatch: selectAdmissionBatch.value,
-  nativePlace: selectNativePlace.value,
-  highSchool: selectHighSchool.value,
-  totalExamScore: selectTotalExamScore.value,
-  foreignLanguage: selectForeignLanguage.value,
-  foreignScore: selectForeignScore.value,
-  hobbies: selectHobbies.value,
-  otherNotes: selectOtherNotes.value,
-  enabled: selectedEnabled.value,
-  pageNo: pageNo.value,
-  pageSize: pageSize.value
+  search: '' as string,
+  grade: null as string | null,
+  majorId: null as string | null,
+  gender: null as string | null,
+  nation: null as string | null,
+  politicsStatus: null as string | null,
+  postalCode: null as string | null,
+  classNo: null as string | null,
+  dormitory: null as string | null,
+  birthdate: null as string | null,
+  householdRegistration: null as string | null,
+  householdType: null as string | null,
+  address: null as string | null,
+  examId: null as string | null,
+  admissionBatch: null as string | null,
+  nativePlace: null as string | null,
+  highSchool: null as string | null,
+  totalExamScore: null as string | null,
+  foreignLanguage: null as string | null,
+  foreignScore: null as string | null,
+  hobbies: null as string | null,
+  otherNotes: null as string | null,
+  enabled: true as boolean,
+  pageNo: 1 as number,
+  pageSize: 10 as number
 })
 
 // 检验用户权限用的
@@ -286,13 +262,13 @@ onMounted(() => {
 
     <section class="menu">
       <span class="w-20">
-        <MajorSelect v-model="selectedMajor" variant="underlined" />
+        <MajorSelect v-model="studentQuery.majorId" variant="underlined" />
       </span>
       <span class="w-20">
-        <GradeSelect v-model="selectedGrade" variant="underlined" />
+        <GradeSelect v-model="studentQuery.grade" variant="underlined" />
       </span>
       <span class="w-20">
-        <EnabledSelect v-model="selectedEnabled" label="学生状态" variant="underlined" />
+        <EnabledSelect v-model="studentQuery.enabled" label="学生状态" variant="underlined" />
       </span>
 
       <span class="w-20 text-indigo">

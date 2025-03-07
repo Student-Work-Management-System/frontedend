@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const model = defineModel<string>()
+const model = defineModel<boolean>()
 const props = withDefaults(
   defineProps<{
     label: string

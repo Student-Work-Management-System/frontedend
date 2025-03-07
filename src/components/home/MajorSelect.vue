@@ -4,7 +4,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 
-const model = defineModel<string>()
+const model = defineModel<string | null>()
 const props = withDefaults(
   defineProps<{
     label: string
