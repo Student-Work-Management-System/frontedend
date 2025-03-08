@@ -4,6 +4,202 @@ export interface BaseHeader extends Student {
   [key: string]: any
 }
 
+export const tableHeaders = [
+  {
+    label: '身份证号',
+    key: 'idNumber',
+    align: "center",
+    width: 200
+  },
+  {
+    label: '性别',
+    key: 'gender',
+    align: "center",
+    width: 50
+  },
+  {
+    label: '民族',
+    key: 'nation',
+    align: "center",
+    width: 100
+  },
+  {
+    label: '生日',
+    key: 'birthdate',
+    align: "center",
+    width: 125
+  },
+  {
+    label: '手机号',
+    key: 'phone',
+    align: "center",
+    width: 120
+  },
+  {
+    label: "邮箱",
+    key: "email",
+    align: "center",
+    width: 200
+  },
+  {
+    label: '年级',
+    key: 'grade',
+    align: "center",
+    width: 75
+  },
+  {
+    label: '专业',
+    key: 'majorName',
+    align: "center",
+    width: 150
+  },
+  {
+    label: '班级',
+    key: 'classNo',
+    align: "center",
+    width: 75
+  },
+  {
+    label: '宿舍',
+    key: 'dormitory',
+    align: "center",
+    width: 150
+  },
+  {
+    label: '政治面貌',
+    key: 'politicsStatus',
+    align: "center",
+    width: 125
+  },
+  {
+    label: '籍贯',
+    key: 'nativePlace',
+    align: "center",
+    width: 125
+  },
+  {
+    label: '家庭住址',
+    key: 'address',
+    align: "center",
+    width: 200
+  },
+  {
+    label: '户籍所在地',
+    key: 'householdRegistration',
+    align: "center",
+    width: 150
+  },
+  {
+    label: '户口类型',
+    key: 'householdType',
+    align: "center",
+    width: 125
+  },
+  {
+    label: '邮政编码',
+    key: 'postalCode',
+    align: "center",
+    width: 100
+  },
+  {
+    label: '班主任姓名',
+    key: 'headTeacherName',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '班主任联系方式',
+    key: 'headTeacherPhone',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '父亲姓名',
+    key: 'fatherName',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '父亲联系方式',
+    key: 'fatherPhone',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '父亲职业',
+    key: 'fatherOccupation',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '母亲姓名',
+    key: 'motherName',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '母亲联系方式',
+    key: 'motherPhone',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '母亲职业',
+    key: 'motherOccupation',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '监护人姓名',
+    key: 'guardian',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '监护人联系方式',
+    key: 'guardianPhone',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '中学名称',
+    key: 'highSchool',
+    align: "center",
+    width: 200
+  },
+  {
+    label: '考生号',
+    key: 'examId',
+    align: "center",
+    width: 200
+  },
+  {
+    label: '录取批次',
+    key: 'admissionBatch',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '高考总分',
+    key: 'totalExamScore',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '外语语种',
+    key: 'foreignLanguage',
+    align: "center",
+    width: 120
+  },
+  {
+    label: '外语分数',
+    key: "foreignScore",
+    align: "center",
+    width: 120,
+  }
+]
+
+
 export const baseheaders: TableHeader[] = [
   {
     type: 'string',

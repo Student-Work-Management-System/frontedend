@@ -16,6 +16,7 @@
     "@kyvg/vue3-notification": "^3.4.1",
     "@visactor/vchart": "^1.13.6",
     "axios": "^1.8.2",
+    "element-plus": "^2.9.6",
     "moment": "^2.30.1",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
@@ -40,7 +41,8 @@
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.0.3",
     "typescript": "~5.4.0",
-    "unplugin-vue-components": "^0.26.0",
+    "unplugin-auto-import": "^19.1.1",
+    "unplugin-vue-components": "^28.4.1",
     "vite": "^5.1.5",
     "vue-tsc": "^2.0.6"
   }

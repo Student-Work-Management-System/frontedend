@@ -10,87 +10,8 @@ import { useUserStore } from '@/stores/user'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import EnabledSelect from '@/components/home/EnabledSelect.vue'
+import { tableHeaders } from '@/misc/table/base-import-header'
 
-const headers = [
-  {
-    title: '学号',
-    align: 'start',
-    sortable: true,
-    key: 'studentId'
-  },
-  {
-    title: '姓名',
-    align: 'start',
-    sortable: false,
-    key: 'name'
-  },
-  {
-    title: '性别',
-    align: 'start',
-    sortable: false,
-    key: 'gender'
-  },
-  {
-    title: '专业',
-    align: 'start',
-    sortable: false,
-    key: 'majorName'
-  },
-  {
-    title: '年级',
-    align: 'start',
-    sortable: true,
-    key: 'grade'
-  },
-  {
-    title: '班级',
-    align: 'start',
-    sortable: true,
-    key: 'classNo'
-  },
-  {
-    title: '身份证号',
-    align: 'start',
-    sortable: false,
-    key: 'idNumber'
-  },
-  {
-    title: '民族',
-    align: 'start',
-    sortable: false,
-    key: 'nation'
-  },
-  {
-    title: '籍贯',
-    align: 'start',
-    sortable: false,
-    key: 'nativePlace'
-  },
-  {
-    title: '政治面貌',
-    align: 'start',
-    sortable: false,
-    key: 'politicsStatus'
-  },
-  {
-    title: '手机号',
-    align: 'start',
-    sortable: false,
-    key: 'phone'
-  },
-  {
-    title: '邮政编码',
-    align: 'start',
-    sortable: false,
-    key: 'postalCode'
-  },
-  {
-    title: '操作',
-    align: 'start',
-    sortable: false,
-    key: 'operations'
-  }
-]
 const loading = ref(false)
 const selected = ref<any[]>([])
 const search = ref('')
@@ -163,7 +84,7 @@ const studentQuery = ref<StudentQuery>({
   otherNotes: null as string | null,
   enabled: true as boolean,
   pageNo: 1 as number,
-  pageSize: 10 as number
+  pageSize: 25 as number
 })
 
 // 检验用户权限用的
@@ -190,6 +111,7 @@ const fetchStudentLogic = async () => {
   deleteDialog.value = false
   loading.value = false
 }
+
 onMounted(fetchStudentLogic)
 
 const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
@@ -235,6 +157,15 @@ const recoverStudent = async (id: string) => {
   return
 }
 
+const editInfo = (item: Student) => {
+  modifyInfo.value = { ...item }
+  editDialog.value = true
+}
+
+const handleSelectionChange = (val: any) => {
+  selected.value = val
+}
+
 // js 写响应式
 const tableHeight = ref(0)
 const tableDom = ref<HTMLElement | null>(null)
@@ -258,9 +189,7 @@ onMounted(() => {
       v-model:length="selected.length"
       @delete="deleteStudentLogic"
     />
-
     <EditBaseInfoForm v-model="editDialog" v-model:info="modifyInfo" @on-closed="afterStudent" />
-
     <section class="menu">
       <span class="w-20">
         <MajorSelect v-model="studentQuery.majorId" variant="underlined" />
@@ -301,49 +230,87 @@ onMounted(() => {
         删除
       </v-btn>
     </section>
-
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table-server
-          v-model="selected"
-          :headers="headers"
+        <el-table
+          :data="data"
+          row-key="studentId"
           :height="tableHeight"
-          :items="data"
-          :items-length="dataLength"
-          :loading="loading"
-          v-model:page="studentQuery.pageNo"
-          v-model:items-per-page="studentQuery.pageSize"
-          @update:options="loadItems"
-          show-select
-          return-object
+          style="width: 100%; table-layout: auto"
+          v-model:selected-rows="selected"
+          @selection-change="handleSelectionChange"
+          :cell-style="{
+            padding: '5px',
+            fontSize: '14px',
+            color: 'black'
+          }"
+          size="small"
+          border
+          stripe
         >
-          <template v-slot:item.operations="{ item }">
-            <div>
-              <v-btn
+          <el-table-column type="selection" align="center" fixed="left" show-overflow-tooltip />
+          <el-table-column
+            prop="studentId"
+            align="center"
+            label="学号"
+            fixed="left"
+            width="120"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="name"
+            align="center"
+            label="姓名"
+            fixed="left"
+            width="120"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            v-for="header in tableHeaders"
+            :key="header.key"
+            :prop="header.key"
+            :label="header.label"
+            :align="header.align"
+            :width="header.width"
+            :min-width="'fit-content'"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="otherNotes"
+            align="center"
+            label="备注"
+            fixed="right"
+            width="150"
+            show-overflow-tooltip
+          />
+          <el-table-column label="操作" align="center" fixed="right" width="150">
+            <template #default="{ row }">
+              <el-button
                 v-if="has('student:delete')"
-                prepend-icon="mdi-pencil"
-                color="indigo"
-                class="mr-2"
-                @click="
-                  () => {
-                    modifyInfo = { ...item }
-                    editDialog = true
-                  }
-                "
-              >
-                编辑
-              </v-btn>
-              <v-btn
-                v-if="has('student:update') && !item.enabled"
-                prepend-icon="mdi-refresh"
-                color="warning"
-                variant="plain"
-                @click="recoverStudent(item.studentId)"
-                >恢复删除</v-btn
-              >
-            </div>
-          </template>
-        </v-data-table-server>
+                icon="el-icon-edit"
+                type="primary"
+                size="small"
+                circle
+                @click="editInfo(row)"
+              />
+              <el-button
+                v-if="has('student:delete')"
+                icon="el-icon-user"
+                type="success"
+                size="small"
+                circle
+              />
+              <el-button
+                v-if="has('student:update') && !row.enabled"
+                icon="el-icon-refresh"
+                type="warning"
+                size="small"
+                circle
+                @click="recoverStudent(row.studentId)"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
       </v-card>
     </section>
   </v-card>

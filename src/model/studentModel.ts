@@ -25,8 +25,10 @@ export interface Student {
     grade: string
     // 班号
     classNo: string
-    // 班主任ID
-    headTeacherId: string
+    // 班主任工号
+    headTeacherUsername: string
+    headTeacherName: string
+    headTeacherPhone: string
     // 政治面貌
     politicsStatus: string
     // 出生日期
@@ -69,12 +71,11 @@ export interface Student {
     hobbies: string
     // 宿舍
     dormitory: string
-    // 其他标签备注
+    // 备注
     otherNotes: string
     // 是否启用
     enabled: boolean
 }
-
 export interface StudentQuery {
     // 学号、姓名、身份证、邮箱、手机号、父母姓名、父母手机号、监护人姓名、监护人电话
     search: string

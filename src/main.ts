@@ -12,6 +12,9 @@ import { pl, zhHans } from 'vuetify/locale'
 import * as components from 'vuetify/components'
 import * as labComponents from "vuetify/labs/components";
 import * as directives from 'vuetify/directives'
+// element-plus
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 // notification
 import Notifications from '@kyvg/vue3-notification'
 import VueExcelEditor from 'vue3-excel-editor'
@@ -39,6 +42,7 @@ app.use(router)
 app.use(vuetify)
 app.use(Vue3Spline)
 app.use(Notifications)
+app.use(ElementPlus)
 app.use(VueExcelEditor)
 
 app.mount('#app')

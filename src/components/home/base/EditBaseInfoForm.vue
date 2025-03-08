@@ -148,7 +148,7 @@ const updateInfoLogic = async () => {
                 clearable
               />
               <v-text-field
-                v-model="info!.name"
+                v-model="info!.email"
                 label="邮箱"
                 class="text-indigo"
                 color="indigo"
