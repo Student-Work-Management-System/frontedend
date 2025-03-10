@@ -14,7 +14,7 @@ const loading = ref(false)
 const form = ref(false)
 const updateInfoLogic = async () => {
   loading.value = true
-  let date = moment(new Date(info.value!.birthdate)).format('YYYY-MM-DD')
+  let date = moment(new Date(info.value!.birthdate!!)).format('YYYY-MM-DD')
   info.value!.birthdate = date
   const { data: result } = await apiUpdateStudent(info.value as Student)
   if (result.code !== 200) {

@@ -8,6 +8,7 @@ import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList } from '@/api/major'
 import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/user'
+import { type Student } from '@/model/studentModel'
 
 const excel = ref<File[]>()
 const jsonData = ref<BaseHeader[]>([])
@@ -15,25 +16,60 @@ const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const uploadDialog = ref()
 const loading = ref(false)
 const nilData: BaseHeader = {
-  studentId: '',
-  name: '',
-  idNumber: '',
-  gender: '',
-  nativePlace: '',
-  postalCode: '',
-  politicsStatus: '',
-  phone: '',
-  nation: '',
-  majorName: '',
-  majorId: '',
-  grade: '',
-  classNo: '',
+  studentId: '' as string | null,
+  name: '' as string | null,
+  idNumber: '' as string | null,
+  gender: '' as string | null,
+  nativePlace: '' as string | null,
+  postalCode: '' as string | null,
+  politicsStatus: '' as string | null,
+  phone: '' as string | null,
+  nation: '' as string | null,
+  majorName: '' as string | null,
+  majorId: '' as string | null,
+  grade: '' as string | null,
+  classNo: '' as string | null,
+  email: '' as string | null,
+  headTeacherUsername: '' as string | null,
+  headTeacherName: '' as string | null,
+  headTeacherPhone: '' as string | null,
+  birthdate: '' as string | null,
+  householdRegistration: '' as string | null,
+  householdType: '' as string | null,
+  address: '' as string | null,
+  fatherName: '' as string | null,
+  fatherPhone: '' as string | null,
+  fatherOccupation: '' as string | null,
+  motherName: '' as string | null,
+  motherPhone: '' as string | null,
+  motherOccupation: '' as string | null,
+  guardian: '' as string | null,
+  guardianPhone: '' as string | null,
+  highSchool: '' as string | null,
+  examId: '' as string | null,
+  admissionBatch: '' as string | null,
+  totalExamScore: '' as string | null,
+  foreignLanguage: '' as string | null,
+  foreignScore: '' as string | null,
+  hobbies: '' as string | null,
+  dormitory: '' as string | null,
+  otherNotes: '' as string | null,
   enabled: true,
+  isCommunistYouthLeagueMember: null as boolean | null,
+  joiningTime: '' as string | null,
+  isStudentLoans: null as boolean | null,
+  height: '' as string | null,
+  weight: '' as string | null,
+  religiousBeliefs: '' as string | null,
+  location: '' as string | null,
+  familyPopulation: '' as string | null,
+  isOnlyChild: null as boolean | null,
+  familyMembers: '' as string | null
 }
 
 const analyzeHandler = async () => {
   loading.value = true
-  const ret = await AnalyzeFileToTable(file.value as File, baseheaders, notify) as BaseHeader[]
+  const ret = (await AnalyzeFileToTable(file.value as File, baseheaders, notify)) as BaseHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -50,8 +86,10 @@ const uploadLogic = async () => {
   loading.value = true
   // valid data format before upload
   if (
-    !jsonData.value.
-      reduce((valid, student) => (!valid ? false : HeaderValidChecker(student, baseheaders)), true)
+    !jsonData.value.reduce(
+      (valid, student) => (!valid ? false : HeaderValidChecker(student, baseheaders)),
+      true
+    )
   ) {
     notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
     loading.value = false
@@ -65,6 +103,7 @@ const uploadLogic = async () => {
     loading.value = false
     return
   }
+
   const majorMap = result.data.reduce((majorMap, major) => {
     majorMap.set(major.majorName, major.majorId)
     return majorMap
@@ -92,13 +131,26 @@ const uploadLogic = async () => {
     <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
     <section class="menu">
       <span class="file text-indigo">
-        <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
+        <v-file-input
+          v-model="excel"
+          color="indigo"
+          variant="underlined"
+          hide-details
+          free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          label="Excel 文件选择"></v-file-input>
+          label="Excel 文件选择"
+        ></v-file-input>
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-      <v-btn v-if="has('student:insert')" prepend-icon="mdi-upload" color="primary"
-        @click="uploadDialog = true">上传数据</v-btn>
+      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
+        >解析文件</v-btn
+      >
+      <v-btn
+        v-if="has('student:insert')"
+        prepend-icon="mdi-upload"
+        color="primary"
+        @click="uploadDialog = true"
+        >上传数据</v-btn
+      >
       <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
@@ -115,7 +167,7 @@ const uploadLogic = async () => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

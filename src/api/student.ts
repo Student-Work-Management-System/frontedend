@@ -6,7 +6,7 @@ import { type Student, type StudentQuery } from '@/model/studentModel'
 export async function apiAddStudentBaseInfo(
   students: Student[]
 ): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student/adds', { students })
+  return http.post('/student/adds', students)
 }
 
 export function apiGetStudentList(query: StudentQuery): Promise<AxiosResponse<Result<RecordsPage<Student>>>> {
