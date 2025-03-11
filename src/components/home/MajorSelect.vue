@@ -5,21 +5,17 @@ import { ref } from 'vue'
 import { onMounted } from 'vue'
 
 const model = defineModel<string | null>()
-const props = withDefaults(
-  defineProps<{
-    label: string
-    variant?:
-      | 'filled'
-      | 'underlined'
-      | 'outlined'
-      | 'plain'
-      | 'solo'
-      | 'solo-inverted'
-      | 'solo-filled'
-      | undefined
-  }>(),
-  { label: '专业' }
-)
+const props = defineProps<{
+  variant?:
+    | 'filled'
+    | 'underlined'
+    | 'outlined'
+    | 'plain'
+    | 'solo'
+    | 'solo-inverted'
+    | 'solo-filled'
+    | undefined
+}>()
 const items = ref<Major[]>([])
 const loading = ref(true)
 const getMajorListLogic = async () => {
@@ -43,13 +39,14 @@ onMounted(() => {
     :loading="loading"
     class="text-indigo"
     color="indigo"
-    :label="props.label"
+    label="专业"
     :items="items"
     item-title="majorName"
     item-value="majorId"
     :variant="props.variant"
     hide-details
     clearable
+    density="compact"
   >
     <template v-slot:prepend>
       <slot></slot>

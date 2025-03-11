@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-
 const model = defineModel<string | null>()
 const props = defineProps<{
+  label: string
   variant?:
     | 'filled'
     | 'underlined'
@@ -12,19 +11,15 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  items: string[]
 }>()
-const items = ref<string[]>([])
-const since = 2017
-const nowYear = new Date().getFullYear()
-items.value = Array.from({ length: nowYear - since + 1 }, (_, index) => (since + index).toString())
-items.value = items.value.reverse()
 </script>
 <template>
   <v-select
     v-model="model"
     class="text-indigo"
     color="indigo"
-    label="年级"
+    :label="props.label"
     :items="items"
     :variant="props.variant"
     hide-details

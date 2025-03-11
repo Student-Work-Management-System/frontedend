@@ -54,7 +54,6 @@ const nilData: BaseHeader = {
   hobbies: '' as string | null,
   dormitory: '' as string | null,
   otherNotes: '' as string | null,
-  enabled: true,
   isCommunistYouthLeagueMember: null as boolean | null,
   joiningTime: '' as string | null,
   isStudentLoans: null as boolean | null,
@@ -64,7 +63,8 @@ const nilData: BaseHeader = {
   location: '' as string | null,
   familyPopulation: '' as string | null,
   isOnlyChild: null as boolean | null,
-  familyMembers: '' as string | null
+  familyMembers: '' as string | null,
+  enabled: true
 }
 
 const analyzeHandler = async () => {

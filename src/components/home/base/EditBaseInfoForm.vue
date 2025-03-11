@@ -24,6 +24,7 @@ const updateInfoLogic = async () => {
   }
   notify({ type: 'success', title: '成功', text: '学生信息修改成功！' })
   loading.value = false
+  dialog.value = false
   emits('onClosed')
 }
 </script>
@@ -85,7 +86,7 @@ const updateInfoLogic = async () => {
                 :counter="18"
                 :rules="[
                   () => !!info!.idNumber || '该选项必填！',
-                  () => info!.idNumber.length === 18 || '身份证号不足18位'
+                  () => info!.idNumber!!.length === 18 || '身份证号不足18位'
                 ]"
               >
                 <template v-slot:prepend>
@@ -133,7 +134,7 @@ const updateInfoLogic = async () => {
                 :counter="11"
                 :rules="[
                   () => !!info!.phone || '该选项必填！',
-                  () => info!.phone.length === 11 || '手机号不足11位'
+                  () => info!!.phone!!.length === 11 || '手机号不足11位'
                 ]"
               >
                 <template v-slot:prepend>
