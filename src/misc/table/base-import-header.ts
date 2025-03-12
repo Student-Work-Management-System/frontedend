@@ -314,7 +314,21 @@ export const tableHeaders = [
     align: "center",
     showOverflowTooltip: true,
     width: 120
-  }
+  },
+  {
+    label: '个人兴趣爱好特长',
+    key: 'hobbies',
+    align: "center",
+    showOverflowTooltip: true,
+    width: 200
+  },
+  {
+    label: '备注',
+    key: 'otherNotes',
+    align: "center",
+    showOverflowTooltip: true,
+    width: 200
+  },
 ]
 
 export const baseheaders: TableHeader[] = [
@@ -456,13 +470,6 @@ export const baseheaders: TableHeader[] = [
     label: '政治面貌',
     require: true,
     options: ['群众', '共青团员', '中共党员(预备)', '中共党员']
-  },
-  {
-    type: 'select',
-    field: 'isCommunistYouthLeagueMember',
-    label: '是否共青团员',
-    require: false,
-    options: ['是', '否']
   },
   {
     type: 'date',
@@ -653,6 +660,20 @@ export const baseheaders: TableHeader[] = [
     type: 'string',
     field: 'religiousBeliefs',
     label: '宗教信仰',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'hobbies',
+    label: '个人兴趣爱好特长',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'otherNotes',
+    label: '备注',
     require: false,
     options: null
   }

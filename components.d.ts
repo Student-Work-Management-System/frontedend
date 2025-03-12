@@ -57,6 +57,7 @@ declare module 'vue' {
     SearchInput: typeof import('./src/components/home/SearchInput.vue')['default']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
     SemesterSelect: typeof import('./src/components/home/SemesterSelect.vue')['default']
+    StatusSelect: typeof import('./src/components/home/StatusSelect.vue')['default']
     TrueOrFalseSelect: typeof import('./src/components/home/TrueOrFalseSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
   }

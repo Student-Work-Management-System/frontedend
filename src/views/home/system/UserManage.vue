@@ -8,7 +8,6 @@ import AddUserForm from '@/components/home/system/AddUserForm.vue'
 import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
 import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
-import EnabledSelect from '@/components/home/EnabledSelect.vue'
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 
@@ -18,43 +17,43 @@ const headers: readonly {
   readonly sortable: boolean
   readonly key: string
 }[] = [
-    {
-      title: '用户ID',
-      align: 'start',
-      sortable: true,
-      key: 'uid'
-    },
-    {
-      title: '用户名',
-      align: 'start',
-      sortable: true,
-      key: 'username'
-    },
-    {
-      title: '真实姓名',
-      align: 'start',
-      sortable: false,
-      key: 'realName'
-    },
-    {
-      title: '邮箱',
-      align: 'start',
-      sortable: false,
-      key: 'email'
-    },
-    {
-      title: '用户角色',
-      align: 'start',
-      sortable: false,
-      key: 'roles'
-    },
-    {
-      title: '操作',
-      align: 'center',
-      key: 'operations',
-      sortable: false
-    }
-  ]
+  {
+    title: '用户ID',
+    align: 'start',
+    sortable: true,
+    key: 'uid'
+  },
+  {
+    title: '用户名',
+    align: 'start',
+    sortable: true,
+    key: 'username'
+  },
+  {
+    title: '真实姓名',
+    align: 'start',
+    sortable: false,
+    key: 'realName'
+  },
+  {
+    title: '邮箱',
+    align: 'start',
+    sortable: false,
+    key: 'email'
+  },
+  {
+    title: '用户角色',
+    align: 'start',
+    sortable: false,
+    key: 'roles'
+  },
+  {
+    title: '操作',
+    align: 'center',
+    key: 'operations',
+    sortable: false
+  }
+]
 
 const selected = ref<UserRecord[]>([])
 const data = ref<any>([])
@@ -117,16 +116,18 @@ const editUserRoleBtnHandler = () => {
 
 const deleteUserLogic = async () => {
   loading.value = true
-  let reqs = selected.value.map(u => (async (u) => {
-    const uid = u.uid
-    const { data: result } = await apiDeleteUser(uid)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `用户:${uid} 角色删除成功！` })
-  })(u))
+  let reqs = selected.value.map((u) =>
+    (async (u) => {
+      const uid = u.uid
+      const { data: result } = await apiDeleteUser(uid)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `用户:${uid} 角色删除成功！` })
+    })(u)
+  )
 
   await Promise.all(reqs)
   afterUser()
@@ -151,7 +152,7 @@ const recoverUser = async (id: string) => {
     loading.value = false
     return
   }
-  notify({ type: 'success', title: '成功', text: "恢复成功！" })
+  notify({ type: 'success', title: '成功', text: '恢复成功！' })
   loading.value = false
   afterUser()
   return
@@ -164,8 +165,8 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.80 - padding
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
+  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
 }
 onMounted(() => {
   fixHeight()
@@ -175,48 +176,119 @@ onMounted(() => {
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddUserForm v-model="addUserFormDialog" @on-closed="afterUser" />
-    <EditUserRoleForm v-model="editUserRoleFormDialog" :selected-users="selectedUids" @on-closed="afterUser" />
+    <EditUserRoleForm
+      v-model="editUserRoleFormDialog"
+      :selected-users="selectedUids"
+      @on-closed="afterUser"
+    />
     <EditUserInfoForm v-model="editUserInfoFormDialog" :info="editInfo" @on-closed="afterUser" />
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteUserLogic" />
+    <DeleteDialog
+      v-model="deleteDialog"
+      v-model:length="selected.length"
+      @delete="deleteUserLogic"
+    />
     <section class="menu">
       <span class="w-20">
-        <EnabledSelect v-model="selectedEnabled" label="账户状态" variant="underlined" />
+        <TrueOrFalseSelect
+          v-model="selectedEnabled"
+          label="账户状态"
+          variant="underlined"
+          :items="[
+            { key: '正常', value: true },
+            { key: '已删除', value: false }
+          ]"
+        />
       </span>
 
       <span class="w-20 text-indigo">
-        <v-text-field v-model="search" @update:modelValue="fetchUserLogic" :loading="loading" :counter="15" clearable
-          label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+        <v-text-field
+          v-model="search"
+          @update:modelValue="fetchUserLogic"
+          :loading="loading"
+          :counter="15"
+          clearable
+          label="搜索"
+          prepend-inner-icon="mdi-magnify"
+          variant="underlined"
+          hide-details
+        >
           <v-tooltip activator="parent" location="top">以用户名或真实姓名搜索</v-tooltip>
         </v-text-field>
       </span>
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic">刷新</v-btn>
-        <v-btn v-if="has('user:insert')" prepend-icon="mdi-plus-circle" color="primary"
-          @click="addUserFormDialog = true">添加</v-btn>
-        <v-btn v-if="has('user_role:insert') && has('user_role:delete')" prepend-icon="mdi-card-multiple" color="indigo"
-          @click="editUserRoleBtnHandler">设置角色</v-btn>
-        <v-btn v-if="has('user:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic"
+          >刷新</v-btn
+        >
+        <v-btn
+          v-if="has('user:insert')"
+          prepend-icon="mdi-plus-circle"
+          color="primary"
+          @click="addUserFormDialog = true"
+          >添加</v-btn
+        >
+        <v-btn
+          v-if="has('user_role:insert') && has('user_role:delete')"
+          prepend-icon="mdi-card-multiple"
+          color="indigo"
+          @click="editUserRoleBtnHandler"
+          >设置角色</v-btn
+        >
+        <v-btn
+          v-if="has('user:delete')"
+          prepend-icon="mdi-delete"
+          color="error"
+          @click="deleteDialog = true"
+          >删除</v-btn
+        >
       </span>
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
-          :page="pageOptions.pageNum" :items-per-page="pageOptions.pageSize" show-select return-object>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :height="tableHeight"
+          :items="data"
+          :loading="loading"
+          :page="pageOptions.pageNum"
+          :items-per-page="pageOptions.pageSize"
+          show-select
+          return-object
+        >
           <template v-slot:item.roles="{ item }">
-            <v-chip class="mr-1" color="indigo" :key="index" v-for="(r, index) in (item as UserRecord).roles">
+            <v-chip
+              class="mr-1"
+              color="indigo"
+              :key="index"
+              v-for="(r, index) in (item as UserRecord).roles"
+            >
               {{ r.roleName }}
             </v-chip>
           </template>
 
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn v-if="has('user:update:all')" prepend-icon="mdi-pencil" color="indigo" class="mr-2" @click="() => {
-                editInfo = item as UserRecord
-                editUserInfoFormDialog = true
-              }
-                ">编辑</v-btn>
-              <v-btn v-if="has('user:update:all') && !item.enabled" prepend-icon="mdi-refresh" color="warning"
-                variant="plain" @click="recoverUser(item.uid)">恢复删除</v-btn>
+              <v-btn
+                v-if="has('user:update:all')"
+                prepend-icon="mdi-pencil"
+                color="indigo"
+                class="mr-2"
+                @click="
+                  () => {
+                    editInfo = item as UserRecord
+                    editUserInfoFormDialog = true
+                  }
+                "
+                >编辑</v-btn
+              >
+              <v-btn
+                v-if="has('user:update:all') && !item.enabled"
+                prepend-icon="mdi-refresh"
+                color="warning"
+                variant="plain"
+                @click="recoverUser(item.uid)"
+                >恢复删除</v-btn
+              >
             </div>
           </template>
         </v-data-table>
@@ -237,7 +309,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu span>* {
+.menu span > * {
   margin-right: 0.5rem;
 }
 

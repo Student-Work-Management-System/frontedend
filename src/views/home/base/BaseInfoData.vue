@@ -4,8 +4,8 @@ import { apiGetStudentList, apiDeleteStudent, apiRecoverDeleteStudent } from '@/
 import { type Student, type StudentQuery } from '@/model/studentModel'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
-import SelectMenu from './components/SelectMenu.vue'
-import BaseInfoTable from './components/BaseInfoTable.vue'
+import TableSelectMenu from './tableComponents/TableSelectMenu.vue'
+import BaseInfoTable from './tableComponents/BaseInfoTable.vue'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 
@@ -56,7 +56,6 @@ const modifyInfo = ref<Student>({
   dormitory: '',
   otherNotes: '',
   enabled: true,
-  isCommunistYouthLeagueMember: false,
   joiningTime: '',
   isStudentLoans: false,
   height: '',
@@ -73,13 +72,12 @@ const studentQuery = ref<StudentQuery>({
   search: '' as string,
   grade: null as string | null,
   majorId: null as string | null,
+  statusId: '4' as string | null,
   gender: null as string | null,
   nation: null as string | null,
   politicsStatus: null as string | null,
-  postalCode: null as string | null,
   classNo: null as string | null,
   dormitory: null as string | null,
-  birthdate: null as string | null,
   householdRegistration: null as string | null,
   householdType: null as string | null,
   address: null as string | null,
@@ -95,16 +93,12 @@ const studentQuery = ref<StudentQuery>({
   enabled: true as boolean,
   pageNo: 1 as number,
   pageSize: 25 as number,
-  isCommunistYouthLeagueMember: null as boolean | null,
   joiningTime: null as string | null,
   isStudentLoans: null as boolean | null,
-  height: null as string | null,
-  weight: null as string | null,
   religiousBeliefs: null as string | null,
   location: null as string | null,
   familyPopulation: null as string | null,
-  isOnlyChild: null as boolean | null,
-  familyMembers: null as string | null
+  isOnlyChild: null as boolean | null
 })
 
 const fetchStudentLogic = async () => {
@@ -122,8 +116,6 @@ const fetchStudentLogic = async () => {
   selected.value = []
   loading.value = false
 }
-
-onMounted(fetchStudentLogic)
 
 const deleteStudentLogic = async () => {
   loading.value = true
@@ -169,6 +161,14 @@ const editStudent = (val: Student) => {
 const deleteStudent = () => {
   deleteDialog.value = true
 }
+
+const exportData = () => {
+  console.log(
+    `exportData, 使用数据大小: ${data.value.length}, 头号数据: ${JSON.stringify(data.value[0])}`
+  )
+}
+
+onMounted(fetchStudentLogic)
 </script>
 
 <template>
@@ -178,13 +178,14 @@ const deleteStudent = () => {
     <!-- 删除弹窗 -->
     <DeleteDialog v-model="deleteDialog" :length="selected.length" @delete="deleteStudentLogic" />
     <!-- 查询条件 -->
-    <SelectMenu
+    <TableSelectMenu
       :loading="loading"
       :selected-length="selected.length"
       v-model:student-query="studentQuery"
       @refresh="fetchStudentLogic"
       @after-student="fetchStudentLogic"
       @delete-button-click="deleteStudent"
+      @export-data="exportData"
     />
     <!-- 表格 -->
     <BaseInfoTable

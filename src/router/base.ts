@@ -21,12 +21,23 @@ export default {
       }
     },
     {
+      path: '/base/status',
+      name: 'base-status',
+      component: () => import('@/views/home/base/BaseInfoStatus.vue'),
+      meta: {
+        icon: 'mdi-chart-bar',
+        title: '基本信息统计',
+        hasPage: true,
+        auth: 'student:select'
+      }
+    },
+    {
       path: '/base/manage',
       name: 'base-manage',
       component: () => import('@/views/home/base/BaseInfoData.vue'),
       meta: {
-        icon: 'mdi-chart-bar',
-        title: '基本信息统计',
+        icon: 'mdi-cog',
+        title: '基本信息管理',
         hasPage: true,
         auth: 'student:update'
       }

@@ -31,8 +31,6 @@ export interface Student {
     headTeacherPhone: string | null
     // 政治面貌
     politicsStatus: string | null
-    // 是否共青团员
-    isCommunistYouthLeagueMember: boolean | null
     // 入团时间
     joiningTime: string | null
     // 是否助学贷款
@@ -96,6 +94,7 @@ export interface Student {
     // 是否启用
     enabled: boolean
 }
+
 export interface StudentQuery {
     // 学号、姓名、身份证、邮箱、手机号、父母姓名、父母手机号、监护人姓名、监护人电话
     search: string
@@ -103,6 +102,8 @@ export interface StudentQuery {
     gender: string | null
     // 籍贯
     nativePlace: string | null
+    // 学籍id
+    statusId: string | null
     // 专业id
     majorId: string | null
     // 年级
@@ -111,16 +112,10 @@ export interface StudentQuery {
     nation: string | null
     // 政治面貌
     politicsStatus: string | null
-    // 是否共青团员
-    isCommunistYouthLeagueMember: boolean | null
     // 入团时间
     joiningTime: string | null
     // 是否助学贷款
     isStudentLoans: boolean | null
-    // 身高(cm)
-    height: string | null
-    // 体重(kg)
-    weight: string | null
     // 宗教信仰
     religiousBeliefs: string | null
     // 家庭所在省/市/区
@@ -129,16 +124,10 @@ export interface StudentQuery {
     familyPopulation: string | null
     // 是否独生子女
     isOnlyChild: boolean | null
-    // 家庭成员
-    familyMembers: string | null
-    // 邮政编码
-    postalCode: string | null
     // 班号
     classNo: string | null
     // 宿舍
     dormitory: string | null
-    // 出生日期
-    birthdate: string | null
     // 户籍所在地
     householdRegistration: string | null
     // 户口类型

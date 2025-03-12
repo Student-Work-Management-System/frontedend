@@ -69,6 +69,7 @@ const selectedRows = computed({
     <el-table
       :data="data"
       row-key="studentId"
+      height="calc(100% - 60px)"
       style="width: 100%; table-layout: auto"
       :selected-rows="selectedRows"
       @selection-change="handleSelectionChange"
@@ -157,8 +158,11 @@ const selectedRows = computed({
 
 <style scoped>
 .table-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .pagination {
