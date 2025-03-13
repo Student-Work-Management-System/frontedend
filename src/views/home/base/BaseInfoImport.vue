@@ -8,7 +8,6 @@ import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList } from '@/api/major'
 import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/user'
-import { type Student } from '@/model/studentModel'
 
 const excel = ref<File[]>()
 const jsonData = ref<BaseHeader[]>([])

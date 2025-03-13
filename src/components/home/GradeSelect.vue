@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { apiGetAllGrades } from '@/api/student'
+import { notify } from '@kyvg/vue3-notification'
+import type { Grade } from '@/model/studentModel'
 
 const model = defineModel<string | null>()
 const props = defineProps<{
@@ -13,19 +16,32 @@ const props = defineProps<{
     | 'solo-filled'
     | undefined
 }>()
-const items = ref<string[]>([])
-const since = 2017
-const nowYear = new Date().getFullYear()
-items.value = Array.from({ length: nowYear - since + 1 }, (_, index) => (since + index).toString())
-items.value = items.value.reverse()
+const items = ref<Grade[]>([])
+const loading = ref(true)
+const getGradeListLogic = async () => {
+  loading.value = true
+  const { data: result } = await apiGetAllGrades()
+  if (result.code !== 200) {
+    notify({ type: 'error', title: '错误', text: result.message })
+    return
+  }
+  items.value = result.data
+  loading.value = false
+}
+onMounted(() => {
+  getGradeListLogic()
+})
 </script>
 <template>
   <v-select
     v-model="model"
+    :loading="loading"
     class="text-indigo"
     color="indigo"
     label="年级"
     :items="items"
+    item-title="gradeName"
+    item-value="gradeId"
     :variant="props.variant"
     hide-details
     clearable

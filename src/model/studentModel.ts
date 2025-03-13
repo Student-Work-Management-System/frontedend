@@ -13,6 +13,8 @@ export interface Student {
     postalCode: string | null
     // 手机号
     phone: string | null
+    // 学历层次
+    degree: string | null
     // 邮箱
     email: string | null
     // 民族
@@ -21,8 +23,8 @@ export interface Student {
     majorId: string | null
     // 专业姓名
     majorName: string | null
-    // 年级（4位数字）
-    grade: string | null
+    // 年级Id
+    gradeId: string | null
     // 班号
     classNo: string | null
     // 班主任工号
@@ -89,6 +91,8 @@ export interface Student {
     hobbies: string | null
     // 宿舍
     dormitory: string | null
+    // 是否残疾
+    disability: boolean | null
     // 备注
     otherNotes: string | null
     // 是否启用
@@ -98,6 +102,8 @@ export interface Student {
 export interface StudentQuery {
     // 学号、姓名、身份证、邮箱、手机号、父母姓名、父母手机号、监护人姓名、监护人电话
     search: string
+    // 学历层次
+    degree: string | null
     // 性别
     gender: string | null
     // 籍贯
@@ -107,7 +113,7 @@ export interface StudentQuery {
     // 专业id
     majorId: string | null
     // 年级
-    grade: string | null
+    gradeId: string | null
     // 民族
     nation: string | null
     // 政治面貌
@@ -148,6 +154,8 @@ export interface StudentQuery {
     foreignScore: string | null
     // 个人兴趣爱好特长
     hobbies: string | null
+    // 是否残疾
+    disability: boolean
     // 其他标签备注
     otherNotes: string | null
     // 是否启用
@@ -156,3 +164,11 @@ export interface StudentQuery {
     pageNo: number
     pageSize: number
 }
+
+export interface Grade {
+    // 年级Id
+    gradeId: string
+    // 年级名称
+    gradeName: string
+}
+

@@ -49,8 +49,8 @@ const exportData = () => {
             variant="underlined"
           />
           <GradeSelect
-            :model-value="studentQuery.grade"
-            @update:model-value="(v) => updateQuery('grade', v)"
+            :model-value="studentQuery.gradeId"
+            @update:model-value="(v) => updateQuery('gradeId', v)"
             label="年级"
             variant="underlined"
           />
@@ -285,11 +285,31 @@ const exportData = () => {
             hide-details
             clearable
           />
+          <TrueOrFalseSelect
+            :model-value="studentQuery.degree as string"
+            @update:model-value="(v) => updateQuery('degree', v)"
+            label="学历"
+            variant="underlined"
+            :items="[
+              { key: '本科', value: '0' },
+              { key: '研究生', value: '1' }
+            ]"
+          />
           <StatusSelect
             :model-value="studentQuery.statusId"
             @update:model-value="(v) => updateQuery('statusId', v)"
             label="学籍状态"
             variant="underlined"
+          />
+          <TrueOrFalseSelect
+            :model-value="studentQuery.disability"
+            @update:model-value="(v) => updateQuery('disability', v)"
+            label="是否残疾"
+            variant="underlined"
+            :items="[
+              { key: '是', value: true },
+              { key: '否', value: false }
+            ]"
           />
           <TrueOrFalseSelect
             :model-value="studentQuery.enabled"

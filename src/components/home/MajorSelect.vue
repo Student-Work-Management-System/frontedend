@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { type Major, apiGetMajorList } from '@/api/major'
 import { notify } from '@kyvg/vue3-notification'
-import { ref } from 'vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const model = defineModel<string | null>()
 const props = defineProps<{

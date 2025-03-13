@@ -22,6 +22,7 @@ declare module 'vue' {
     CompetitionStudentAddForm: typeof import('./src/components/home/competition/CompetitionStudentAddForm.vue')['default']
     CompetitonForm: typeof import('./src/components/home/competition/CompetitonForm.vue')['default']
     DateSelect: typeof import('./src/components/home/DateSelect.vue')['default']
+    DegreeSelect: typeof import('./src/components/home/base/DegreeSelect.vue')['default']
     DeleteDialog: typeof import('./src/components/home/DeleteDialog.vue')['default']
     DSearch: typeof import('vue-devui/search/index.es.js')['Search']
     DTree: typeof import('vue-devui/tree/index.es.js')['Tree']

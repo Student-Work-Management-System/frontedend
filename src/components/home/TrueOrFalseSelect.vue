@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const model = defineModel<boolean>()
+const model = defineModel<boolean | string>()
 const props = defineProps<{
   label: string
   variant?:
@@ -11,7 +11,7 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
-  items: { key: string; value: boolean }[]
+  items: { key: string; value: boolean | string }[]
 }>()
 </script>
 

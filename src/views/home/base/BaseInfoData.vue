@@ -35,7 +35,7 @@ const modifyInfo = ref<Student>({
   householdRegistration: '',
   householdType: '',
   address: '',
-  grade: '',
+  gradeId: '',
   classNo: '',
   politicsStatus: '',
   fatherName: '',
@@ -64,15 +64,18 @@ const modifyInfo = ref<Student>({
   location: '',
   familyPopulation: '',
   isOnlyChild: true,
-  familyMembers: ''
+  familyMembers: '',
+  degree: '',
+  disability: false
 })
 
 // 查询参数
 const studentQuery = ref<StudentQuery>({
   search: '' as string,
-  grade: null as string | null,
+  gradeId: null as string | null,
   majorId: null as string | null,
-  statusId: '4' as string | null,
+  degree: '0' as string | null,
+  statusId: '1' as string | null,
   gender: null as string | null,
   nation: null as string | null,
   politicsStatus: null as string | null,
@@ -89,16 +92,17 @@ const studentQuery = ref<StudentQuery>({
   foreignLanguage: null as string | null,
   foreignScore: null as string | null,
   hobbies: null as string | null,
-  otherNotes: null as string | null,
-  enabled: true as boolean,
-  pageNo: 1 as number,
-  pageSize: 25 as number,
   joiningTime: null as string | null,
   isStudentLoans: null as boolean | null,
   religiousBeliefs: null as string | null,
   location: null as string | null,
   familyPopulation: null as string | null,
-  isOnlyChild: null as boolean | null
+  isOnlyChild: null as boolean | null,
+  disability: false as boolean,
+  otherNotes: null as string | null,
+  enabled: true as boolean,
+  pageNo: 1 as number,
+  pageSize: 25 as number
 })
 
 const fetchStudentLogic = async () => {

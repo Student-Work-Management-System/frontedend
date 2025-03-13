@@ -3,6 +3,15 @@ import type { Result } from '.'
 import { type AxiosResponse } from 'axios'
 import { type Role } from './role'
 
+export interface User {
+  username: string
+  realName: string
+  email: string
+  phone: string
+  password: string
+  roles: string[]
+}
+
 export interface Authority {
   authority: string
   permissionDesc: string
@@ -65,13 +74,7 @@ export async function apiGetUserList(query: {
   return http.post('/user/gets', query)
 }
 
-export async function apiAddUser(user: {
-  username: string
-  realName: string
-  email: string
-  password: string
-  roles: string[]
-}): Promise<AxiosResponse<Result<null>>> {
+export async function apiAddUser(user: User): Promise<AxiosResponse<Result<null>>> {
   return http.post('/user/add', user)
 }
 

@@ -145,7 +145,7 @@ const selectedRows = computed({
         "
         :current-page="currentPage"
         :page-size="pageSize"
-        :page-sizes="[25, 50, 100, 200]"
+        :page-sizes="[25, 50, 100, 200, 500, 1000]"
         :background="true"
         layout="total, sizes, prev, pager, next"
         :total="totalRow"

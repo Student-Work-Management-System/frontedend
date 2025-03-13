@@ -216,30 +216,33 @@ onMounted(() => {
         </v-text-field>
       </span>
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic"
-          >刷新</v-btn
-        >
+        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic">
+          刷新
+        </v-btn>
         <v-btn
           v-if="has('user:insert')"
           prepend-icon="mdi-plus-circle"
           color="primary"
           @click="addUserFormDialog = true"
-          >添加</v-btn
         >
+          添加
+        </v-btn>
         <v-btn
           v-if="has('user_role:insert') && has('user_role:delete')"
           prepend-icon="mdi-card-multiple"
           color="indigo"
           @click="editUserRoleBtnHandler"
-          >设置角色</v-btn
         >
+          设置角色
+        </v-btn>
         <v-btn
           v-if="has('user:delete')"
           prepend-icon="mdi-delete"
           color="error"
           @click="deleteDialog = true"
-          >删除</v-btn
         >
+          删除
+        </v-btn>
       </span>
     </section>
     <section class="pa-4 w-100" ref="tableDom">
@@ -279,16 +282,18 @@ onMounted(() => {
                     editUserInfoFormDialog = true
                   }
                 "
-                >编辑</v-btn
               >
+                编辑
+              </v-btn>
               <v-btn
                 v-if="has('user:update:all') && !item.enabled"
                 prepend-icon="mdi-refresh"
                 color="warning"
                 variant="plain"
                 @click="recoverUser(item.uid)"
-                >恢复删除</v-btn
               >
+                恢复删除
+              </v-btn>
             </div>
           </template>
         </v-data-table>

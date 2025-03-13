@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type Status, apiGetAllStatus } from '@/api/status.ts'
+import { type Status, apiGetAllStatus } from '@/api/status'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { onMounted } from 'vue'

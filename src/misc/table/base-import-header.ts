@@ -440,7 +440,7 @@ export const baseheaders: TableHeader[] = [
     field: 'majorName',
     label: '专业名称',
     require: true,
-    options: ['计算机科学与技术', '软件工程', '信息安全', '物联网工程', '智能科学与技术', '网络空间安全']
+    options: ['计算机科学与技术', '软件工程', '信息安全', '物联网工程', '智能科学与技术', '网络空间安全', '应用密码学']
   },
   {
     type: 'string',
