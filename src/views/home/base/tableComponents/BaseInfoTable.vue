@@ -11,6 +11,7 @@ const props = defineProps<{
   studentQuery: StudentQuery
   totalRow: number
   selected: Student[]
+  tableHeight: number
 }>()
 
 const emit = defineEmits<{
@@ -65,76 +66,77 @@ const selectedRows = computed({
 </script>
 
 <template>
-  <section class="table-container flex-grow-1 pa-4 w-100">
-    <el-table
-      :data="data"
-      row-key="studentId"
-      height="calc(100% - 60px)"
-      style="width: 100%; table-layout: auto"
-      :selected-rows="selectedRows"
-      @selection-change="handleSelectionChange"
-      :header-cell-style="{
-        color: '#333333',
-        fontSize: '14px',
-        fontWeight: 700,
-        background: '#F9FAFC'
-      }"
-      :cell-style="{
-        padding: '5px',
-        fontSize: '14px',
-        color: 'black'
-      }"
-      size="small"
-      border
-      stripe
-    >
-      <el-table-column type="selection" align="center" fixed="left" />
-      <el-table-column prop="studentId" align="center" label="学号" fixed="left" width="120" />
-      <el-table-column prop="name" align="center" label="姓名" fixed="left" width="120" />
-      <el-table-column
-        v-for="header in tableHeaders"
-        :key="header.key"
-        :prop="header.key"
-        :label="header.label"
-        :align="header.align"
-        :width="header.width"
-        :show-overflow-tooltip="header.showOverflowTooltip"
-      />
-      <el-table-column
-        prop="otherNotes"
-        align="center"
-        label="备注"
-        fixed="right"
-        width="150"
-        show-overflow-tooltip
-      />
-      <el-table-column label="操作" align="center" fixed="right" width="150">
-        <template #default="{ row }">
-          <el-button
-            v-if="has('student:update')"
-            :icon="Edit"
-            type="primary"
-            circle
-            @click="emit('edit', row)"
-          />
-          <el-button
-            v-if="has('student:select')"
-            :icon="Document"
-            type="success"
-            @click="emit('getArchive', row.studentId)"
-            circle
-          />
-          <el-button
-            v-if="has('student:update') && !row.enabled"
-            :icon="RefreshRight"
-            type="warning"
-            circle
-            @click="emit('recover', row.studentId)"
-          />
-        </template>
-      </el-table-column>
-    </el-table>
-    <section class="pagination d-flex justify-end pa-2">
+  <div class="container">
+    <div class="table-container">
+      <el-table
+        :data="data"
+        row-key="studentId"
+        :height="tableHeight"
+        :selected-rows="selectedRows"
+        @selection-change="handleSelectionChange"
+        :header-cell-style="{
+          color: '#333333',
+          fontSize: '14px',
+          fontWeight: 700,
+          background: '#F9FAFC'
+        }"
+        :cell-style="{
+          padding: '5px',
+          fontSize: '14px',
+          color: 'black'
+        }"
+        size="small"
+        border
+        stripe
+      >
+        <el-table-column type="selection" align="center" fixed="left" />
+        <el-table-column prop="studentId" align="center" label="学号" fixed="left" width="120" />
+        <el-table-column prop="name" align="center" label="姓名" fixed="left" width="120" />
+        <el-table-column
+          v-for="header in tableHeaders"
+          :key="header.key"
+          :prop="header.key"
+          :label="header.label"
+          :align="header.align"
+          :width="header.width"
+          :show-overflow-tooltip="header.showOverflowTooltip"
+        />
+        <el-table-column
+          prop="otherNotes"
+          align="center"
+          label="备注"
+          fixed="right"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column label="操作" align="center" fixed="right" width="150">
+          <template #default="{ row }">
+            <el-button
+              v-if="has('student:update')"
+              :icon="Edit"
+              type="primary"
+              circle
+              @click="emit('edit', row)"
+            />
+            <el-button
+              v-if="has('student:select')"
+              :icon="Document"
+              type="success"
+              @click="emit('getArchive', row.studentId)"
+              circle
+            />
+            <el-button
+              v-if="has('student:update') && !row.enabled"
+              :icon="RefreshRight"
+              type="warning"
+              circle
+              @click="emit('recover', row.studentId)"
+            />
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="pagination">
       <el-pagination
         style="
           display: flex;
@@ -152,20 +154,29 @@ const selectedRows = computed({
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </section>
-  </section>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.table-container {
-  height: 100%;
+.container {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  height: 100%;
+}
+
+.table-container {
+  flex: 1;
   overflow: hidden;
 }
 
 .pagination {
-  flex: 0 0 auto;
+  height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: white;
+  border-top: 1px solid #ebeef5;
 }
 </style>

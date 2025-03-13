@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { apiGetStudentList, apiDeleteStudent, apiRecoverDeleteStudent } from '@/api/student'
 import { type Student, type StudentQuery } from '@/model/studentModel'
 import { notify } from '@kyvg/vue3-notification'
-import { onMounted } from 'vue'
-import TableSelectMenu from './tableComponents/TableSelectMenu.vue'
-import BaseInfoTable from './tableComponents/BaseInfoTable.vue'
+import TableSelectMenu from '../tableComponents/TableSelectMenu.vue'
+import BaseInfoTable from '../tableComponents/BaseInfoTable.vue'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 
@@ -172,17 +171,55 @@ const exportData = () => {
   )
 }
 
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+
+const tableHeight = computed(() => {
+  if (!containerHeight.value || !selectMenuHeight.value || !tabsHeight.value) return 560
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 60
+})
+
+onMounted(() => {
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('table-select-menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tabs')) {
+        tabsHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.table-select-menu')
+  const tabs = document.querySelector('.tabs')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+  if (tabs) resizeObserver.observe(tabs)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
+})
+
 onMounted(fetchStudentLogic)
 </script>
 
 <template>
-  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column">
+  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column card-container">
     <!-- 编辑弹窗 -->
     <EditBaseInfoForm v-model="editDialog" :info="modifyInfo" @on-closed="fetchStudentLogic" />
     <!-- 删除弹窗 -->
     <DeleteDialog v-model="deleteDialog" :length="selected.length" @delete="deleteStudentLogic" />
     <!-- 查询条件 -->
     <TableSelectMenu
+      class="table-select-menu"
       :loading="loading"
       :selected-length="selected.length"
       v-model:student-query="studentQuery"
@@ -195,6 +232,7 @@ onMounted(fetchStudentLogic)
     <BaseInfoTable
       :data="data"
       :loading="loading"
+      :table-height="tableHeight"
       v-model:selected="selected"
       v-model:student-query="studentQuery"
       :total-row="totalRow || 0"
