@@ -1,13 +1,33 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import DegreeSelect from '@/components/home/DegreeSelect.vue'
+import GradeSelect from '@/components/home/GradeSelect.vue'
+import { type StudentQuery } from '@/model/studentModel'
+const props = defineProps<{
+  studentQuery: StudentQuery
+}>()
+
+const emit = defineEmits(['update:studentQuery'])
+
+const updateQuery = (field: keyof StudentQuery, value: any) => {
+  emit('update:studentQuery', { ...props.studentQuery, [field]: value })
+}
+</script>
 
 <template>
-  <!--
-    可选项: 年级, 学历层次(本科,硕士,博士)
-    需要增加内容: 辅导员与负责专业, 预期新增辅导员负责表(工号和负责年级, 需要在后端校验该用户是否为辅导员身份才允许插入)
-    字段: 是否残疾, 学历层次
-    疑问: 
-      1. 研究生学号和本科生学号类型?
-      2. 特殊转入学生是否能归类为学籍变动?
-  -->
-  <v-card></v-card>
+  <div class="status-select-menu">
+    <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
+      <DegreeSelect
+        :model-value="studentQuery.degreeId"
+        @update:model-value="(v) => updateQuery('degreeId', v)"
+        label="学历层次"
+        variant="underlined"
+      />
+      <GradeSelect
+        :model-value="studentQuery.gradeId"
+        @update:model-value="(v) => updateQuery('gradeId', v)"
+        label="年级"
+        variant="underlined"
+      />
+    </v-col>
+  </div>
 </template>

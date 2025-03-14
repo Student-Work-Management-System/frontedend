@@ -14,7 +14,7 @@ export interface Student {
     // 手机号
     phone: string | null
     // 学历层次
-    degree: string | null
+    degreeId: string | null
     // 邮箱
     email: string | null
     // 民族
@@ -103,7 +103,7 @@ export interface StudentQuery {
     // 学号、姓名、身份证、邮箱、手机号、父母姓名、父母手机号、监护人姓名、监护人电话
     search: string
     // 学历层次
-    degree: string | null
+    degreeId: string | null
     // 性别
     gender: string | null
     // 籍贯
@@ -170,5 +170,12 @@ export interface Grade {
     gradeId: string
     // 年级名称
     gradeName: string
+}
+
+export interface Degree {
+    // 学历层次Id
+    degreeId: string
+    // 学历层次名称
+    degreeName: string
 }
 

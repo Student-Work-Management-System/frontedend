@@ -23,7 +23,7 @@ export default {
     {
       path: '/punishment/list',
       name: 'punishment-list',
-      component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '处分信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/punishment/manage',
       name: 'punishment-manage',
-      component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '处分信息管理',

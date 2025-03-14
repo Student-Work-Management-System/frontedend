@@ -2,6 +2,7 @@
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import StatusSelect from '@/components/home/StatusSelect.vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
+import DegreeSelect from '@/components/home/DegreeSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
 import { type StudentQuery } from '@/model/studentModel'
 import { useUserStore } from '@/stores/user'
@@ -286,9 +287,9 @@ const exportData = () => {
               hide-details
               clearable
             />
-            <TrueOrFalseSelect
-              :model-value="studentQuery.degree as string"
-              @update:model-value="(v) => updateQuery('degree', v)"
+            <DegreeSelect
+              :model-value="studentQuery.degreeId"
+              @update:model-value="(v) => updateQuery('degreeId', v)"
               label="学历"
               variant="underlined"
               :items="[

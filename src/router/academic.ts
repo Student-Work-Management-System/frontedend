@@ -45,7 +45,7 @@ export default {
     {
       path: '/academic/manage',
       name: 'academic-manage',
-      component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '学术成果管理',

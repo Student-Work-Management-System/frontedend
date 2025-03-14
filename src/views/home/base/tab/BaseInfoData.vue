@@ -64,7 +64,7 @@ const modifyInfo = ref<Student>({
   familyPopulation: '',
   isOnlyChild: true,
   familyMembers: '',
-  degree: '',
+  degreeId: '',
   disability: false
 })
 
@@ -73,7 +73,7 @@ const studentQuery = ref<StudentQuery>({
   search: '' as string,
   gradeId: null as string | null,
   majorId: null as string | null,
-  degree: '0' as string | null,
+  degreeId: '1' as string | null,
   statusId: '1' as string | null,
   gender: null as string | null,
   nation: null as string | null,

@@ -23,7 +23,7 @@ export default {
     {
       path: '/scholarship/list',
       name: 'scholarship-list',
-      component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '奖学金信息统计',
@@ -34,7 +34,7 @@ export default {
     {
       path: '/scholarship/manage',
       name: 'scholarship-manage',
-      component: () => import('@/views/home/base/BaseInfoData.vue'),
+      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
       meta: {
         icon: 'mdi-cog',
         title: '奖学金信息管理',
