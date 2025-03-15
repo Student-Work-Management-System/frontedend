@@ -1,8 +1,22 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import BaseInfoData from './tab/BaseInfoData.vue'
 import BaseInfoStatus from './tab/BaseInfoStatus.vue'
+import { useUserStore } from '@/stores/userStore'
+import { useBaseStore } from '@/stores/baseStore'
 const tab = ref<number>(1)
+const store = useUserStore()
+const baseStore = useBaseStore()
+onMounted(() => {
+  baseStore.updateStudentQuery(
+    'gradeId',
+    store.getUserData.chargeGrades!![0].gradeId as string | null
+  )
+  baseStore.updateStudentQuery(
+    'degreeId',
+    store.getUserData.chargeDegrees!![0].degreeId as string | null
+  )
+})
 </script>
 
 <template>
