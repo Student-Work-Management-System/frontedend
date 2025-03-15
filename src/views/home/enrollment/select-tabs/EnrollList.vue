@@ -1,9 +1,9 @@
-<script lang="ts"  setup>
+<script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore'
 import { apiGetEnrollment, apiDeleteEnrollment, type Enrollment } from '@/api/enroll'
 import { notify } from '@kyvg/vue3-notification'
-import EnrollForm from '@/components/home/enroll/EnrollForm.vue';
+import EnrollForm from '@/components/home/enroll/EnrollForm.vue'
 
 const headers = [
   {
@@ -125,16 +125,18 @@ const afterEditHandler = () => {
 }
 
 const deleteEnrollLogic = async () => {
-  let reqs = selected.value.map(e => (async (e) => {
-    const eid = e.enrollmentId
-    const { data: result } = await apiDeleteEnrollment(eid)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `就业信息:${eid}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
-  })(e))
+  let reqs = selected.value.map((e) =>
+    (async (e) => {
+      const eid = e.enrollmentId
+      const { data: result } = await apiDeleteEnrollment(eid)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `就业信息:${eid}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
+    })(e)
+  )
 
   await Promise.all(reqs)
   afterEditHandler()
@@ -146,7 +148,6 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
-
 // js 写响应式
 const tableHeight = ref(0)
 const tableDom = ref<HTMLElement | null>(null)
@@ -154,7 +155,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.69 - padding
 }
 onMounted(() => {
@@ -163,7 +164,11 @@ onMounted(() => {
 })
 </script>
 <template>
-  <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEnrollLogic" />
+  <DeleteDialog
+    v-model="deleteDialog"
+    v-model:length="selected.length"
+    @delete="deleteEnrollLogic"
+  />
   <EnrollForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
   <section class="menu">
     <span class="w-20">
@@ -176,28 +181,65 @@ onMounted(() => {
       <MajorSelect label="第一志愿专业" v-model="selectedFirstMajor" variant="underlined" />
     </span>
     <span class="w-20 text-indigo">
-      <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEnrollLogic" :loading="loading" :counter="15"
-        clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
-        <v-tooltip activator="parent" location="top">以准考证号、姓名、身份证号、生源地搜索</v-tooltip>
+      <v-text-field
+        v-model="search"
+        color="indigo"
+        @update:modelValue="fetchEnrollLogic"
+        :loading="loading"
+        :counter="15"
+        clearable
+        label="搜索"
+        prepend-inner-icon="mdi-magnify"
+        variant="underlined"
+        hide-details
+      >
+        <v-tooltip activator="parent" location="top"
+          >以准考证号、姓名、身份证号、生源地搜索</v-tooltip
+        >
       </v-text-field>
     </span>
-    <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-refresh" @click="fetchEnrollLogic">刷新</v-btn>
+    <v-btn v-if="has('enrollment:select')" prepend-icon="mdi-refresh" @click="fetchEnrollLogic"
+      >刷新</v-btn
+    >
 
-    <v-btn v-if="has('enrollment:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+    <v-btn
+      v-if="has('enrollment:delete')"
+      prepend-icon="mdi-delete"
+      color="error"
+      @click="deleteDialog = true"
+      >删除</v-btn
+    >
   </section>
 
   <section class="pa-4 w-100" ref="tableDom">
     <v-card>
-      <v-data-table-server v-model="selected" :headers="headers" :height="tableHeight" :items="data"
-        :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
-        v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
+      <v-data-table-server
+        v-model="selected"
+        :headers="headers"
+        :height="tableHeight"
+        :items="data"
+        :items-length="dataLength"
+        :loading="loading"
+        v-model:page="pageOptions.pageNo"
+        v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems"
+        show-select
+        return-object
+      >
         <template v-slot:item.operations="{ item }">
           <div>
-            <v-btn v-if="has('enrollment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-              editModel = JSON.parse(JSON.stringify(item))
-              editDialog = true
-            }
-              ">编辑</v-btn>
+            <v-btn
+              v-if="has('enrollment:update')"
+              prepend-icon="mdi-pencil"
+              color="indigo"
+              @click="
+                () => {
+                  editModel = JSON.parse(JSON.stringify(item))
+                  editDialog = true
+                }
+              "
+              >编辑</v-btn
+            >
           </div>
         </template>
       </v-data-table-server>
@@ -213,7 +255,7 @@ onMounted(() => {
   padding: 0rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

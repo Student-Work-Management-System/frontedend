@@ -9,7 +9,7 @@ import {
 import { notify } from '@kyvg/vue3-notification'
 import AddPovertyForm from '@/components/home/poverty/AddPovertyForm.vue'
 import EditPovertyForm from '@/components/home/poverty/EditPovertyForm.vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const headers = [
   {
@@ -86,15 +86,17 @@ const afterPoverty = () => {
 
 const deletePovertyLogic = async () => {
   loading.value = true
-  let reqs = selected.value.map(p => (async (p) => {
-    const povertyAssistanceId = p.povertyAssistanceId
-    const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
-      return
-    }
-  })(p))
+  let reqs = selected.value.map((p) =>
+    (async (p) => {
+      const povertyAssistanceId = p.povertyAssistanceId
+      const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: result.message })
+        return
+      }
+    })(p)
+  )
 
   await Promise.all(reqs)
   notify({ type: 'success', title: '成功', text: `删除成功！` })
@@ -111,7 +113,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
 }
 onMounted(() => {
@@ -122,35 +124,78 @@ onMounted(() => {
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddPovertyForm v-model="addPovertyFormDialog" @on-closed="afterPoverty" />
-    <EditPovertyForm v-model="editPovertyInfoFormDialog" :info="editInfo" @on-closed="afterPoverty" />
+    <EditPovertyForm
+      v-model="editPovertyInfoFormDialog"
+      :info="editInfo"
+      @on-closed="afterPoverty"
+    />
     <v-dialog width="500" v-model="deleteDialog">
-      <v-card prepend-icon="mdi-delete" title="删除选择" :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`">
+      <v-card
+        prepend-icon="mdi-delete"
+        title="删除选择"
+        :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
+      >
         <v-card-actions class="mx-auto">
-          <v-btn :loading="loading" :disabled="selected.length === 0" color="error" @click="deletePovertyLogic">删除</v-btn>
+          <v-btn
+            :loading="loading"
+            :disabled="selected.length === 0"
+            color="error"
+            @click="deletePovertyLogic"
+            >删除</v-btn
+          >
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <section class="menu">
-      <v-btn v-if="has('poverty_assistance:select')" prepend-icon="mdi-refresh" @click="fetchPovertyLogic">刷新</v-btn>
-      <v-btn v-if="has('poverty_assistance:insert')" prepend-icon="mdi-plus-circle" color="primary"
-        @click="addPovertyFormDialog = true">添加</v-btn>
+      <v-btn
+        v-if="has('poverty_assistance:select')"
+        prepend-icon="mdi-refresh"
+        @click="fetchPovertyLogic"
+        >刷新</v-btn
+      >
+      <v-btn
+        v-if="has('poverty_assistance:insert')"
+        prepend-icon="mdi-plus-circle"
+        color="primary"
+        @click="addPovertyFormDialog = true"
+        >添加</v-btn
+      >
 
-      <v-btn v-if="has('poverty_assistance:delete')" prepend-icon="mdi-delete" color="error"
-        @click="deleteDialog = true">删除</v-btn>
+      <v-btn
+        v-if="has('poverty_assistance:delete')"
+        prepend-icon="mdi-delete"
+        color="error"
+        @click="deleteDialog = true"
+        >删除</v-btn
+      >
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
-          show-select return-object>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :height="tableHeight"
+          :items="data"
+          :loading="loading"
+          show-select
+          return-object
+        >
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn v-if="has('poverty_assistance:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                editInfo = JSON.parse(JSON.stringify(item))
-                editPovertyInfoFormDialog = true
-              }
-                ">编辑</v-btn>
+              <v-btn
+                v-if="has('poverty_assistance:update')"
+                prepend-icon="mdi-pencil"
+                color="indigo"
+                @click="
+                  () => {
+                    editInfo = JSON.parse(JSON.stringify(item))
+                    editPovertyInfoFormDialog = true
+                  }
+                "
+                >编辑</v-btn
+              >
             </div>
           </template>
         </v-data-table>
@@ -168,7 +213,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 </style>

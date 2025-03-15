@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { type Employ, apiGetEmployList, apiDeleteEmploy } from '@/api/employ'
 import { notify } from '@kyvg/vue3-notification'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore'
 import EmployForm from '@/components/home/employ/EmployForm.vue'
 
 const headers = [
@@ -107,7 +107,7 @@ const editModel = ref<Employ>({
   jobIndustry: '',
   jobLocation: '',
   category: '',
-  salary: '',
+  salary: ''
 })
 const pageOptions = reactive({
   pageSize: 10,
@@ -125,21 +125,22 @@ const has = (authority: string) => {
 const deleteEmployLogic = async () => {
   loading.value = true
 
-  let reqs = selected.value.map(e => (async (e) => {
-    const eid = e.studentEmploymentId
-    const { data: result } = await apiDeleteEmploy(eid)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `就业信息:${eid}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
-  })(e))
+  let reqs = selected.value.map((e) =>
+    (async (e) => {
+      const eid = e.studentEmploymentId
+      const { data: result } = await apiDeleteEmploy(eid)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `就业信息:${eid}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `就业信息:${eid} 删除成功！` })
+    })(e)
+  )
 
   await Promise.all(reqs)
   afterEditHandler()
   loading.value = false
-
 }
 
 const afterEditHandler = () => {
@@ -179,7 +180,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.69 - padding
 }
 onMounted(() => {
@@ -188,7 +189,11 @@ onMounted(() => {
 })
 </script>
 <template>
-  <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteEmployLogic" />
+  <DeleteDialog
+    v-model="deleteDialog"
+    v-model:length="selected.length"
+    @delete="deleteEmployLogic"
+  />
   <EmployForm v-model="editDialog" v-model:info="editModel" @on-closed="afterEditHandler" />
   <section class="menu">
     <span class="w-20">
@@ -201,29 +206,66 @@ onMounted(() => {
       <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
     </span>
     <span class="w-20 text-indigo">
-      <v-text-field v-model="search" color="indigo" @update:modelValue="fetchEmployLogic" :loading="loading" :counter="15"
-        clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+      <v-text-field
+        v-model="search"
+        color="indigo"
+        @update:modelValue="fetchEmployLogic"
+        :loading="loading"
+        :counter="15"
+        clearable
+        label="搜索"
+        prepend-inner-icon="mdi-magnify"
+        variant="underlined"
+        hide-details
+      >
         <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
       </v-text-field>
     </span>
-    <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-refresh" @click="fetchEmployLogic">刷新</v-btn>
+    <v-btn
+      v-if="has('student_employment:select')"
+      prepend-icon="mdi-refresh"
+      @click="fetchEmployLogic"
+      >刷新</v-btn
+    >
 
-    <v-btn v-if="has('student_employment:delete')" prepend-icon="mdi-delete" color="error"
-      @click="deleteDialog = true">删除</v-btn>
+    <v-btn
+      v-if="has('student_employment:delete')"
+      prepend-icon="mdi-delete"
+      color="error"
+      @click="deleteDialog = true"
+      >删除</v-btn
+    >
   </section>
 
   <section class="pa-4 w-100" ref="tableDom">
     <v-card>
-      <v-data-table-server v-model="selected" :height="tableHeight" :headers="headers" :items="data"
-        :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
-        v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
+      <v-data-table-server
+        v-model="selected"
+        :height="tableHeight"
+        :headers="headers"
+        :items="data"
+        :items-length="dataLength"
+        :loading="loading"
+        v-model:page="pageOptions.pageNo"
+        v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems"
+        show-select
+        return-object
+      >
         <template v-slot:item.operations="{ item }">
           <div>
-            <v-btn v-if="has('student_employment:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-              editModel = JSON.parse(JSON.stringify(item))
-              editDialog = true
-            }
-              ">编辑</v-btn>
+            <v-btn
+              v-if="has('student_employment:update')"
+              prepend-icon="mdi-pencil"
+              color="indigo"
+              @click="
+                () => {
+                  editModel = JSON.parse(JSON.stringify(item))
+                  editDialog = true
+                }
+              "
+              >编辑</v-btn
+            >
           </div>
         </template>
       </v-data-table-server>
@@ -238,7 +280,7 @@ onMounted(() => {
   padding: 0rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

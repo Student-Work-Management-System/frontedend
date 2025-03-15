@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { ref, reactive, onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { apiDeleteCometition, apiGetCompetitions, type Competition } from '@/api/competition'
@@ -36,7 +36,7 @@ const headers = [
 const loading = ref(false)
 const deleteDialog = ref(false)
 const selected = ref<Competition[]>([])
-const formType = ref<"add" | "edit">('add')
+const formType = ref<'add' | 'edit'>('add')
 const editInfo = ref<Competition>({
   competitionId: '',
   competitionName: '',
@@ -61,16 +61,18 @@ const has = (permission: string) => {
 }
 
 const deleteLogic = async () => {
-  let reqs = selected.value.map(e => (async (e) => {
-    const cid = e.competitionId
-    const { data: result } = await apiDeleteCometition(cid)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `就业信息:${cid} 删除成功！` })
-  })(e))
+  let reqs = selected.value.map((e) =>
+    (async (e) => {
+      const cid = e.competitionId
+      const { data: result } = await apiDeleteCometition(cid)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `就业信息:${cid} 删除成功！` })
+    })(e)
+  )
 
   await Promise.all(reqs)
   afterEdit()
@@ -110,7 +112,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.68 - padding
 }
 onMounted(() => {
@@ -120,33 +122,74 @@ onMounted(() => {
 </script>
 <template>
   <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
-  <CompetitionForm v-model="formDialog" v-model:type="formType" v-model:info="editInfo" @on-closed="afterEdit" />
+  <CompetitionForm
+    v-model="formDialog"
+    v-model:type="formType"
+    v-model:info="editInfo"
+    @on-closed="afterEdit"
+  />
   <section class="menu">
-    <v-btn v-if="has('competition:select')" prepend-icon="mdi-refresh" @click="fetchCompetitionLogic">刷新</v-btn>
-    <v-btn v-if="has('competition:insert')" prepend-icon="mdi-plus-circle" color="primary" @click="() => {
-      formType = 'add'
-      editInfo = {
-        competitionId: '',
-        competitionName: '',
-        competitionNature: null,
-        competitionLevel: null
-      }
-      formDialog = true
-    }
-      ">添加</v-btn>
-    <v-btn v-if="has('competition:delete')" prepend-icon="mdi-delete" color="error"
-      @click="deleteDialog = true">删除</v-btn>
+    <v-btn
+      v-if="has('competition:select')"
+      prepend-icon="mdi-refresh"
+      @click="fetchCompetitionLogic"
+      >刷新</v-btn
+    >
+    <v-btn
+      v-if="has('competition:insert')"
+      prepend-icon="mdi-plus-circle"
+      color="primary"
+      @click="
+        () => {
+          formType = 'add'
+          editInfo = {
+            competitionId: '',
+            competitionName: '',
+            competitionNature: null,
+            competitionLevel: null
+          }
+          formDialog = true
+        }
+      "
+      >添加</v-btn
+    >
+    <v-btn
+      v-if="has('competition:delete')"
+      prepend-icon="mdi-delete"
+      color="error"
+      @click="deleteDialog = true"
+      >删除</v-btn
+    >
   </section>
 
   <section class="pa-4 w-100" ref="tableDom">
     <v-card>
-      <v-data-table-server v-model="selected" :headers="headers" :height="tableHeight" :items="data"
-        :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
-        v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
+      <v-data-table-server
+        v-model="selected"
+        :headers="headers"
+        :height="tableHeight"
+        :items="data"
+        :items-length="dataLength"
+        :loading="loading"
+        v-model:page="pageOptions.pageNo"
+        v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems"
+        show-select
+        return-object
+      >
         <template v-slot:item.operations="{ item }">
           <div>
-            <v-btn v-if="has('competition:update')" prepend-icon="mdi-pencil" color="indigo"
-              @click="formType = 'edit', editInfo = JSON.parse(JSON.stringify(item)), formDialog = true">编辑</v-btn>
+            <v-btn
+              v-if="has('competition:update')"
+              prepend-icon="mdi-pencil"
+              color="indigo"
+              @click="
+                (formType = 'edit'),
+                  (editInfo = JSON.parse(JSON.stringify(item))),
+                  (formDialog = true)
+              "
+              >编辑</v-btn
+            >
           </div>
         </template>
       </v-data-table-server>
@@ -161,7 +204,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

@@ -2,18 +2,19 @@
 import { ref, reactive } from 'vue'
 import { setAuthorizationToken } from '@/api'
 import { apiLogin, userDataCheck } from '@/api/user'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import ForgetPasswordForm from '@/components/login/ForgetPasswordForm.vue'
-
+import { useBaseStore } from '@/stores/baseStore'
 interface UserLoginData {
   username: string
   password: string
 }
 
 const store = useUserStore()
+const baseStore = useBaseStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -40,6 +41,8 @@ const loginHandler = async () => {
     return
   }
   store.updateUser(result.data)
+  baseStore.updateStudentQuery('gradeId', result.data.chargeGrades?.[0].gradeId as string | null)
+  baseStore.updateStudentQuery('degreeId', result.data.chargeDegrees?.[0].degreeId as string | null)
   setAuthorizationToken(result.data.token)
   if (remember.value) {
     localStorage.setItem('user-cache', JSON.stringify(result.data))

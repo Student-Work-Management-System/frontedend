@@ -8,7 +8,7 @@ import SelectPermission from '@/components/home/system/SelectPermission.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { reactive } from 'vue'
 import { computed } from 'vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const headers = [
   {
@@ -80,16 +80,18 @@ const afterRole = () => {
 const deleteRolerLogic = async () => {
   loading.value = true
 
-  let reqs = selected.value.map(r => (async (r) => {
-    const rid = r.rid
-    const { data: result } = await apiDeleteRole(rid)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `角色:${rid} 角色删除成功！` })
-  })(r))
+  let reqs = selected.value.map((r) =>
+    (async (r) => {
+      const rid = r.rid
+      const { data: result } = await apiDeleteRole(rid)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `角色:${rid} 角色删除成功！` })
+    })(r)
+  )
 
   await Promise.all(reqs)
   loading.value = false
@@ -113,7 +115,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.805 - padding
 }
 onMounted(() => {
@@ -124,21 +126,54 @@ onMounted(() => {
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddRoleForm v-model="addRoleFormDialog" :role-info="editRoleInfo" @on-closed="afterRole" />
-    <SelectPermission v-model="selectPermissionDialog" :rid-list="selectedIds" :permissions="selectedPermissions"
-      @on-closed="afterRole" />
-    <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteRolerLogic" />
+    <SelectPermission
+      v-model="selectPermissionDialog"
+      :rid-list="selectedIds"
+      :permissions="selectedPermissions"
+      @on-closed="afterRole"
+    />
+    <DeleteDialog
+      v-model="deleteDialog"
+      v-model:length="selected.length"
+      @delete="deleteRolerLogic"
+    />
     <section class="menu">
-      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic">刷新</v-btn>
-      <v-btn v-if="has('role:insert')" prepend-icon="mdi-plus-circle" color="primary"
-        @click="addRoleFormDialog = true">添加</v-btn>
-      <v-btn v-if="has('role_permission:insert') && has('role_permission:delete')" prepend-icon="mdi-card-multiple"
-        color="indigo" @click="editRoleBtnHandler">设置权限</v-btn>
-      <v-btn v-if="has('role:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic"
+        >刷新</v-btn
+      >
+      <v-btn
+        v-if="has('role:insert')"
+        prepend-icon="mdi-plus-circle"
+        color="primary"
+        @click="addRoleFormDialog = true"
+        >添加</v-btn
+      >
+      <v-btn
+        v-if="has('role_permission:insert') && has('role_permission:delete')"
+        prepend-icon="mdi-card-multiple"
+        color="indigo"
+        @click="editRoleBtnHandler"
+        >设置权限</v-btn
+      >
+      <v-btn
+        v-if="has('role:delete')"
+        prepend-icon="mdi-delete"
+        color="error"
+        @click="deleteDialog = true"
+        >删除</v-btn
+      >
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
-          show-select return-object>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :height="tableHeight"
+          :items="data"
+          :loading="loading"
+          show-select
+          return-object
+        >
         </v-data-table>
       </v-card>
     </section>
@@ -154,7 +189,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 </style>

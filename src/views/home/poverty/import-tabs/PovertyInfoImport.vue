@@ -14,7 +14,7 @@ import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiAddPovertyAssistanceInfo } from '@/api/poverty'
 
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const excel = ref<File[]>()
 const jsonData = ref<PovertyHeader[]>([])
@@ -30,7 +30,11 @@ const nilData: PovertyHeader = {
 
 const analyzeHandler = async () => {
   loading.value = true
-  const ret = (await AnalyzeFileToTable(file.value as File, povertyheaders, notify)) as PovertyHeader[]
+  const ret = (await AnalyzeFileToTable(
+    file.value as File,
+    povertyheaders,
+    notify
+  )) as PovertyHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }

@@ -5,11 +5,10 @@ import { ref } from 'vue'
 import { apiGetAllRecord, apiDeleteStudentCET } from '@/api/cet'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { reactive } from 'vue'
 import EditStudentCet from '@/components/home/cet/EditStudentCet.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
-
 
 const headers = [
   {
@@ -78,7 +77,7 @@ const selected = ref<any[]>([])
 const search = ref<string | null>(null)
 const examDate = ref<string | null>(null)
 const examType = ref<string | null>(null)
-const data = ref<any[]>([]);
+const data = ref<any[]>([])
 const dataLength = ref<number>(0)
 const selectedMajor = ref<string | null>(null)
 const selectedGrade = ref<string | null>(null)
@@ -92,7 +91,7 @@ const modifyInfo = ref({
   score: 0,
   examDate: '',
   certificateNumber: '',
-  examType: '',
+  examType: ''
 })
 const pageOptions = reactive({
   pageSize: 10,
@@ -124,17 +123,19 @@ const fetchStudentLogic = async () => {
     return
   }
 
-  data.value = result.data.records.flatMap(record => record.cets.map(cet => ({
-    studentCetId: cet.studentCetId,
-    studentId: record.studentId,
-    name: record.name,
-    grade: record.grade,
-    majorName: record.majorName,
-    score: cet.score,
-    examDate: cet.examDate,
-    certificateNumber: cet.certificateNumber,
-    examType: cet.examType
-  })));
+  data.value = result.data.records.flatMap((record) =>
+    record.cets.map((cet) => ({
+      studentCetId: cet.studentCetId,
+      studentId: record.studentId,
+      name: record.name,
+      grade: record.grade,
+      majorName: record.majorName,
+      score: cet.score,
+      examDate: cet.examDate,
+      certificateNumber: cet.certificateNumber,
+      examType: cet.examType
+    }))
+  )
   dataLength.value = result.data.totalRow
   deleteDialog.value = false
   loading.value = false
@@ -147,27 +148,28 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
 }
 
 const deleteStudentLogic = async () => {
-  loading.value = true;
-  const studentCetId = selected.value.map((v) => v.studentCetId);
-  await Promise.all(studentCetId.map(async (id) => {
-    const { data: result } = await apiDeleteStudentCET(id);
-    if (result.code !== 200) {
-      console.error(result);
-      notify({ type: 'error', title: '错误', text: `CET成绩:${id}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `CET成绩:${id} 删除成功！` })
-  }));
+  loading.value = true
+  const studentCetId = selected.value.map((v) => v.studentCetId)
+  await Promise.all(
+    studentCetId.map(async (id) => {
+      const { data: result } = await apiDeleteStudentCET(id)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `CET成绩:${id}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `CET成绩:${id} 删除成功！` })
+    })
+  )
   afterEditStudent()
-  loading.value = false;
-};
+  loading.value = false
+}
 
 const afterEditStudent = () => {
   editDialog.value = false
-  deleteDialog.value = false;
+  deleteDialog.value = false
   fetchStudentLogic()
 }
-
 
 // js 写响应式
 const tableHeight = ref(0)
@@ -176,7 +178,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.69 - padding
 }
 onMounted(() => {
@@ -186,9 +188,19 @@ onMounted(() => {
 </script>
 <template>
   <v-dialog width="500" v-model="deleteDialog">
-    <v-card prepend-icon="mdi-delete" title="删除选择" :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`">
+    <v-card
+      prepend-icon="mdi-delete"
+      title="删除选择"
+      :text="`已选择 ${selected.length} 条记录，本操作不可撤回，确定要删除吗？`"
+    >
       <v-card-actions class="mx-auto">
-        <v-btn :loading="loading" :disabled="selected.length === 0" color="error" @click="deleteStudentLogic">删除</v-btn>
+        <v-btn
+          :loading="loading"
+          :disabled="selected.length === 0"
+          color="error"
+          @click="deleteStudentLogic"
+          >删除</v-btn
+        >
         <v-btn @click="deleteDialog = false">取消</v-btn>
       </v-card-actions>
     </v-card>
@@ -208,35 +220,77 @@ onMounted(() => {
     </span>
 
     <span class="w-20">
-      <v-select label="考试类别" v-model="examType" :items="['CET4', 'CET6']" class="text-indigo" color="indigo" hide-details
-        clearable variant="underlined">
+      <v-select
+        label="考试类别"
+        v-model="examType"
+        :items="['CET4', 'CET6']"
+        class="text-indigo"
+        color="indigo"
+        hide-details
+        clearable
+        variant="underlined"
+      >
       </v-select>
     </span>
 
     <span class="w-20 text-indigo">
-      <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentLogic" :loading="loading"
-        :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+      <v-text-field
+        v-model="search"
+        color="indigo"
+        @update:modelValue="fetchStudentLogic"
+        :loading="loading"
+        :counter="15"
+        clearable
+        label="搜索"
+        prepend-inner-icon="mdi-magnify"
+        variant="underlined"
+        hide-details
+      >
         <v-tooltip activator="parent" location="top">以姓名、学号、证书编号搜索</v-tooltip>
       </v-text-field>
     </span>
-    <v-btn v-if="has('student_cet:select')" prepend-icon="mdi-refresh" @click="fetchStudentLogic">刷新</v-btn>
+    <v-btn v-if="has('student_cet:select')" prepend-icon="mdi-refresh" @click="fetchStudentLogic"
+      >刷新</v-btn
+    >
 
-    <v-btn v-if="has('student_cet:delete')" prepend-icon="mdi-delete" color="error"
-      @click="deleteDialog = true">删除</v-btn>
+    <v-btn
+      v-if="has('student_cet:delete')"
+      prepend-icon="mdi-delete"
+      color="error"
+      @click="deleteDialog = true"
+      >删除</v-btn
+    >
   </section>
 
   <section class="pa-4 w-100" ref="tableDom">
     <v-card>
-      <v-data-table-server v-model="selected" :headers="headers" :height="tableHeight" :items="data"
-        :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
-        v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
+      <v-data-table-server
+        v-model="selected"
+        :headers="headers"
+        :height="tableHeight"
+        :items="data"
+        :items-length="dataLength"
+        :loading="loading"
+        v-model:page="pageOptions.pageNo"
+        v-model:items-per-page="pageOptions.pageSize"
+        @update:options="loadItems"
+        show-select
+        return-object
+      >
         <template v-slot:item.operations="{ item }">
           <div>
-            <v-btn v-if="has('student_cet:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-              modifyInfo = { ...item }
-              editDialog = true
-            }
-              ">编辑</v-btn>
+            <v-btn
+              v-if="has('student_cet:update')"
+              prepend-icon="mdi-pencil"
+              color="indigo"
+              @click="
+                () => {
+                  modifyInfo = { ...item }
+                  editDialog = true
+                }
+              "
+              >编辑</v-btn
+            >
           </div>
         </template>
       </v-data-table-server>
@@ -252,7 +306,7 @@ onMounted(() => {
   padding: 0rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { VChart, type ISpec } from '@visactor/vchart';
+import { VChart, type ISpec } from '@visactor/vchart'
 import { notify } from '@kyvg/vue3-notification'
 import { apiStatsEmploy, apiDownloadStatsEmploy, type EmployStats } from '@/api/employ'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore'
 
 const loading = ref(false)
 const selectedMajor = ref<string | null>(null)
 const selectedYear = ref<string | null>(null)
 const majorName = ref('')
-const salary = ref("")
+const salary = ref('')
 const statusChartRef = ref()
 const locationChartRef = ref()
 const industryChartRef = ref()
@@ -18,12 +18,12 @@ const stats = ref<EmployStats>()
 
 const checkQueryField = () => {
   if (selectedMajor.value == null) {
-    notify({ type: "warn", title: "提示", text: "请至少选择一个专业！" })
+    notify({ type: 'warn', title: '提示', text: '请至少选择一个专业！' })
     loading.value = false
     return false
   }
   if (selectedYear.value == null) {
-    notify({ type: "warn", title: "提示", text: "请至少选择一个年份！" })
+    notify({ type: 'warn', title: '提示', text: '请至少选择一个年份！' })
     loading.value = false
     return false
   }
@@ -36,8 +36,7 @@ const has = (authority: string) => {
 }
 
 function toFixDot2(num: number): number {
-  return Number(num.toFixed(2));
-
+  return Number(num.toFixed(2))
 }
 
 const getStatsDataHandler = async () => {
@@ -60,26 +59,58 @@ const getStatsDataHandler = async () => {
       graduationStatus: [],
       jobLocation: {},
       jobIndustry: {},
-      salary: "0"
+      salary: '0'
     }
-    notify({ type: "warn", title: "提示", text: "无数据返回，请上传数据后重试！" })
+    notify({ type: 'warn', title: '提示', text: '无数据返回，请上传数据后重试！' })
     loading.value = false
     return
   }
   majorName.value = Object.keys(result.data)[0]
   stats.value = result.data[majorName.value]
   salary.value = Number(stats.value?.salary).toFixed(2)
-  stats.value.graduationStatus = Object.keys(stats.value?.graduationStatus).map((key) => ({ type: key, value: stats.value?.graduationStatus[key] }))
-  stats.value.jobLocation = Object.keys(stats.value?.jobLocation).map((key) => ({ type: key, value: stats.value?.jobLocation[key] }))
-  stats.value.jobIndustry = Object.keys(stats.value?.jobIndustry).map((key) => ({ type: key, value: stats.value?.jobIndustry[key] }))
+  stats.value.graduationStatus = Object.keys(stats.value?.graduationStatus).map((key) => ({
+    type: key,
+    value: stats.value?.graduationStatus[key]
+  }))
+  stats.value.jobLocation = Object.keys(stats.value?.jobLocation).map((key) => ({
+    type: key,
+    value: stats.value?.jobLocation[key]
+  }))
+  stats.value.jobIndustry = Object.keys(stats.value?.jobIndustry).map((key) => ({
+    type: key,
+    value: stats.value?.jobIndustry[key]
+  }))
 
-  const statusTotal = stats.value.graduationStatus?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
-  const localtionTotal = stats.value.jobLocation?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
-  const industryTotal = stats.value.jobIndustry?.reduce((total: number, item: { key: string, value: number }) => total + item.value, 0)
+  const statusTotal = stats.value.graduationStatus?.reduce(
+    (total: number, item: { key: string; value: number }) => total + item.value,
+    0
+  )
+  const localtionTotal = stats.value.jobLocation?.reduce(
+    (total: number, item: { key: string; value: number }) => total + item.value,
+    0
+  )
+  const industryTotal = stats.value.jobIndustry?.reduce(
+    (total: number, item: { key: string; value: number }) => total + item.value,
+    0
+  )
 
-  stats.value.graduationStatus = stats.value.graduationStatus.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / statusTotal), number: item.value }))
-  stats.value.jobLocation = stats.value.jobLocation.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / localtionTotal), number: item.value }))
-  stats.value.jobIndustry = stats.value.jobIndustry.map((item: { key: string, value: number }) => ({ ...item, value: toFixDot2(item.value * 100 / industryTotal), number: item.value }))
+  stats.value.graduationStatus = stats.value.graduationStatus.map(
+    (item: { key: string; value: number }) => ({
+      ...item,
+      value: toFixDot2((item.value * 100) / statusTotal),
+      number: item.value
+    })
+  )
+  stats.value.jobLocation = stats.value.jobLocation.map((item: { key: string; value: number }) => ({
+    ...item,
+    value: toFixDot2((item.value * 100) / localtionTotal),
+    number: item.value
+  }))
+  stats.value.jobIndustry = stats.value.jobIndustry.map((item: { key: string; value: number }) => ({
+    ...item,
+    value: toFixDot2((item.value * 100) / industryTotal),
+    number: item.value
+  }))
 
   notify({ title: '成功', text: '获取统计成功！', type: 'success' })
   updateChart()
@@ -94,16 +125,16 @@ const exportStatsExeclHandler = async () => {
   })
   notify({ title: '成功', text: '下载已开始！', type: 'success' })
 
-  const url = URL.createObjectURL(result);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = selectedYear.value as string + '-学生就业信息-就业情况统计.xlsx';
-  a.click();
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(result)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = (selectedYear.value as string) + '-学生就业信息-就业情况统计.xlsx'
+  a.click()
+  URL.revokeObjectURL(url)
   loading.value = false
 }
 
-const parseISpec = (title: string, data: { type: string, value: any }[]): ISpec => ({
+const parseISpec = (title: string, data: { type: string; value: any }[]): ISpec => ({
   type: 'pie',
   data: {
     values: data
@@ -113,53 +144,58 @@ const parseISpec = (title: string, data: { type: string, value: any }[]): ISpec 
   categoryField: 'type',
   title: {
     visible: true,
-    text: majorName.value + "-" + title
+    text: majorName.value + '-' + title
   },
   legends: {
     visible: true,
-    orient: 'left',
+    orient: 'left'
   },
   label: {
-    visible: true,
+    visible: true
   },
   tooltip: {
     mark: {
       content: [
         {
-          key: datum => datum['type'],
-          value: datum => datum['number'] + `(${datum['value']}%)`
+          key: (datum) => datum['type'],
+          value: (datum) => datum['number'] + `(${datum['value']}%)`
         }
       ]
     }
   }
-});
+})
 
-let statusChart: VChart;
-let jobIndustryChart: VChart;
-let jobLocationChart: VChart;
+let statusChart: VChart
+let jobIndustryChart: VChart
+let jobLocationChart: VChart
 const updateChart = () => {
   loading.value = true
   if (statusChart === undefined) {
-    statusChart = new VChart(parseISpec("就业状态", stats.value?.graduationStatus), { dom: statusChartRef.value })
+    statusChart = new VChart(parseISpec('就业状态', stats.value?.graduationStatus), {
+      dom: statusChartRef.value
+    })
     statusChart.renderSync()
 
-    jobIndustryChart = new VChart(parseISpec("所处产业", stats.value?.jobIndustry), { dom: industryChartRef.value })
+    jobIndustryChart = new VChart(parseISpec('所处产业', stats.value?.jobIndustry), {
+      dom: industryChartRef.value
+    })
     jobIndustryChart.renderSync()
 
-    jobLocationChart = new VChart(parseISpec("工作地点", stats.value?.jobLocation), { dom: locationChartRef.value })
+    jobLocationChart = new VChart(parseISpec('工作地点', stats.value?.jobLocation), {
+      dom: locationChartRef.value
+    })
     jobLocationChart.renderSync()
     loading.value = false
     return
   }
-  statusChart?.updateSpec(parseISpec("就业分析", stats.value?.graduationStatus));
-  statusChart?.renderAsync();
-  jobIndustryChart?.updateSpec(parseISpec("所处产业", stats.value?.jobIndustry));
-  jobIndustryChart?.renderAsync();
-  jobLocationChart?.updateSpec(parseISpec("工作地点", stats.value?.jobLocation));
-  jobLocationChart?.renderAsync();
+  statusChart?.updateSpec(parseISpec('就业分析', stats.value?.graduationStatus))
+  statusChart?.renderAsync()
+  jobIndustryChart?.updateSpec(parseISpec('所处产业', stats.value?.jobIndustry))
+  jobIndustryChart?.renderAsync()
+  jobLocationChart?.updateSpec(parseISpec('工作地点', stats.value?.jobLocation))
+  jobLocationChart?.renderAsync()
   loading.value = false
 }
-
 </script>
 <template>
   <section class="h-100 d-flex flex-column">
@@ -171,13 +207,26 @@ const updateChart = () => {
         <GradeSelect v-model="selectedYear" label="毕业年份" variant="underlined" />
       </span>
 
-      <v-btn v-if="has('student_employment:select')" prepend-icon="mdi-poll" color="indigo" :loading="loading"
-        @click="getStatsDataHandler">统计分析</v-btn>
-      <v-btn v-if="has('student_employment:select') && has('file:download')" prepend-icon="mdi-export" :loading="loading"
-        @click="exportStatsExeclHandler">导出表格</v-btn>
+      <v-btn
+        v-if="has('student_employment:select')"
+        prepend-icon="mdi-poll"
+        color="indigo"
+        :loading="loading"
+        @click="getStatsDataHandler"
+        >统计分析</v-btn
+      >
+      <v-btn
+        v-if="has('student_employment:select') && has('file:download')"
+        prepend-icon="mdi-export"
+        :loading="loading"
+        @click="exportStatsExeclHandler"
+        >导出表格</v-btn
+      >
     </section>
     <v-card :loading="loading" class="chart-container">
-      <h1 v-if="salary.length > 0" class="text-indigo ma-8 text-weigh-black font-weight-medium">平均月薪：{{ salary }}</h1>
+      <h1 v-if="salary.length > 0" class="text-indigo ma-8 text-weigh-black font-weight-medium">
+        平均月薪：{{ salary }}
+      </h1>
       <span class="d-flex justify-space-evenly mb-4">
         <v-card>
           <div ref="statusChartRef"></div>
@@ -202,7 +251,7 @@ const updateChart = () => {
   padding: 0rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

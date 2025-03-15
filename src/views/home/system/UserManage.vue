@@ -9,7 +9,7 @@ import EditUserRoleForm from '@/components/home/system/EditUserRoleForm.vue'
 import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { computed } from 'vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const headers: readonly {
   readonly title: string

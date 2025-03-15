@@ -7,7 +7,7 @@ import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList } from '@/api/other'
 import { apiAddStudentBaseInfo } from '@/api/student'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const excel = ref<File[]>()
 const jsonData = ref<BaseHeader[]>([])

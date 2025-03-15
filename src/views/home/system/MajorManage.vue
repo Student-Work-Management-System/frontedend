@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { apiDeleteMajor, apiGetMajorList, type Major } from '@/api/major'
@@ -72,16 +72,18 @@ const afterForm = () => {
 const deleteLogic = async () => {
   loading.value = true
 
-  let reqs = selected.value.map(u => (async (u) => {
-    const majorId = u.majorId
-    const { data: result } = await apiDeleteMajor(majorId)
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `专业: ${majorId}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `专业:${majorId} 删除成功！` })
-  })(u))
+  let reqs = selected.value.map((u) =>
+    (async (u) => {
+      const majorId = u.majorId
+      const { data: result } = await apiDeleteMajor(majorId)
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `专业: ${majorId}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `专业:${majorId} 删除成功！` })
+    })(u)
+  )
 
   await Promise.all(reqs)
 
@@ -97,7 +99,7 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.78 - padding
 }
 onMounted(() => {
@@ -107,38 +109,77 @@ onMounted(() => {
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <MajorForm v-model="majorFormDialog" v-model:info="editInfo" v-model:type="formType" @on-closed="afterForm" />
+    <MajorForm
+      v-model="majorFormDialog"
+      v-model:info="editInfo"
+      v-model:type="formType"
+      @on-closed="afterForm"
+    />
     <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
     <section class="menu">
       <span class="w-20 text-indigo">
-        <v-text-field v-model="collegeName" color="indigo" variant="outlined" label="学院名称" hide-details></v-text-field>
+        <v-text-field
+          v-model="collegeName"
+          color="indigo"
+          variant="outlined"
+          label="学院名称"
+          hide-details
+        ></v-text-field>
       </span>
       <!-- 假的 uwu -->
       <v-btn color="primary" text="修改" @click="updateCollegeNameHandler"></v-btn>
     </section>
     <section class="menu">
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchMajorLogic">刷新</v-btn>
-        <v-btn v-if="has('major:insert')" prepend-icon="mdi-plus-circle" color="primary" @click="
-          (formType = 'add'),
-          (editInfo = { majorId: '', majorName: '' }),
-          (majorFormDialog = true)
-          ">添加</v-btn>
-        <v-btn v-if="has('major:delete')" prepend-icon="mdi-delete" color="error" @click="deleteDialog = true">删除</v-btn>
+        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchMajorLogic"
+          >刷新</v-btn
+        >
+        <v-btn
+          v-if="has('major:insert')"
+          prepend-icon="mdi-plus-circle"
+          color="primary"
+          @click="
+            (formType = 'add'),
+              (editInfo = { majorId: '', majorName: '' }),
+              (majorFormDialog = true)
+          "
+          >添加</v-btn
+        >
+        <v-btn
+          v-if="has('major:delete')"
+          prepend-icon="mdi-delete"
+          color="error"
+          @click="deleteDialog = true"
+          >删除</v-btn
+        >
       </span>
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table v-model="selected" :headers="headers" :height="tableHeight" :items="data" :loading="loading"
-          show-select return-object>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :height="tableHeight"
+          :items="data"
+          :loading="loading"
+          show-select
+          return-object
+        >
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn v-if="has('major:update')" prepend-icon="mdi-pencil" color="indigo" @click="() => {
-                formType = 'edit'
-                editInfo = item
-                majorFormDialog = true
-              }
-                ">编辑</v-btn>
+              <v-btn
+                v-if="has('major:update')"
+                prepend-icon="mdi-pencil"
+                color="indigo"
+                @click="
+                  () => {
+                    formType = 'edit'
+                    editInfo = item
+                    majorFormDialog = true
+                  }
+                "
+                >编辑</v-btn
+              >
             </div>
           </template>
         </v-data-table>
@@ -159,7 +200,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu span>* {
+.menu span > * {
   margin-right: 0.5rem;
 }
 

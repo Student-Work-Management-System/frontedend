@@ -2,13 +2,19 @@
 import { tableHeaders } from '@/misc/table/base-import-header'
 import { type Student, type StudentQuery } from '@/model/studentModel'
 import { Edit, RefreshRight, Document } from '@element-plus/icons-vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { computed } from 'vue'
+import { useBaseStore } from '@/stores/baseStore'
+
+const baseStore = useBaseStore()
+const studentQuery = baseStore.getStudentQuery
+const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery[K]) => {
+  baseStore.updateStudentQuery(field, value)
+}
 
 const props = defineProps<{
   data: Student[]
   loading: boolean
-  studentQuery: StudentQuery
   totalRow: number
   selected: Student[]
   tableHeight: number
@@ -16,7 +22,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:selected': [value: Student[]]
-  'update:studentQuery': [value: StudentQuery]
   edit: [value: Student]
   recover: [value: string]
   getArchive: [value: string]
@@ -34,26 +39,26 @@ const handleSelectionChange = (val: Student[]) => {
 }
 
 const handleSizeChange = (val: number) => {
-  emit('update:studentQuery', { ...props.studentQuery, pageSize: val })
+  updateQuery('pageSize', val)
   emit('sizeChange')
 }
 
 const handleCurrentChange = (val: number) => {
-  emit('update:studentQuery', { ...props.studentQuery, pageNo: val })
+  updateQuery('pageNo', val)
   emit('currentChange')
 }
 
 const currentPage = computed({
-  get: () => props.studentQuery.pageNo,
+  get: () => studentQuery.pageNo,
   set: (val: number) => {
-    emit('update:studentQuery', { ...props.studentQuery, pageNo: val })
+    updateQuery('pageNo', val)
   }
 })
 
 const pageSize = computed({
-  get: () => props.studentQuery.pageSize,
+  get: () => studentQuery.pageSize,
   set: (val: number) => {
-    emit('update:studentQuery', { ...props.studentQuery, pageSize: val })
+    updateQuery('pageSize', val)
   }
 })
 

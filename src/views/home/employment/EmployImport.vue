@@ -1,16 +1,20 @@
 <script lang="ts" setup>
-import { employheaders, type EmployHeader, AnalyzeFileToTable, HeaderValidChecker }
-  from '@/misc/table'
+import {
+  employheaders,
+  type EmployHeader,
+  AnalyzeFileToTable,
+  HeaderValidChecker
+} from '@/misc/table'
 import { ref, computed } from 'vue'
-import UploadDialog from '@/components/home/UploadDialog.vue';
+import UploadDialog from '@/components/home/UploadDialog.vue'
 import { notify } from '@kyvg/vue3-notification'
-import { useUserStore } from '@/stores/user';
-import { apiAddEmployInfo } from '@/api/employ';
+import { useUserStore } from '@/stores/userStore'
+import { apiAddEmployInfo } from '@/api/employ'
 
 const excel = ref<File[]>()
 const jsonData = ref<EmployHeader[]>([])
 const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
-const loading = ref(false);
+const loading = ref(false)
 const uploadDialog = ref(false)
 const nilData: EmployHeader = {
   studentId: '',
@@ -28,7 +32,11 @@ const nilData: EmployHeader = {
 
 const analyzeHandler = async () => {
   loading.value = true
-  const ret = await AnalyzeFileToTable(file.value as File, employheaders, notify) as EmployHeader[]
+  const ret = (await AnalyzeFileToTable(
+    file.value as File,
+    employheaders,
+    notify
+  )) as EmployHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -44,8 +52,10 @@ const uploadLogic = async () => {
   loading.value = true
   // valid data format before upload
   if (
-    !jsonData.value.
-      reduce((valid, employ) => (!valid ? false : HeaderValidChecker(employ, employheaders)), true)
+    !jsonData.value.reduce(
+      (valid, employ) => (!valid ? false : HeaderValidChecker(employ, employheaders)),
+      true
+    )
   ) {
     notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
     loading.value = false
@@ -63,7 +73,6 @@ const uploadLogic = async () => {
   uploadDialog.value = false
   loading.value = false
 }
-
 </script>
 
 <template>
@@ -71,13 +80,26 @@ const uploadLogic = async () => {
     <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
     <section class="menu">
       <span class="file text-indigo">
-        <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
+        <v-file-input
+          v-model="excel"
+          color="indigo"
+          variant="underlined"
+          hide-details
+          free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          label="Excel 文件选择"></v-file-input>
+          label="Excel 文件选择"
+        ></v-file-input>
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-      <v-btn v-if="has('student_employment:insert')" prepend-icon="mdi-upload" color="primary"
-        @click="uploadDialog = true">上传数据</v-btn>
+      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
+        >解析文件</v-btn
+      >
+      <v-btn
+        v-if="has('student_employment:insert')"
+        prepend-icon="mdi-upload"
+        color="primary"
+        @click="uploadDialog = true"
+        >上传数据</v-btn
+      >
       <v-btn prepend-icon="mdi-download" href="/template/学生就业信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
@@ -94,7 +116,7 @@ const uploadLogic = async () => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

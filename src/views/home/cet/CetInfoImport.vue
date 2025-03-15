@@ -6,7 +6,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { cetheaders, type CetHeader, CetHeaderChecker } from '@/misc/table/cet-import-header'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import { apiImportCETScore } from '@/api/cet'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import { type StudentCet } from '@/api/cet'
 
 const excel = ref<File[]>()
@@ -20,7 +20,7 @@ const nilData: CetHeader = {
   score: '',
   examDate: '',
   certificateNumber: '',
-  examType: '',
+  examType: ''
 }
 
 const analyzeHandler = async () => {
@@ -61,7 +61,7 @@ const uploadLogic = async () => {
     return
   }
 
-  const students: StudentCet[] = jsonData.value.map(student => ({
+  const students: StudentCet[] = jsonData.value.map((student) => ({
     ...student,
     score: parseInt(student.score)
   }))
@@ -81,24 +81,49 @@ const uploadLogic = async () => {
 
 <template>
   <v-dialog width="500" v-model="uploadDialog">
-    <v-card prepend-icon="mdi-upload" title="上传数据" :text="`填写选择 ${jsonData.length} 条记录，确定要上传吗？`">
+    <v-card
+      prepend-icon="mdi-upload"
+      title="上传数据"
+      :text="`填写选择 ${jsonData.length} 条记录，确定要上传吗？`"
+    >
       <v-card-actions class="mx-auto">
-        <v-btn v-if="has('student:insert')" :loading="loading" :disabled="jsonData.length === 0 && ifValided"
-          color="indigo" @click="uploadLogic">上传</v-btn>
+        <v-btn
+          v-if="has('student:insert')"
+          :loading="loading"
+          :disabled="jsonData.length === 0 && ifValided"
+          color="indigo"
+          @click="uploadLogic"
+          >上传</v-btn
+        >
         <v-btn @click="uploadDialog = false">取消</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
   <section class="menu">
     <span class="file text-indigo">
-      <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
+      <v-file-input
+        v-model="excel"
+        color="indigo"
+        variant="underlined"
+        hide-details
+        free-select
         accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        label="Excel 文件选择"></v-file-input>
+        label="Excel 文件选择"
+      ></v-file-input>
     </span>
-    <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-    <v-btn v-if="has('student_cet:insert')" prepend-icon="mdi-upload" color="primary"
-      @click="uploadDialog = true">上传数据</v-btn>
-    <v-btn prepend-icon="mdi-download" href="/template/学生CET等级成绩上传模板.xlsx">下载模板</v-btn>
+    <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
+      >解析文件</v-btn
+    >
+    <v-btn
+      v-if="has('student_cet:insert')"
+      prepend-icon="mdi-upload"
+      color="primary"
+      @click="uploadDialog = true"
+      >上传数据</v-btn
+    >
+    <v-btn prepend-icon="mdi-download" href="/template/学生CET等级成绩上传模板.xlsx"
+      >下载模板</v-btn
+    >
   </section>
   <section class="pa-4 w-100">
     <ExcelTable v-model="jsonData" :headers="cetheaders" :nil-data="nilData" />
@@ -113,7 +138,7 @@ const uploadLogic = async () => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

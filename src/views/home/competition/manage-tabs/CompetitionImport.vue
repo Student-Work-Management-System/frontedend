@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { useUserStore } from '@/stores/user';
-import { competitionheaders, type CompetitionHeader, AnalyzeFileToTable, HeaderValidChecker } from '@/misc/table'
+import { useUserStore } from '@/stores/userStore'
+import {
+  competitionheaders,
+  type CompetitionHeader,
+  AnalyzeFileToTable,
+  HeaderValidChecker
+} from '@/misc/table'
 import { notify } from '@kyvg/vue3-notification'
-import { apiAddCompetitions } from '@/api/competition';
+import { apiAddCompetitions } from '@/api/competition'
 
 const nilData = {
   competitionId: '',
@@ -42,40 +47,56 @@ const analyzeHandler = async () => {
   loading.value = true
   // valid data format before upload
   if (
-    !jsonData.value.
-      reduce((valid, e) => (!valid ? false : HeaderValidChecker(e, competitionheaders)), true)
+    !jsonData.value.reduce(
+      (valid, e) => (!valid ? false : HeaderValidChecker(e, competitionheaders)),
+      true
+    )
   ) {
     notify({ title: '提示', text: '数据格式有问题！', type: 'warn' })
     loading.value = false
     return
   }
-  const ret = await AnalyzeFileToTable(file.value as File, competitionheaders, notify) as CompetitionHeader[]
+  const ret = (await AnalyzeFileToTable(
+    file.value as File,
+    competitionheaders,
+    notify
+  )) as CompetitionHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
   loading.value = false
 }
-
-
 </script>
 <template>
   <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
   <section class="menu">
     <span class="file text-indigo">
-      <v-file-input v-model="excel" color="indigo" variant="underlined" hide-details free-select
+      <v-file-input
+        v-model="excel"
+        color="indigo"
+        variant="underlined"
+        hide-details
+        free-select
         accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        label="Excel 文件选择"></v-file-input>
+        label="Excel 文件选择"
+      ></v-file-input>
     </span>
-    <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">解析文件</v-btn>
-    <v-btn v-if="has('competition:insert')" prepend-icon="mdi-upload" color="primary"
-      @click="uploadDialog = true">上传数据</v-btn>
+    <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
+      >解析文件</v-btn
+    >
+    <v-btn
+      v-if="has('competition:insert')"
+      prepend-icon="mdi-upload"
+      color="primary"
+      @click="uploadDialog = true"
+      >上传数据</v-btn
+    >
     <v-btn prepend-icon="mdi-download" href="/template/竞赛信息上传模板.xlsx">下载模板</v-btn>
   </section>
   <section class="pa-4 w-100">
     <ExcelTable v-model="jsonData" :headers="competitionheaders" :nil-data="nilData" />
   </section>
 </template>
-
 
 <style scoped>
 .menu {
@@ -85,7 +106,7 @@ const analyzeHandler = async () => {
   padding: 0rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

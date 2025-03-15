@@ -1,22 +1,12 @@
 <script lang="ts" setup>
-import { type StudentQuery } from '@/model/studentModel'
 import StatusSelectMenu from '../statusCompones/StatusSelectMenu.vue'
 import StatusTable from '../statusCompones/StatusTable.vue'
 
-const props = defineProps<{
-  studentQuery: StudentQuery
-}>()
-
-const emit = defineEmits(['update:studentQuery'])
 </script>
 
 <template>
   <div class="status-container">
-    <StatusSelectMenu
-      class="status-select-menu"
-      :student-query="studentQuery"
-      @update:student-query="(v) => emit('update:studentQuery', v)"
-    />
+    <StatusSelectMenu class="status-select-menu" />
     <StatusTable />
   </div>
 </template>

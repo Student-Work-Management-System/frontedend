@@ -5,17 +5,18 @@ import GradeSelect from '@/components/home/GradeSelect.vue'
 import DegreeSelect from '@/components/home/DegreeSelect.vue'
 import PoliticSelect from '@/components/home/PoliticSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
-import { type StudentQuery } from '@/model/studentModel'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import ItemSelect from '@/components/home/ItemSelect.vue'
 import { type Degree } from '@/model/otherModel'
+import { useBaseStore } from '@/stores/baseStore'
+import type { StudentQuery } from '@/model/studentModel'
+import { watch } from 'vue'
+import { debounce } from '@visactor/vchart/esm/util'
 
-const props = defineProps<{
-  loading: boolean
-  selectedLength: number
-  studentQuery: StudentQuery
-}>()
-const emit = defineEmits(['update:studentQuery', 'refresh', 'deleteButtonClick', 'exportData'])
+const baseStore = useBaseStore()
+const studentQuery = baseStore.getStudentQuery
+const loading = defineModel<boolean>('loading')
+const emit = defineEmits(['refresh', 'deleteButtonClick', 'exportData'])
 
 const store = useUserStore()
 const has = (authority: string) => {
@@ -24,11 +25,6 @@ const has = (authority: string) => {
 
 const chargeGrades = store.getUserData.chargeGrades
 const chargeDegrees = store.getUserData.chargeDegrees
-
-// 更新查询条件
-const updateQuery = (field: keyof StudentQuery, value: any) => {
-  emit('update:studentQuery', { ...props.studentQuery, [field]: value })
-}
 
 const deleteStudent = () => {
   emit('deleteButtonClick')
@@ -41,6 +37,21 @@ const refreshData = () => {
 const exportData = () => {
   emit('exportData')
 }
+
+const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery[K]) => {
+  baseStore.updateStudentQuery(field, value)
+}
+
+watch(
+  () => ({
+    gradeId: studentQuery.gradeId,
+    degreeId: studentQuery.degreeId
+  }),
+  debounce((newVal) => {
+    refreshData()
+  }, 300),
+  { deep: true }
+)
 </script>
 
 <template>
@@ -51,27 +62,27 @@ const exportData = () => {
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <MajorSelect
               :model-value="studentQuery.majorId"
-              @update:model-value="(v) => updateQuery('majorId', v)"
+              @update:model-value="(v) => updateQuery('majorId', v as string | null)"
               label="专业"
               variant="underlined"
             />
             <GradeSelect
               :model-value="studentQuery.gradeId"
               :charge-grades="chargeGrades"
-              @update:model-value="(v) => updateQuery('gradeId', v)"
+              @update:model-value="(v) => updateQuery('gradeId', v as string | null)"
               label="年级"
               variant="underlined"
             />
             <ItemSelect
               :model-value="studentQuery.gender"
-              @update:model-value="(v) => updateQuery('gender', v)"
+              @update:model-value="(v) => updateQuery('gender', v as string | null)"
               label="性别"
               variant="underlined"
               :items="['男', '女']"
             />
             <v-text-field
               :model-value="studentQuery.classNo"
-              @update:model-value="(v: string) => updateQuery('classNo', v)"
+              @update:model-value="(v: string) => updateQuery('classNo', v as string | null)"
               label="班号"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -82,7 +93,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.dormitory"
-              @update:model-value="(v) => updateQuery('dormitory', v)"
+              @update:model-value="(v) => updateQuery('dormitory', v as string | null)"
               label="宿舍"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -93,7 +104,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.nation"
-              @update:model-value="(v) => updateQuery('nation', v)"
+              @update:model-value="(v) => updateQuery('nation', v as string | null)"
               label="民族"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -105,14 +116,14 @@ const exportData = () => {
 
             <PoliticSelect
               :model-value="studentQuery.politicId"
-              @update:model-value="(v) => updateQuery('politicId', v)"
+              @update:model-value="(v) => updateQuery('politicId', v as string | null)"
               label="政治面貌"
               variant="underlined"
             />
 
             <v-text-field
               :model-value="studentQuery.nativePlace"
-              @update:model-value="(v) => updateQuery('nativePlace', v)"
+              @update:model-value="(v) => updateQuery('nativePlace', v as string | null)"
               label="籍贯"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -123,7 +134,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.religiousBeliefs"
-              @update:model-value="(v) => updateQuery('religiousBeliefs', v)"
+              @update:model-value="(v) => updateQuery('religiousBeliefs', v as string | null)"
               label="宗教信仰"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -134,7 +145,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.location"
-              @update:model-value="(v) => updateQuery('location', v)"
+              @update:model-value="(v) => updateQuery('location', v as string | null)"
               label="家庭所在地"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -150,7 +161,7 @@ const exportData = () => {
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.address"
-              @update:model-value="(v) => updateQuery('address', v)"
+              @update:model-value="(v) => updateQuery('address', v as string | null)"
               label="家庭住址"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -161,7 +172,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.householdRegistration"
-              @update:model-value="(v) => updateQuery('householdRegistration', v)"
+              @update:model-value="(v) => updateQuery('householdRegistration', v as string | null)"
               label="户籍所在地"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -172,7 +183,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.householdType"
-              @update:model-value="(v) => updateQuery('householdType', v)"
+              @update:model-value="(v) => updateQuery('householdType', v as string | null)"
               label="户口类型"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -183,7 +194,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.familyPopulation"
-              @update:model-value="(v) => updateQuery('familyPopulation', v)"
+              @update:model-value="(v) => updateQuery('familyPopulation', v as string | null)"
               label="家庭人口"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -194,7 +205,7 @@ const exportData = () => {
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.isOnlyChild!!"
-              @update:model-value="(v) => updateQuery('isOnlyChild', v)"
+              @update:model-value="(v) => updateQuery('isOnlyChild', v as boolean | null)"
               label="是否独生子女"
               variant="underlined"
               :items="[
@@ -203,8 +214,8 @@ const exportData = () => {
               ]"
             />
             <TrueOrFalseSelect
-              :model-value="studentQuery.isStudentLoans as boolean"
-              @update:model-value="(v) => updateQuery('isStudentLoans', v)"
+              :model-value="studentQuery.isStudentLoans!!"
+              @update:model-value="(v) => updateQuery('isStudentLoans', v as boolean | null)"
               label="助学贷款"
               variant="underlined"
               :items="[
@@ -215,7 +226,7 @@ const exportData = () => {
 
             <v-text-field
               :model-value="studentQuery.highSchool"
-              @update:model-value="(v) => updateQuery('highSchool', v)"
+              @update:model-value="(v) => updateQuery('highSchool', v as string | null)"
               label="高中名称"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -227,7 +238,7 @@ const exportData = () => {
 
             <v-text-field
               :model-value="studentQuery.examId"
-              @update:model-value="(v) => updateQuery('examId', v)"
+              @update:model-value="(v) => updateQuery('examId', v as string | null)"
               label="考生号"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -238,7 +249,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.admissionBatch"
-              @update:model-value="(v) => updateQuery('admissionBatch', v)"
+              @update:model-value="(v) => updateQuery('admissionBatch', v as string | null)"
               label="录取批次"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -252,7 +263,7 @@ const exportData = () => {
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.totalExamScore"
-              @update:model-value="(v) => updateQuery('totalExamScore', v)"
+              @update:model-value="(v) => updateQuery('totalExamScore', v as string | null)"
               label="高考总分"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -263,7 +274,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.foreignLanguage"
-              @update:model-value="(v) => updateQuery('foreignLanguage', v)"
+              @update:model-value="(v) => updateQuery('foreignLanguage', v as string | null)"
               label="外语语种"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -274,7 +285,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.foreignScore"
-              @update:model-value="(v) => updateQuery('foreignScore', v)"
+              @update:model-value="(v) => updateQuery('foreignScore', v as string | null)"
               label="外语分数"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -285,7 +296,7 @@ const exportData = () => {
             />
             <v-text-field
               :model-value="studentQuery.hobbies"
-              @update:model-value="(v) => updateQuery('hobbies', v)"
+              @update:model-value="(v) => updateQuery('hobbies', v as string | null)"
               label="兴趣爱好"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -297,19 +308,19 @@ const exportData = () => {
             <DegreeSelect
               :model-value="studentQuery.degreeId"
               :charge-degrees="chargeDegrees as Degree[]"
-              @update:model-value="(v) => updateQuery('degreeId', v)"
+              @update:model-value="(v) => updateQuery('degreeId', v as string | null)"
               label="学历"
               variant="underlined"
             />
             <StatusSelect
               :model-value="studentQuery.statusId"
-              @update:model-value="(v) => updateQuery('statusId', v)"
+              @update:model-value="(v) => updateQuery('statusId', v as string | null)"
               label="学籍状态"
               variant="underlined"
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.disability"
-              @update:model-value="(v) => updateQuery('disability', v)"
+              @update:model-value="(v) => updateQuery('disability', v as boolean)"
               label="是否残疾"
               variant="underlined"
               :items="[
@@ -319,7 +330,7 @@ const exportData = () => {
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.enabled"
-              @update:model-value="(v) => updateQuery('enabled', v)"
+              @update:model-value="(v) => updateQuery('enabled', v as boolean)"
               label="学生状态"
               variant="underlined"
               :items="[
@@ -330,7 +341,7 @@ const exportData = () => {
             <div class="flex-shrink-0 operation-area-right" style="width: 30%">
               <v-text-field
                 :model-value="studentQuery.search"
-                @update:model-value="(v) => updateQuery('search', v)"
+                @update:model-value="(v) => updateQuery('search', v as string)"
                 color="indigo"
                 :loading="loading"
                 :counter="15"

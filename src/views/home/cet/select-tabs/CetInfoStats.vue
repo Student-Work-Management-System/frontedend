@@ -9,7 +9,7 @@ const loading = ref(false)
 const selectedMajor = ref<string | null>(null)
 const selectedTerm = ref<string | null>(null)
 const majorName = ref('')
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 
 const stats = ref<any>({
   cet4: {},

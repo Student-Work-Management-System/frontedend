@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
-import { apiGetStudentAuditCompetition, apiAuditStudentCompetition, type StudentCompetition } from '@/api/competition'
+import { useUserStore } from '@/stores/userStore'
+import {
+  apiGetStudentAuditCompetition,
+  apiAuditStudentCompetition,
+  type StudentCompetition
+} from '@/api/competition'
 import { apiDownloadFile } from '@/api/file'
 import { notify } from '@kyvg/vue3-notification'
 
@@ -71,7 +75,7 @@ const headers = [
     sortable: false,
     key: 'operations'
   }
-];
+]
 
 const auditDialog = ref(false)
 const selected = ref<StudentCompetition[]>([])
@@ -81,7 +85,6 @@ const selectedGrade = ref<string | null>(null)
 const selectMajor = ref<string | null>(null)
 const selectStartDate = ref<Date | null>(null)
 const selectEndDate = ref<Date | null>(null)
-
 
 const data = ref<any[]>([])
 const dataLength = ref(0)
@@ -94,22 +97,24 @@ const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
   fetchStudentCompetitionLogic()
 }
 
-const auditLogic = async (auditState: "已通过" | "已拒绝", reason: string) => {
+const auditLogic = async (auditState: '已通过' | '已拒绝', reason: string) => {
   loading.value = true
 
-  let reqs = selected.value.map(e => (async (scid) => {
-    const { data: result } = await apiAuditStudentCompetition({
-      studentCompetitionId: scid,
-      reviewState: auditState,
-      rejectReason: auditState === "已通过" ? null : reason
-    })
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `记录: ${scid}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `记录: ${scid} 已审核！` })
-  })(e.studentCompetitionId))
+  let reqs = selected.value.map((e) =>
+    (async (scid) => {
+      const { data: result } = await apiAuditStudentCompetition({
+        studentCompetitionId: scid,
+        reviewState: auditState,
+        rejectReason: auditState === '已通过' ? null : reason
+      })
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `记录: ${scid}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `记录: ${scid} 已审核！` })
+    })(e.studentCompetitionId)
+  )
   await Promise.all(reqs)
 
   afterHandler()
@@ -137,49 +142,49 @@ const fetchStudentCompetitionLogic = async () => {
     return
   }
   dataLength.value = result.data.totalRow
-  data.value = result.data.records.map(item => ({
+  data.value = result.data.records.map((item) => ({
     ...item,
     headerInfo: item.headerId + item.headerName,
     members: item.members.map((m) => m.studentId + m.realName)
   }))
   selected.value = []
   loading.value = false
-};
+}
 onMounted(fetchStudentCompetitionLogic)
 
 const downloadEvidence = async (filename: string) => {
   loading.value = true
   const { data: result } = await apiDownloadFile(filename)
   notify({ title: '成功', text: '下载已开始！', type: 'success' })
-  const url = URL.createObjectURL(result);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename.split('-').slice(1).join('');
-  a.click();
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(result)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename.split('-').slice(1).join('')
+  a.click()
+  URL.revokeObjectURL(url)
   loading.value = false
   loading.value = false
 }
 
-const checkStateColor = (state: string): "indigo" | "green" | "error" => {
+const checkStateColor = (state: string): 'indigo' | 'green' | 'error' => {
   switch (state) {
-    case "审核中":
-      return "indigo"
-    case "已通过":
-      return "green"
+    case '审核中':
+      return 'indigo'
+    case '已通过':
+      return 'green'
     default:
-      return "error"
+      return 'error'
   }
 }
 
 const checkStateIcon = (state: string): string => {
   switch (state) {
-    case "审核中":
-      return "mdi-progress-clock"
-    case "已通过":
-      return "mdi-progress-check"
+    case '审核中':
+      return 'mdi-progress-clock'
+    case '已通过':
+      return 'mdi-progress-check'
     default:
-      return "mdi-progress-close"
+      return 'mdi-progress-close'
   }
 }
 
@@ -190,18 +195,21 @@ const fixHeight = () => {
   const offsetTop = tableDom.value?.offsetTop as number
   const windowHeight = window.screen.height as number
   const totalHeight = document.body.clientHeight
-  const padding = (totalHeight * 0.5 / windowHeight) * 32
+  const padding = ((totalHeight * 0.5) / windowHeight) * 32
   tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
 }
 onMounted(() => {
   fixHeight()
   window.onresize = fixHeight
 })
-
 </script>
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <CompetitionAuditDialog v-model="auditDialog" v-model:length="selected.length" @on-audit="auditLogic" />
+    <CompetitionAuditDialog
+      v-model="auditDialog"
+      v-model:length="selected.length"
+      @on-audit="auditLogic"
+    />
     <section class="menu">
       <span class="w-15">
         <GradeSelect v-model="selectedGrade" variant="underlined" />
@@ -216,42 +224,80 @@ onMounted(() => {
         <DateSelect label="结束日期" variant="underlined" v-model="selectEndDate" />
       </span>
       <span class="w-20 text-indigo">
-        <v-text-field v-model="search" color="indigo" @update:modelValue="fetchStudentCompetitionLogic" :loading="loading"
-          :counter="15" clearable label="搜索" prepend-inner-icon="mdi-magnify" variant="underlined" hide-details>
+        <v-text-field
+          v-model="search"
+          color="indigo"
+          @update:modelValue="fetchStudentCompetitionLogic"
+          :loading="loading"
+          :counter="15"
+          clearable
+          label="搜索"
+          prepend-inner-icon="mdi-magnify"
+          variant="underlined"
+          hide-details
+        >
           <v-tooltip activator="parent" location="top">以填报学生姓名、学号搜索</v-tooltip>
         </v-text-field>
       </span>
-      <v-btn v-if="has('student_competition_claim:select')" prepend-icon="mdi-refresh"
-        @click="fetchStudentCompetitionLogic">刷新</v-btn>
-      <v-btn v-if="has('student_competition_claim:update')" prepend-icon="mdi-eye" color="primary"
-        @click="auditDialog = true">审核</v-btn>
+      <v-btn
+        v-if="has('student_competition_claim:select')"
+        prepend-icon="mdi-refresh"
+        @click="fetchStudentCompetitionLogic"
+        >刷新</v-btn
+      >
+      <v-btn
+        v-if="has('student_competition_claim:update')"
+        prepend-icon="mdi-eye"
+        color="primary"
+        @click="auditDialog = true"
+        >审核</v-btn
+      >
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table-server v-model="selected" :height="tableHeight" :headers="headers" :items="data"
-          :items-length="dataLength" :loading="loading" v-model:page="pageOptions.pageNo"
-          v-model:items-per-page="pageOptions.pageSize" @update:options="loadItems" show-select return-object>
+        <v-data-table-server
+          v-model="selected"
+          :height="tableHeight"
+          :headers="headers"
+          :items="data"
+          :items-length="dataLength"
+          :loading="loading"
+          v-model:page="pageOptions.pageNo"
+          v-model:items-per-page="pageOptions.pageSize"
+          @update:options="loadItems"
+          show-select
+          return-object
+        >
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" color="primary">
               {{ item.headerInfo }}
             </v-chip>
           </template>
           <template v-slot:item.members="{ item }">
-            <v-chip class="mr-1" v-for="( member, id ) in item.members" :key="id">
+            <v-chip class="mr-1" v-for="(member, id) in item.members" :key="id">
               {{ member }}
             </v-chip>
           </template>
           <template v-slot:item.reviewState="{ item }">
-            <v-chip class="mr-1" :prepend-icon="checkStateIcon(item.reviewState)"
-              :color="checkStateColor(item.reviewState)">
+            <v-chip
+              class="mr-1"
+              :prepend-icon="checkStateIcon(item.reviewState)"
+              :color="checkStateColor(item.reviewState)"
+            >
               {{ item.reviewState }}
             </v-chip>
           </template>
           <template v-slot:item.operations="{ item }">
             <div>
-              <v-btn v-if="has('student_competition:select') && has('file:download')" color="indigo"
-                prepend-icon="mdi-download" variant="link" @click="downloadEvidence(item.evidence)">证明材料</v-btn>
+              <v-btn
+                v-if="has('student_competition:select') && has('file:download')"
+                color="indigo"
+                prepend-icon="mdi-download"
+                variant="link"
+                @click="downloadEvidence(item.evidence)"
+                >证明材料</v-btn
+              >
             </div>
           </template>
         </v-data-table-server>
@@ -268,7 +314,7 @@ onMounted(() => {
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu>* {
+.menu > * {
   margin-right: 0.5rem;
 }
 

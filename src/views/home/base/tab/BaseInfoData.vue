@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { apiGetStudentList, apiDeleteStudent, apiRecoverDeleteStudent } from '@/api/student'
-import { type Student, type StudentQuery } from '@/model/studentModel'
+import { type Student } from '@/model/studentModel'
 import { notify } from '@kyvg/vue3-notification'
 import TableSelectMenu from '../tableComponents/TableSelectMenu.vue'
 import BaseInfoTable from '../tableComponents/BaseInfoTable.vue'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
-import { useUserStore } from '@/stores/user'
-const store = useUserStore()
+import { useBaseStore } from '@/stores/baseStore'
+
+const baseStore = useBaseStore()
+const studentQuery = baseStore.getStudentQuery
 const loading = ref(false)
 const selected = ref<Student[]>([])
 const data = ref<Student[]>([])
@@ -69,45 +71,9 @@ const modifyInfo = ref<Student>({
   disability: false
 })
 
-// 查询参数
-const studentQuery = ref<StudentQuery>({
-  search: '' as string,
-  gradeId: store.getUserData.chargeGrades?.[0].gradeId as string | null,
-  majorId: null as string | null,
-  degreeId: store.getUserData.chargeDegrees?.[0].degreeId as string | null,
-  statusId: '1' as string | null,
-  gender: null as string | null,
-  nation: null as string | null,
-  politicId: null as string | null,
-  classNo: null as string | null,
-  dormitory: null as string | null,
-  householdRegistration: null as string | null,
-  householdType: null as string | null,
-  address: null as string | null,
-  examId: null as string | null,
-  admissionBatch: null as string | null,
-  nativePlace: null as string | null,
-  highSchool: null as string | null,
-  totalExamScore: null as string | null,
-  foreignLanguage: null as string | null,
-  foreignScore: null as string | null,
-  hobbies: null as string | null,
-  joiningTime: null as string | null,
-  isStudentLoans: null as boolean | null,
-  religiousBeliefs: null as string | null,
-  location: null as string | null,
-  familyPopulation: null as string | null,
-  isOnlyChild: null as boolean | null,
-  disability: false as boolean,
-  otherNotes: null as string | null,
-  enabled: true as boolean,
-  pageNo: 1 as number,
-  pageSize: 25 as number
-})
-
 const fetchStudentLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetStudentList(studentQuery.value)
+  const { data: result } = await apiGetStudentList(studentQuery)
   if (result.code !== 200) {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })
@@ -222,8 +188,6 @@ onMounted(fetchStudentLogic)
     <TableSelectMenu
       class="table-select-menu"
       :loading="loading"
-      :selected-length="selected.length"
-      v-model:student-query="studentQuery"
       @refresh="fetchStudentLogic"
       @after-student="fetchStudentLogic"
       @delete-button-click="deleteStudent"
@@ -234,8 +198,7 @@ onMounted(fetchStudentLogic)
       :data="data"
       :loading="loading"
       :table-height="tableHeight"
-      v-model:selected="selected"
-      v-model:student-query="studentQuery"
+      :selected="selected"
       :total-row="totalRow || 0"
       @edit="editStudent"
       @recover="recoverStudent"
