@@ -7,7 +7,8 @@ import TableSelectMenu from '../tableComponents/TableSelectMenu.vue'
 import BaseInfoTable from '../tableComponents/BaseInfoTable.vue'
 import EditBaseInfoForm from '@/components/home/base/EditBaseInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
-
+import { useUserStore } from '@/stores/user'
+const store = useUserStore()
 const loading = ref(false)
 const selected = ref<Student[]>([])
 const data = ref<Student[]>([])
@@ -36,7 +37,7 @@ const modifyInfo = ref<Student>({
   address: '',
   gradeId: '',
   classNo: '',
-  politicsStatus: '',
+  politicId: '',
   fatherName: '',
   fatherPhone: '',
   fatherOccupation: '',
@@ -71,13 +72,13 @@ const modifyInfo = ref<Student>({
 // 查询参数
 const studentQuery = ref<StudentQuery>({
   search: '' as string,
-  gradeId: null as string | null,
+  gradeId: store.getUserData.chargeGrades?.[0].gradeId as string | null,
   majorId: null as string | null,
-  degreeId: '1' as string | null,
+  degreeId: store.getUserData.chargeDegrees?.[0].degreeId as string | null,
   statusId: '1' as string | null,
   gender: null as string | null,
   nation: null as string | null,
-  politicsStatus: null as string | null,
+  politicId: null as string | null,
   classNo: null as string | null,
   dormitory: null as string | null,
   householdRegistration: null as string | null,

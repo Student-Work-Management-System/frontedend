@@ -322,13 +322,6 @@ export const tableHeaders = [
     showOverflowTooltip: true,
     width: 200
   },
-  {
-    label: '备注',
-    key: 'otherNotes',
-    align: "center",
-    showOverflowTooltip: true,
-    width: 200
-  },
 ]
 
 export const baseheaders: TableHeader[] = [

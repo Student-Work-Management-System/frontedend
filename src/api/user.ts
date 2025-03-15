@@ -1,42 +1,7 @@
 import http from '.'
 import type { Result } from '.'
 import { type AxiosResponse } from 'axios'
-import { type Role } from './role'
-
-export interface User {
-  username: string
-  realName: string
-  email: string
-  phone: string
-  password: string
-  roles: string[]
-}
-
-export interface Authority {
-  authority: string
-  permissionDesc: string
-}
-
-// 与用户登录账户相关的数据
-export interface UserData {
-  uid: string
-  username: string
-  realName: string
-  email: string
-  authorities: Authority[] | null
-  token: string
-}
-
-// 用户列表相关数据
-export interface UserRecord {
-  uid: string
-  username: string
-  realName: string
-  email: string
-  createdAt: string
-  roles: Role[]
-  enabled: boolean
-}
+import type { UserData, UserRecord, User } from '@/model/systemModel'
 
 export function userDataCheck(obj: Object): UserData {
   const ud = obj as UserData

@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { type UserData } from '@/api/user'
+import { type UserData } from '@/model/systemModel'
 
 export const useUserStore = defineStore('user', () => {
   const user = reactive<UserData>({
@@ -9,8 +9,11 @@ export const useUserStore = defineStore('user', () => {
     realName: '',
     email: '',
     authorities: null,
-    token: ''
+    token: '',
+    chargeDegrees: null,
+    chargeGrades: null
   })
+
   const getUserData = user
   function updateUser(newUser: UserData) {
     user.uid = newUser.uid
@@ -19,10 +22,14 @@ export const useUserStore = defineStore('user', () => {
     user.email = newUser.email
     user.token = newUser.token
     user.authorities = newUser.authorities
+    user.chargeDegrees = newUser.chargeDegrees
+    user.chargeGrades = newUser.chargeGrades
   }
+
   function hasAuthorized(authority: string): boolean {
     return user.authorities!.some((a) => a.authority === authority)
   }
+
   function cleanStore() {
     updateUser({
       uid: '',
@@ -30,7 +37,9 @@ export const useUserStore = defineStore('user', () => {
       realName: '',
       email: '',
       authorities: null,
-      token: ''
+      token: '',
+      chargeGrades: null,
+      chargeDegrees: null
     })
   }
   return { user, getUserData, updateUser, hasAuthorized, cleanStore }

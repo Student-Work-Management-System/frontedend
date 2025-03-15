@@ -31,7 +31,15 @@ const logoutBtnHandler = () => {
 const logoutHandler = () => {
   loading.value = true
   apiLogout()
-  store.updateUser({ uid: '', username: '', email: '', realName: '', token: '', authorities: [] })
+  store.updateUser({
+    uid: '',
+    username: '',
+    email: '',
+    realName: '',
+    token: '',
+    authorities: [],
+    counselors: []
+  })
   setAuthorizationToken('')
   localStorage.clear()
   loading.value = false
@@ -43,7 +51,12 @@ onMounted(finishLoading)
 </script>
 <template>
   <v-dialog v-model="dialog" width="auto">
-    <v-card max-width="400" prepend-icon="mdi-account-question" text="确定要登出当前账号吗？" title="登出账号">
+    <v-card
+      max-width="400"
+      prepend-icon="mdi-account-question"
+      text="确定要登出当前账号吗？"
+      title="登出账号"
+    >
       <template v-slot:actions>
         <section class="w-100 d-flex justify-space-evenly">
           <v-btn text="确定" @click="logoutBtnHandler"></v-btn>
@@ -62,8 +75,14 @@ onMounted(finishLoading)
             <v-card-title class="d-flex justify-space-between align-center" style="height: 6vh">
               <span>
                 <RouterBreadcrumb>
-                  <v-icon size="small" class="mr-2" :color="drawer ? 'indigo' : 'black'"
-                    :icon="drawer ? 'mdi-menu-open' : 'mdi-menu'" variant="text" @click="drawer = !drawer">
+                  <v-icon
+                    size="small"
+                    class="mr-2"
+                    :color="drawer ? 'indigo' : 'black'"
+                    :icon="drawer ? 'mdi-menu-open' : 'mdi-menu'"
+                    variant="text"
+                    @click="drawer = !drawer"
+                  >
                   </v-icon>
                 </RouterBreadcrumb>
               </span>
@@ -71,7 +90,12 @@ onMounted(finishLoading)
                 <v-btn variant="text" :loading="loading" prepend-icon="mdi-account">
                   {{ realName }}
                 </v-btn>
-                <v-btn variant="text" :loading="loading" prepend-icon="mdi-login-variant" @click="dialog = true">
+                <v-btn
+                  variant="text"
+                  :loading="loading"
+                  prepend-icon="mdi-login-variant"
+                  @click="dialog = true"
+                >
                   登出
                 </v-btn>
               </span>

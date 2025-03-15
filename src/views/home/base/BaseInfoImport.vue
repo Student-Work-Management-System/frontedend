@@ -5,7 +5,7 @@ import { notify } from '@kyvg/vue3-notification'
 import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
-import { apiGetMajorList } from '@/api/major'
+import { apiGetMajorList } from '@/api/other'
 import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/user'
 
@@ -63,6 +63,10 @@ const nilData: BaseHeader = {
   familyPopulation: '' as string | null,
   isOnlyChild: null as boolean | null,
   familyMembers: '' as string | null,
+  degreeId: null as string | null,
+  gradeId: null as string | null,
+  politicId: null as string | null,
+  disability: null as boolean | null,
   enabled: true
 }
 

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { apiGetMajorList } from '@/api/other'
-import { notify } from '@kyvg/vue3-notification'
 import { ref, onMounted } from 'vue'
-import type { Major } from '@/model/otherModel'
+import { apiGetAllPolitics } from '@/api/other'
+import { notify } from '@kyvg/vue3-notification'
+import type { Politics } from '@/model/otherModel'
 
 const model = defineModel<string | null>()
 const props = defineProps<{
@@ -16,11 +16,11 @@ const props = defineProps<{
     | 'solo-filled'
     | undefined
 }>()
-const items = ref<Major[]>([])
+const items = ref<Politics[]>([])
 const loading = ref(true)
-const getMajorListLogic = async () => {
+const getPoliticsListLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetMajorList()
+  const { data: result } = await apiGetAllPolitics()
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
@@ -29,20 +29,19 @@ const getMajorListLogic = async () => {
   loading.value = false
 }
 onMounted(() => {
-  getMajorListLogic()
+  getPoliticsListLogic()
 })
 </script>
-
 <template>
   <v-select
     v-model="model"
     :loading="loading"
     class="text-indigo"
     color="indigo"
-    label="专业"
+    label="政治面貌"
     :items="items"
-    item-title="majorName"
-    item-value="majorId"
+    item-title="politicStatus"
+    item-value="politicId"
     :variant="props.variant"
     hide-details
     clearable

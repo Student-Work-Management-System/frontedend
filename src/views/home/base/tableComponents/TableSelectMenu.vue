@@ -3,22 +3,27 @@ import MajorSelect from '@/components/home/MajorSelect.vue'
 import StatusSelect from '@/components/home/StatusSelect.vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import DegreeSelect from '@/components/home/DegreeSelect.vue'
+import PoliticSelect from '@/components/home/PoliticSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
 import { type StudentQuery } from '@/model/studentModel'
 import { useUserStore } from '@/stores/user'
 import ItemSelect from '@/components/home/ItemSelect.vue'
+import { type Degree } from '@/model/otherModel'
+
 const props = defineProps<{
   loading: boolean
   selectedLength: number
   studentQuery: StudentQuery
 }>()
-
 const emit = defineEmits(['update:studentQuery', 'refresh', 'deleteButtonClick', 'exportData'])
 
 const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
+
+const chargeGrades = store.getUserData.chargeGrades
+const chargeDegrees = store.getUserData.chargeDegrees
 
 // 更新查询条件
 const updateQuery = (field: keyof StudentQuery, value: any) => {
@@ -52,6 +57,7 @@ const exportData = () => {
             />
             <GradeSelect
               :model-value="studentQuery.gradeId"
+              :charge-grades="chargeGrades"
               @update:model-value="(v) => updateQuery('gradeId', v)"
               label="年级"
               variant="underlined"
@@ -96,13 +102,14 @@ const exportData = () => {
               hide-details
               clearable
             />
-            <ItemSelect
-              :model-value="studentQuery.politicsStatus"
-              @update:model-value="(v) => updateQuery('politicsStatus', v)"
+
+            <PoliticSelect
+              :model-value="studentQuery.politicId"
+              @update:model-value="(v) => updateQuery('politicId', v)"
               label="政治面貌"
               variant="underlined"
-              :items="['中共党员', '中共党员(预备)', '共青团员', '群众']"
             />
+
             <v-text-field
               :model-value="studentQuery.nativePlace"
               @update:model-value="(v) => updateQuery('nativePlace', v)"
@@ -289,13 +296,10 @@ const exportData = () => {
             />
             <DegreeSelect
               :model-value="studentQuery.degreeId"
+              :charge-degrees="chargeDegrees as Degree[]"
               @update:model-value="(v) => updateQuery('degreeId', v)"
               label="学历"
               variant="underlined"
-              :items="[
-                { key: '本科', value: '0' },
-                { key: '研究生', value: '1' }
-              ]"
             />
             <StatusSelect
               :model-value="studentQuery.statusId"

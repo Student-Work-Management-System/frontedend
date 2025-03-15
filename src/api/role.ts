@@ -1,19 +1,7 @@
 import http from '.'
 import { type Result } from '.'
 import { type AxiosResponse } from 'axios'
-
-export interface Role {
-  rid: string
-  roleName: string
-  roleDesc: string
-  permissionList: Permission[]
-}
-
-export interface Permission {
-  pid: string
-  permissionName: string
-  permissionDesc: string
-}
+import type { Role, Permission } from '@/model/systemModel'
 
 export interface PermissionTree extends Permission {
   children: PermissionTree[]

@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import { type Student, type StudentQuery, type Grade, type Degree } from '@/model/studentModel'
+import { type Student, type StudentQuery } from '@/model/studentModel'
 
 export async function apiAddStudentBaseInfo(
   students: Student[]
@@ -29,10 +29,6 @@ export function apiValidateHeadTeacherExists(headTeacherUsername: string): Promi
   return http.get(`/student/validate_teacher_existed/${headTeacherUsername}`)
 }
 
-export function apiGetAllGrades(): Promise<AxiosResponse<Result<Grade[]>>> {
-  return http.get('/student/allGrade')
-}
-
-export function apiGetAllDegrees(): Promise<AxiosResponse<Result<Degree[]>>> {
-  return http.get('/student/allDegree')
+export const apiGetStudentStatistics = (query: StudentQuery) => {
+  return http.get('/student/status', { params: query })
 }

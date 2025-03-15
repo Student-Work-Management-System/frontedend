@@ -32,7 +32,7 @@ export interface Student {
     headTeacherName: string | null
     headTeacherPhone: string | null
     // 政治面貌
-    politicsStatus: string | null
+    politicId: string | null
     // 入团时间
     joiningTime: string | null
     // 是否助学贷款
@@ -117,7 +117,7 @@ export interface StudentQuery {
     // 民族
     nation: string | null
     // 政治面貌
-    politicsStatus: string | null
+    politicId: string | null
     // 入团时间
     joiningTime: string | null
     // 是否助学贷款
@@ -164,18 +164,3 @@ export interface StudentQuery {
     pageNo: number
     pageSize: number
 }
-
-export interface Grade {
-    // 年级Id
-    gradeId: string
-    // 年级名称
-    gradeName: string
-}
-
-export interface Degree {
-    // 学历层次Id
-    degreeId: string
-    // 学历层次名称
-    degreeName: string
-}
-

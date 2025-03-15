@@ -1,22 +1,32 @@
 <script lang="ts" setup>
-import StatusSelectMenu from '@/views/home/base/statusCompones/StatusSelectMenu.vue'
 import { type StudentQuery } from '@/model/studentModel'
+import StatusSelectMenu from '../statusCompones/StatusSelectMenu.vue'
+import StatusTable from '../statusCompones/StatusTable.vue'
 
 const props = defineProps<{
   studentQuery: StudentQuery
 }>()
+
+const emit = defineEmits(['update:studentQuery'])
 </script>
 
 <template>
-  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column">
-    <StatusSelectMenu class="status-select-menu" :student-query="studentQuery" />
-  </v-card>
+  <div class="status-container">
+    <StatusSelectMenu
+      class="status-select-menu"
+      :student-query="studentQuery"
+      @update:student-query="(v) => emit('update:studentQuery', v)"
+    />
+    <StatusTable />
+  </div>
 </template>
 
 <style scoped>
-.status-select-menu {
-  padding: 8px;
+.status-container {
+  padding: 16px;
   height: 100%;
-  width: 40%;
+}
+.status-select-menu {
+  width: 30vw;
 }
 </style>
