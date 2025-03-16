@@ -335,6 +335,13 @@ export const baseheaders: TableHeader[] = [
     validate: (content) => (content === '' ? '学号不能为空！' : '')
   },
   {
+    type: 'select',
+    field: 'degree',
+    label: '学历层次',
+    require: true,
+    options: ['本科', '硕士', '博士'],
+  },
+  {
     type: 'string',
     field: 'idNumber',
     label: '身份证号',
@@ -462,7 +469,7 @@ export const baseheaders: TableHeader[] = [
     field: 'politicsStatus',
     label: '政治面貌',
     require: true,
-    options: ['群众', '共青团员', '中共党员(预备)', '中共党员']
+    options: ['群众', '共青团员', '预备党员', '中共党员']
   },
   {
     type: 'date',
@@ -523,18 +530,18 @@ export const baseheaders: TableHeader[] = [
     options: null,
   },
   {
-    type: 'select',
-    field: 'isOnlyChild',
-    label: '是否独生子女',
-    require: false,
-    options: ['是', '否']
-  },
-  {
     type: 'string',
     field: 'familyMembers',
     label: '家庭成员',
     require: false,
     options: null
+  },
+  {
+    type: 'select',
+    field: 'isOnlyChild',
+    label: '是否独生子女',
+    require: false,
+    options: ['是', '否']
   },
 
   // 父母信息
@@ -646,6 +653,13 @@ export const baseheaders: TableHeader[] = [
     type: 'select',
     field: 'isStudentLoans',
     label: '是否助学贷款',
+    require: false,
+    options: ['是', '否']
+  },
+  {
+    type: 'select',
+    field: 'disability',
+    label: '是否残疾',
     require: false,
     options: ['是', '否']
   },

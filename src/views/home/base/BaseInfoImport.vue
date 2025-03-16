@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
@@ -127,6 +127,10 @@ const uploadLogic = async () => {
   uploadDialog.value = false
   loading.value = false
 }
+onMounted(() => {
+  // todo: 获取学历层次、获取专业、获取年级、获取班主任、获取政治面貌
+  // todo: 填入headers中, 覆盖原先的options
+})
 </script>
 
 <template>
@@ -142,18 +146,19 @@ const uploadLogic = async () => {
           free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           label="Excel 文件选择"
-        ></v-file-input>
+        />
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
+      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler">
+        解析文件
+      </v-btn>
       <v-btn
         v-if="has('student:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
-        >上传数据</v-btn
       >
+        上传数据
+      </v-btn>
       <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
