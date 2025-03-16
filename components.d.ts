@@ -64,4 +64,7 @@ declare module 'vue' {
     TrueOrFalseSelect: typeof import('./src/components/home/TrueOrFalseSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vEle: typeof import('vue-devui/ele/index.es.js')['EleDirective']
+  }
 }

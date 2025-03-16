@@ -1,33 +1,64 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
+import type { StudentStatusItem } from '@/model/studentModel'
+import { apiGetStudentStatus } from '@/api/student'
+import { useBaseStore } from '@/stores/baseStore'
+import { debounce } from '@visactor/vchart/esm/util'
+import { notify } from '@kyvg/vue3-notification'
+import { useUserStore } from '@/stores/userStore'
+
+const baseStore = useBaseStore()
+const studentQuery = baseStore.getStudentQuery
+const userStore = useUserStore()
+
+// 计算当前学历层次名称
+const currentDegreeName = computed(() => {
+  const degrees = userStore.getUserData.chargeDegrees
+  const currentDegree = degrees?.find((degree) => degree.degreeId === studentQuery.degreeId)
+  return currentDegree?.degreeName || ''
+})
+
+// 计算当前年级名称
+const currentGradeName = computed(() => {
+  const grades = userStore.getUserData.chargeGrades
+  const currentGrade = grades?.find((grade) => grade.gradeId === studentQuery.gradeId)
+  return currentGrade?.gradeName || ''
+})
+
+// 计算表格标题
+const tableTitle = computed(() => {
+  return `${currentGradeName.value}${currentDegreeName.value}学生信息统计`
+})
 
 // Mock数据 - 2021级各专业统计
-const tableData = ref([
+const tableData = ref<StudentStatusItem[]>([
   {
-    majorId: '0801',
     majorName: '计算机科学与技术',
     totalCount: 120,
-    // 学籍状态
     normalCount: 110,
     suspendCount: 2,
     militaryCount: 3,
     returnCount: 1,
     transferInCount: 4,
     transferOutCount: 2,
-    // 性别
+    dropOfEnrollmentCount: 0,
+    retainEnrollmentCount: 1,
+    graduationCount: 0,
+    gradCount: 0,
+    droppedCount: 1,
+    rechristenCount: 0,
+    deathCount: 0,
     maleCount: 85,
     femaleCount: 35,
-    // 政治面貌
-    massCount: 40, // 群众
-    leagueCount: 65, // 共青团员
-    partyCount: 10, // 中共党员
-    prepareCount: 5, // 预备党员
-    // 其他
+    massCount: 40,
+    leagueCount: 65,
+    partyCount: 10,
+    prepareCount: 5,
     disabilityCount: 0,
-    loanCount: 8
+    minorityCount: 8,
+    originData: []
   },
   {
-    majorId: '0802',
     majorName: '软件工程',
     totalCount: 110,
     normalCount: 102,
@@ -36,6 +67,13 @@ const tableData = ref([
     returnCount: 2,
     transferInCount: 3,
     transferOutCount: 1,
+    dropOfEnrollmentCount: 0,
+    retainEnrollmentCount: 0,
+    graduationCount: 0,
+    gradCount: 0,
+    droppedCount: 0,
+    rechristenCount: 0,
+    deathCount: 0,
     maleCount: 75,
     femaleCount: 35,
     massCount: 35,
@@ -43,10 +81,10 @@ const tableData = ref([
     partyCount: 8,
     prepareCount: 7,
     disabilityCount: 1,
-    loanCount: 6
+    minorityCount: 0,
+    originData: []
   },
   {
-    majorId: '0803',
     majorName: '网络工程',
     totalCount: 90,
     normalCount: 85,
@@ -55,6 +93,13 @@ const tableData = ref([
     returnCount: 0,
     transferInCount: 2,
     transferOutCount: 2,
+    dropOfEnrollmentCount: 0,
+    retainEnrollmentCount: 0,
+    graduationCount: 0,
+    gradCount: 0,
+    droppedCount: 0,
+    rechristenCount: 0,
+    deathCount: 0,
     maleCount: 60,
     femaleCount: 30,
     massCount: 30,
@@ -62,10 +107,10 @@ const tableData = ref([
     partyCount: 6,
     prepareCount: 4,
     disabilityCount: 0,
-    loanCount: 5
+    minorityCount: 0,
+    originData: []
   },
   {
-    majorId: '0804',
     majorName: '人工智能',
     totalCount: 100,
     normalCount: 95,
@@ -74,14 +119,22 @@ const tableData = ref([
     returnCount: 1,
     transferInCount: 2,
     transferOutCount: 1,
+    dropOfEnrollmentCount: 0,
+    retainEnrollmentCount: 0,
+    graduationCount: 0,
+    gradCount: 0,
+    droppedCount: 0,
+    rechristenCount: 0,
+    deathCount: 0,
     maleCount: 70,
     femaleCount: 30,
-    massCount: 32, // 群众
-    leagueCount: 55, // 共青团员
-    partyCount: 8, // 中共党员
-    prepareCount: 5, // 预备党员
+    massCount: 32,
+    leagueCount: 55,
+    partyCount: 8,
+    prepareCount: 5,
     disabilityCount: 0,
-    loanCount: 7
+    minorityCount: 0,
+    originData: []
   }
 ])
 
@@ -110,12 +163,37 @@ const getSummaries = (param: any) => {
   })
   return sums
 }
+
+onMounted(() => {
+  refreshData()
+})
+
+const refreshData = async () => {
+  const { data: result } = await apiGetStudentStatus(studentQuery)
+  if (result.code !== 200) {
+    console.error(result)
+    notify({ type: 'error', title: '错误', text: result.message })
+  }
+  console.log(result.data)
+  tableData.value = result.data
+}
+
+watch(
+  () => ({
+    gradeId: studentQuery.gradeId,
+    degreeId: studentQuery.degreeId
+  }),
+  debounce((newVal) => {
+    refreshData()
+  }, 300),
+  { deep: true }
+)
 </script>
 
 <template>
   <div class="status-table">
     <div class="table-header">
-      <h3>2021级学生学籍状态统计</h3>
+      <h3>{{ tableTitle }}</h3>
     </div>
     <el-table
       :data="tableData"
@@ -135,10 +213,17 @@ const getSummaries = (param: any) => {
       <el-table-column label="学籍状态" align="center">
         <el-table-column prop="normalCount" label="在籍" align="center" width="90" />
         <el-table-column prop="suspendCount" label="休学" align="center" width="90" />
-        <el-table-column prop="militaryCount" label="入伍保留" align="center" width="90" />
+        <el-table-column prop="militaryCount" label="入伍" align="center" width="90" />
         <el-table-column prop="returnCount" label="复学" align="center" width="90" />
         <el-table-column prop="transferInCount" label="转入" align="center" width="90" />
         <el-table-column prop="transferOutCount" label="转出" align="center" width="90" />
+        <el-table-column prop="dropOfEnrollmentCount" label="放弃入学" align="center" width="90" />
+        <el-table-column prop="retainEnrollmentCount" label="保留入学" align="center" width="90" />
+        <el-table-column prop="graduationCount" label="结业" align="center" width="90" />
+        <el-table-column prop="gradCount" label="毕业" align="center" width="90" />
+        <el-table-column prop="droppedCount" label="退学" align="center" width="90" />
+        <el-table-column prop="rechristenCount" label="改名" align="center" width="90" />
+        <el-table-column prop="deathCount" label="死亡" align="center" width="90" />
       </el-table-column>
 
       <el-table-column label="政治面貌" align="center">
@@ -155,7 +240,7 @@ const getSummaries = (param: any) => {
 
       <el-table-column label="其他统计" align="center">
         <el-table-column prop="disabilityCount" label="残疾" align="center" width="90" />
-        <el-table-column prop="loanCount" label="助学贷款" align="center" width="90" />
+        <el-table-column prop="minorityCount" label="少数民族" align="center" width="90" />
       </el-table-column>
     </el-table>
   </div>
@@ -163,9 +248,8 @@ const getSummaries = (param: any) => {
 
 <style scoped>
 .status-table {
-  margin-top: 16px;
+  padding: 0 16px 16px 16px;
   background-color: white;
-  padding: 16px;
   border-radius: 4px;
 }
 

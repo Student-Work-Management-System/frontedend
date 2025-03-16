@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import StatusSelectMenu from '../statusCompones/StatusSelectMenu.vue'
 import StatusTable from '../statusCompones/StatusTable.vue'
-
 </script>
 
 <template>
@@ -13,8 +12,10 @@ import StatusTable from '../statusCompones/StatusTable.vue'
 
 <style scoped>
 .status-container {
-  padding: 16px;
   height: 100%;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 .status-select-menu {
   width: 30vw;
