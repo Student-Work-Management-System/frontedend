@@ -7,6 +7,7 @@ import { debounce } from '@visactor/vchart/esm/util'
 import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/userStore'
 
+const tableHeight = defineModel<number>('tableHeight')
 const baseStore = useBaseStore()
 const studentQuery = baseStore.getStudentQuery
 const userStore = useUserStore()
@@ -174,7 +175,6 @@ const refreshData = async () => {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })
   }
-  console.log(result.data)
   tableData.value = result.data
 }
 
@@ -195,54 +195,73 @@ watch(
     <div class="table-header">
       <h3>{{ tableTitle }}</h3>
     </div>
-    <el-table
-      :data="tableData"
-      border
-      show-summary
-      :summary-method="getSummaries"
-      style="width: 100%"
-      :header-cell-style="{
-        background: '#F5F7FA',
-        color: '#606266',
-        fontWeight: 600
-      }"
-    >
-      <el-table-column prop="majorName" label="专业" align="center" min-width="180" fixed="left" />
-      <el-table-column prop="totalCount" label="总人数" align="center" width="90" fixed="left" />
+    <div class="table-container">
+      <el-table
+        :data="tableData"
+        border
+        show-summary
+        :height="tableHeight"
+        :summary-method="getSummaries"
+        style="width: 100%"
+        :header-cell-style="{
+          background: '#F5F7FA',
+          color: '#606266',
+          fontWeight: 600
+        }"
+      >
+        <el-table-column
+          prop="majorName"
+          label="专业"
+          align="center"
+          min-width="180"
+          fixed="left"
+        />
+        <el-table-column prop="totalCount" label="总人数" align="center" width="90" fixed="left" />
 
-      <el-table-column label="学籍状态" align="center">
-        <el-table-column prop="normalCount" label="在籍" align="center" width="90" />
-        <el-table-column prop="suspendCount" label="休学" align="center" width="90" />
-        <el-table-column prop="militaryCount" label="入伍" align="center" width="90" />
-        <el-table-column prop="returnCount" label="复学" align="center" width="90" />
-        <el-table-column prop="transferInCount" label="转入" align="center" width="90" />
-        <el-table-column prop="transferOutCount" label="转出" align="center" width="90" />
-        <el-table-column prop="dropOfEnrollmentCount" label="放弃入学" align="center" width="90" />
-        <el-table-column prop="retainEnrollmentCount" label="保留入学" align="center" width="90" />
-        <el-table-column prop="graduationCount" label="结业" align="center" width="90" />
-        <el-table-column prop="gradCount" label="毕业" align="center" width="90" />
-        <el-table-column prop="droppedCount" label="退学" align="center" width="90" />
-        <el-table-column prop="rechristenCount" label="改名" align="center" width="90" />
-        <el-table-column prop="deathCount" label="死亡" align="center" width="90" />
-      </el-table-column>
+        <el-table-column label="学籍状态" align="center">
+          <el-table-column prop="normalCount" label="在籍" align="center" width="90" />
+          <el-table-column prop="suspendCount" label="休学" align="center" width="90" />
+          <el-table-column prop="militaryCount" label="入伍" align="center" width="90" />
+          <el-table-column prop="returnCount" label="复学" align="center" width="90" />
+          <el-table-column prop="transferInCount" label="转入" align="center" width="90" />
+          <el-table-column prop="transferOutCount" label="转出" align="center" width="90" />
+          <el-table-column
+            prop="dropOfEnrollmentCount"
+            label="放弃入学"
+            align="center"
+            width="90"
+          />
+          <el-table-column
+            prop="retainEnrollmentCount"
+            label="保留入学"
+            align="center"
+            width="90"
+          />
+          <el-table-column prop="graduationCount" label="结业" align="center" width="90" />
+          <el-table-column prop="gradCount" label="毕业" align="center" width="90" />
+          <el-table-column prop="droppedCount" label="退学" align="center" width="90" />
+          <el-table-column prop="rechristenCount" label="改名" align="center" width="90" />
+          <el-table-column prop="deathCount" label="死亡" align="center" width="90" />
+        </el-table-column>
 
-      <el-table-column label="政治面貌" align="center">
-        <el-table-column prop="massCount" label="群众" align="center" width="90" />
-        <el-table-column prop="leagueCount" label="共青团员" align="center" width="90" />
-        <el-table-column prop="partyCount" label="中共党员" align="center" width="90" />
-        <el-table-column prop="prepareCount" label="预备党员" align="center" width="90" />
-      </el-table-column>
+        <el-table-column label="政治面貌" align="center">
+          <el-table-column prop="massCount" label="群众" align="center" width="90" />
+          <el-table-column prop="leagueCount" label="共青团员" align="center" width="90" />
+          <el-table-column prop="partyCount" label="中共党员" align="center" width="90" />
+          <el-table-column prop="prepareCount" label="预备党员" align="center" width="90" />
+        </el-table-column>
 
-      <el-table-column label="性别统计" align="center">
-        <el-table-column prop="maleCount" label="男生" align="center" width="90" />
-        <el-table-column prop="femaleCount" label="女生" align="center" width="90" />
-      </el-table-column>
+        <el-table-column label="性别统计" align="center">
+          <el-table-column prop="maleCount" label="男生" align="center" width="90" />
+          <el-table-column prop="femaleCount" label="女生" align="center" width="90" />
+        </el-table-column>
 
-      <el-table-column label="其他统计" align="center">
-        <el-table-column prop="disabilityCount" label="残疾" align="center" width="90" />
-        <el-table-column prop="minorityCount" label="少数民族" align="center" width="90" />
-      </el-table-column>
-    </el-table>
+        <el-table-column label="其他统计" align="center">
+          <el-table-column prop="disabilityCount" label="残疾" align="center" width="90" />
+          <el-table-column prop="minorityCount" label="少数民族" align="center" width="90" />
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -251,9 +270,13 @@ watch(
   padding: 0 16px 16px 16px;
   background-color: white;
   border-radius: 4px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-header {
+  flex: none;
   margin-bottom: 16px;
 }
 
@@ -262,6 +285,20 @@ watch(
   font-size: 18px;
   font-weight: 600;
   margin: 0;
+}
+
+.table-container {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+:deep(.el-table) {
+  height: 100% !important;
+}
+
+:deep(.el-table__body-wrapper) {
+  overflow-y: auto;
 }
 
 :deep(.el-table__footer) {

@@ -111,17 +111,10 @@ export const tableHeaders = [
   // 政治信息
   {
     label: '政治面貌',
-    key: 'politicsStatus',
+    key: 'politicStatus',
     align: "center",
     showOverflowTooltip: false,
     width: 125
-  },
-  {
-    label: '是否共青团员',
-    key: 'isCommunistYouthLeagueMember',
-    align: "center",
-    showOverflowTooltip: false,
-    width: 120
   },
   {
     label: '入团时间',

@@ -21,7 +21,7 @@ const nilData: BaseHeader = {
   gender: '' as string | null,
   nativePlace: '' as string | null,
   postalCode: '' as string | null,
-  politicsStatus: '' as string | null,
+  politicStatus: '' as string | null,
   phone: '' as string | null,
   nation: '' as string | null,
   majorName: '' as string | null,

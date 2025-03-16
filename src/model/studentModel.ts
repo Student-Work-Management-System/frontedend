@@ -33,6 +33,7 @@ export interface Student {
     headTeacherPhone: string | null
     // 政治面貌
     politicId: string | null
+    politicStatus: string | null
     // 入团时间
     joiningTime: string | null
     // 是否助学贷款

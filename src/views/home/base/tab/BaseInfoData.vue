@@ -68,7 +68,8 @@ const modifyInfo = ref<Student>({
   isOnlyChild: true,
   familyMembers: '',
   degreeId: '',
-  disability: false
+  disability: false,
+  politicStatus: ''
 })
 
 const fetchStudentLogic = async () => {
