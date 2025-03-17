@@ -58,6 +58,7 @@ export async function apiUpdateUserInfo(userInfo: {
   uid: string
   realName: string
   email: string
+  phone: string
   password: string | null
 }): Promise<AxiosResponse<Result<null>>> {
   return http.put('/user/update', userInfo)

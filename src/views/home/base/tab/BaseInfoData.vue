@@ -21,10 +21,12 @@ const deleteDialog = ref(false)
 const modifyInfo = ref<Student>({
   majorId: '',
   majorName: '',
+  gradeName: '',
   studentId: '',
   idNumber: '',
   name: '',
   gender: '',
+  statusId: '',
   nativePlace: '',
   postalCode: '',
   phone: '',

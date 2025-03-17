@@ -329,10 +329,10 @@ export const baseheaders: TableHeader[] = [
   },
   {
     type: 'select',
-    field: 'degree',
+    field: 'degreeName',
     label: '学历层次',
     require: true,
-    options: ['本科', '硕士', '博士'],
+    options: []
   },
   {
     type: 'string',
@@ -340,12 +340,12 @@ export const baseheaders: TableHeader[] = [
     label: '身份证号',
     require: true,
     options: null,
-    validate: (content) => {
-      if (content === '') return '身份证号不能为空！';
-      if (!/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/.test(content))
-        return '身份证格式错误！';
-      return '';
-    }
+    // validate: (content) => {
+    //   if (content === '') return '身份证号不能为空！';
+    //   if (!/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/.test(content))
+    //     return '身份证格式错误！';
+    //   return '';
+    // }
   },
   {
     type: 'string',
@@ -383,12 +383,12 @@ export const baseheaders: TableHeader[] = [
     label: '手机号',
     require: true,
     options: null,
-    validate: (content) =>
-      content === ''
-        ? '手机号不能为空！'
-        : !/^1[3-9]\d{9}$/.test(content)
-          ? '手机号格式错误！'
-          : ''
+    // validate: (content) =>
+    //   content === ''
+    //     ? '手机号不能为空！'
+    //     : !/^1[3-9]\d{9}$/.test(content)
+    //       ? '手机号格式错误！'
+    //       : ''
   },
   {
     type: 'string',
@@ -396,12 +396,12 @@ export const baseheaders: TableHeader[] = [
     label: '邮箱',
     require: true,
     options: null,
-    validate: (content) =>
-      content === ''
-        ? '邮箱不能为空！'
-        : !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(content)
-          ? '邮箱格式错误！'
-          : ''
+    // validate: (content) =>
+    //   content === ''
+    //     ? '邮箱不能为空！'
+    //     : !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(content)
+    //       ? '邮箱格式错误！'
+    //       : ''
   },
 
   // 身体信息
@@ -422,18 +422,18 @@ export const baseheaders: TableHeader[] = [
 
   // 学校信息
   {
-    type: 'string',
-    field: 'grade',
+    type: 'select',
+    field: 'gradeName',
     label: '年级',
     require: true,
-    options: null
+    options: []
   },
   {
     type: 'select',
     field: 'majorName',
-    label: '专业名称',
+    label: '专业',
     require: true,
-    options: ['计算机科学与技术', '软件工程', '信息安全', '物联网工程', '智能科学与技术', '网络空间安全', '应用密码学']
+    options: []
   },
   {
     type: 'string',
@@ -459,10 +459,10 @@ export const baseheaders: TableHeader[] = [
   // 政治信息
   {
     type: 'select',
-    field: 'politicsStatus',
+    field: 'politicStatus',
     label: '政治面貌',
     require: true,
-    options: ['群众', '共青团员', '预备党员', '中共党员']
+    options: []
   },
   {
     type: 'date',

@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { type StudentQuery } from '@/model/studentModel'
+import type { Grade, Major, Degree, Politics } from '@/model/otherModel'
 
 export const useBaseStore = defineStore('base', () => {
     const studentQuery = reactive<StudentQuery>({
@@ -41,6 +42,49 @@ export const useBaseStore = defineStore('base', () => {
     const updateStudentQuery = <K extends keyof StudentQuery>(key: K, value: StudentQuery[K]) => {
         studentQuery[key] = value
     }
-    return { getStudentQuery, updateStudentQuery }
+    const gradeList = reactive<Grade[]>([])
+    const majorList = reactive<Major[]>([])
+    const degreeList = reactive<Degree[]>([])
+    const politicList = reactive<Politics[]>([])
+    const getGradeList = () => {
+        return gradeList
+    }
+    const getMajorList = () => {
+        return majorList
+    }
+    const getDegreeList = () => {
+        return degreeList
+    }
+    const getPoliticList = () => {
+        return politicList
+    }
+    const updateGradeList = (grades: Grade[]) => {
+        gradeList.length = 0
+        gradeList.push(...grades)
+    }
+    const updateMajorList = (majors: Major[]) => {
+        majorList.length = 0
+        majorList.push(...majors)
+    }
+    const updateDegreeList = (degrees: Degree[]) => {
+        degreeList.length = 0
+        degreeList.push(...degrees)
+    }
+    const updatePoliticList = (politics: Politics[]) => {
+        politicList.length = 0
+        politicList.push(...politics)
+    }
+    return {
+        getStudentQuery,
+        updateStudentQuery,
+        getGradeList,
+        getMajorList,
+        getDegreeList,
+        getPoliticList,
+        updateGradeList,
+        updateMajorList,
+        updateDegreeList,
+        updatePoliticList
+    }
 })
 

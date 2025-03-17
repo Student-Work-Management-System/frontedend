@@ -5,13 +5,13 @@ import { notify } from '@kyvg/vue3-notification'
 import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
-import { apiGetMajorList } from '@/api/other'
+import { apiGetMajorList, apiGetAllDegrees, apiGetAllGrades, apiGetAllPolitics } from '@/api/other'
 import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
+import { useBaseStore } from '@/stores/baseStore'
 
-const excel = ref<File[]>()
+const excel = ref<File>()
 const jsonData = ref<BaseHeader[]>([])
-const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const uploadDialog = ref()
 const loading = ref(false)
 const nilData: BaseHeader = {
@@ -67,12 +67,59 @@ const nilData: BaseHeader = {
   gradeId: null as string | null,
   politicId: null as string | null,
   disability: null as boolean | null,
-  enabled: true
+  enabled: true,
+  statusId: null as string | null,
+  gradeName: '' as string | null
 }
+const baseStore = useBaseStore()
+
+const degreeOptions = computed(() => baseStore.getDegreeList().map((degree) => degree.degreeName))
+const gradeOptions = computed(() => baseStore.getGradeList().map((grade) => grade.gradeName))
+const politicOptions = computed(() =>
+  baseStore.getPoliticList().map((politic) => politic.politicStatus)
+)
+const majorNameOptions = computed(() => baseStore.getMajorList().map((major) => major.majorName))
+
+const refBaseHeaders = computed(() => {
+  const degreeIndex = baseheaders.findIndex((header) => header.field === 'degree')
+  const gradeIndex = baseheaders.findIndex((header) => header.field === 'grade')
+  const politicIndex = baseheaders.findIndex((header) => header.field === 'politicStatus')
+  const majorNameIndex = baseheaders.findIndex((header) => header.field === 'majorName')
+
+  if (degreeIndex !== -1) {
+    baseheaders[degreeIndex] = {
+      ...baseheaders[degreeIndex],
+      options: degreeOptions.value
+    }
+  }
+  if (gradeIndex !== -1) {
+    baseheaders[gradeIndex] = {
+      ...baseheaders[gradeIndex],
+      options: gradeOptions.value
+    }
+  }
+  if (politicIndex !== -1) {
+    baseheaders[politicIndex] = {
+      ...baseheaders[politicIndex],
+      options: politicOptions.value
+    }
+  }
+  if (majorNameIndex !== -1) {
+    baseheaders[majorNameIndex] = {
+      ...baseheaders[majorNameIndex],
+      options: majorNameOptions.value
+    }
+  }
+  return baseheaders
+})
 
 const analyzeHandler = async () => {
   loading.value = true
-  const ret = (await AnalyzeFileToTable(file.value as File, baseheaders, notify)) as BaseHeader[]
+  const ret = (await AnalyzeFileToTable(
+    excel.value as File,
+    refBaseHeaders.value,
+    notify
+  )) as BaseHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -90,7 +137,7 @@ const uploadLogic = async () => {
   // valid data format before upload
   if (
     !jsonData.value.reduce(
-      (valid, student) => (!valid ? false : HeaderValidChecker(student, baseheaders)),
+      (valid, student) => (!valid ? false : HeaderValidChecker(student, refBaseHeaders.value)),
       true
     )
   ) {
@@ -99,24 +146,64 @@ const uploadLogic = async () => {
     return
   }
 
-  const { data: result } = await apiGetMajorList()
-  if (result.code !== 200) {
-    console.log(result)
-    notify({ title: '错误', text: result.message, type: 'error' })
-    loading.value = false
-    return
-  }
-
-  const majorMap = result.data.reduce((majorMap, major) => {
+  const majorMap = baseStore.getMajorList().reduce((majorMap, major) => {
     majorMap.set(major.majorName, major.majorId)
     return majorMap
   }, new Map())
 
+  const degreeMap = baseStore.getDegreeList().reduce((degreeMap, degree) => {
+    degreeMap.set(degree.degreeName, degree.degreeId)
+    return degreeMap
+  }, new Map())
+
+  const gradeMap = baseStore.getGradeList().reduce((gradeMap, grade) => {
+    gradeMap.set(grade.gradeName, grade.gradeId)
+    return gradeMap
+  }, new Map())
+
+  const politicMap = baseStore.getPoliticList().reduce((politicMap, politic) => {
+    politicMap.set(politic.politicStatus, politic.politicId)
+    return politicMap
+  }, new Map())
+
   const students = jsonData.value.map((student) => ({
     ...student,
-    majorId: majorMap.get(student.majorName)
+    majorId: majorMap.get(student.majorName),
+    gradeId: gradeMap.get(student.gradeName?.toString()),
+    degreeId: degreeMap.get(student.degreeName),
+    politicId: politicMap.get(student.politicStatus)
   }))
+  let idx = 0
+  let idNumber = 123456789012345678n
+  students.forEach((student) => {
+    student.idNumber = (idNumber + BigInt(idx)).toString()
+    student.headTeacherUsername = '50'
+    student.statusId = '1'
+    if (student.majorId === null) {
+      student.majorId = '1'
+    }
+    idx++
+  })
+
+  console.log(students)
+
+  const size = students.length
+  if (size >= 100) {
+    const batchSize = 100 // 每批上传的大小
+    for (let i = 0; i < students.length; i += batchSize) {
+      const batch = students.slice(i, i + batchSize)
+      const { data: result2 } = await apiAddStudentBaseInfo(batch)
+      if (result2.code !== 200) {
+        console.log(result2)
+        notify({ title: '错误', text: result2.message, type: 'error' })
+        loading.value = false
+        return
+      }
+    }
+    return
+  }
   const { data: result2 } = await apiAddStudentBaseInfo(students)
+
   if (result2.code !== 200) {
     console.log(result2)
     notify({ title: '错误', text: result2.message, type: 'error' })
@@ -124,12 +211,26 @@ const uploadLogic = async () => {
     return
   }
   notify({ title: '成功', text: '上传成功！', type: 'success' })
-  uploadDialog.value = false
-  loading.value = false
 }
+
+const getSelectableOptions = async () => {
+  // 获取所有数据
+  const [DegreeResult, GradeResult, PoliticResult, MajorResult] = await Promise.all([
+    apiGetAllDegrees(),
+    apiGetAllGrades(),
+    apiGetAllPolitics(),
+    apiGetMajorList()
+  ])
+
+  // 更新 store
+  baseStore.updateDegreeList(DegreeResult.data.data)
+  baseStore.updateGradeList(GradeResult.data.data)
+  baseStore.updatePoliticList(PoliticResult.data.data)
+  baseStore.updateMajorList(MajorResult.data.data)
+}
+
 onMounted(() => {
-  // todo: 获取学历层次、获取专业、获取年级、获取班主任、获取政治面貌
-  // todo: 填入headers中, 覆盖原先的options
+  getSelectableOptions()
 })
 </script>
 
@@ -162,7 +263,7 @@ onMounted(() => {
       <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模板.xlsx">下载模板</v-btn>
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="baseheaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="refBaseHeaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

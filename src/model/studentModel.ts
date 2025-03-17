@@ -7,6 +7,7 @@ export interface Student {
     name: string | null
     // 性别（仅限 "男" 或 "女"）
     gender: string | null
+    statusId: string | null
     // 籍贯
     nativePlace: string | null
     // 邮政编码
@@ -25,6 +26,7 @@ export interface Student {
     majorName: string | null
     // 年级Id
     gradeId: string | null
+    gradeName: string | null
     // 班号
     classNo: string | null
     // 班主任工号

@@ -3,17 +3,18 @@ import { chLabel, type TableHeader } from '@/misc/table'
 import { ref, onMounted } from 'vue'
 
 const model = defineModel()
-const props = defineProps<{ headers: TableHeader[]; nilData: any }>()
+const headers = defineModel<TableHeader[]>('headers')
+const nilData = defineModel<any>('nilData')
 const tableRef = ref()
 
 const addNewRow = () => {
-  tableRef.value.newRecord(JSON.parse(JSON.stringify(props.nilData)))
+  tableRef.value.newRecord(JSON.parse(JSON.stringify(nilData)))
 }
 const deleteSelectRows = () => {
   tableRef.value.deleteSelectedRecords()
 }
 onMounted(() => {
-  tableRef.value.newRecord(JSON.parse(JSON.stringify(props.nilData)))
+  tableRef.value.newRecord(JSON.parse(JSON.stringify(nilData)))
 })
 </script>
 <template>
@@ -29,7 +30,7 @@ onMounted(() => {
   >
     <vue-excel-column
       :key="idx"
-      v-for="(header, idx) in props.headers"
+      v-for="(header, idx) in headers"
       :field="header.field"
       :label="`${header.require ? '<span style=\'color: red;\'>*</span>' : ''}` + header.label"
       :type="header.type"
@@ -37,6 +38,6 @@ onMounted(() => {
       autoFillWidth
       :validate="header.validate === null ? () => {} : header.validate"
       key-field
-    ></vue-excel-column>
+    />
   </vue-excel-editor>
 </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { apiDeleteUser, apiGetUserList, apiRecoverDeteteUser, type UserRecord } from '@/api/user'
+import { apiDeleteUser, apiGetUserList, apiRecoverDeteteUser } from '@/api/user'
 import { notify } from '@kyvg/vue3-notification'
 import { reactive } from 'vue'
 import { onMounted } from 'vue'
@@ -10,6 +10,7 @@ import EditUserInfoForm from '@/components/home/system/EditUserInfoForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
+import { type UserRecord } from '@/model/systemModel'
 
 const headers: readonly {
   readonly title: string
@@ -42,6 +43,12 @@ const headers: readonly {
     key: 'email'
   },
   {
+    title: '手机号',
+    align: 'start',
+    sortable: false,
+    key: 'phone'
+  },
+  {
     title: '用户角色',
     align: 'start',
     sortable: false,
@@ -64,6 +71,7 @@ const editInfo = ref<UserRecord>({
   username: '',
   realName: '',
   email: '',
+  phone: '',
   createdAt: '',
   enabled: true,
   roles: []
@@ -249,7 +257,7 @@ onMounted(() => {
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="headers"
+          :headers="headers as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
@@ -286,11 +294,11 @@ onMounted(() => {
                 编辑
               </v-btn>
               <v-btn
-                v-if="has('user:update:all') && !item.enabled"
+                v-if="has('user:update:all') && !(item as UserRecord).enabled"
                 prepend-icon="mdi-refresh"
                 color="warning"
                 variant="plain"
-                @click="recoverUser(item.uid)"
+                @click="recoverUser((item as UserRecord).uid)"
               >
                 恢复删除
               </v-btn>
