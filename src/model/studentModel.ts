@@ -30,9 +30,9 @@ export interface Student {
     // 班号
     classNo: string | null
     // 班主任工号
-    headTeacherUsername: string | null
-    headTeacherName: string | null
-    headTeacherPhone: string | null
+    headerTeacherUsername: string | null
+    headerTeacherName: string | null
+    headerTeacherPhone: string | null
     // 政治面貌
     politicId: string | null
     politicStatus: string | null
@@ -217,9 +217,13 @@ export interface StudentStatusItem {
     originData: Student[]
 }
 
-
 export interface StudentStatusQuery {
     gradeId: string | null
     degreeId: string | null
 }
 
+export interface HeaderTeacher {
+    headerTeacherUsername: string
+    headerTeacherRealName: string
+    headerTeacherPhone: string
+}

@@ -71,8 +71,8 @@ const fetchRoleList = async () => {
   selected.value = []
 }
 
-onMounted(() => {
-  fetchRoleList()
+onMounted(async () => {
+  await fetchRoleList()
 })
 </script>
 

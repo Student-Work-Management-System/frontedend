@@ -14,7 +14,6 @@ const deleteSelectRows = () => {
   tableRef.value.deleteSelectedRecords()
 }
 onMounted(() => {
-  console.log(headers.value)
   tableRef.value.newRecord(JSON.parse(JSON.stringify(nilData)))
 })
 </script>
@@ -36,9 +35,11 @@ onMounted(() => {
       :label="`${header.require ? '<span style=\'color: red;\'>*</span>' : ''}` + header.label"
       :type="header.type"
       :options="header.options"
-      autoFillWidth
       :validate="header.validate === null ? () => {} : header.validate"
+      :to-text="header.toText === null ? () => {} : header.toText"
+      :to-value="header.toValue === null ? () => {} : header.toValue"
       key-field
+      autoFillWidth
     />
   </vue-excel-editor>
 </template>

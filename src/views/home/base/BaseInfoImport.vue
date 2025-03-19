@@ -6,7 +6,7 @@ import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } 
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList, apiGetAllDegrees, apiGetAllGrades, apiGetAllPolitics } from '@/api/other'
-import { apiAddStudentBaseInfo } from '@/api/student'
+import { apiAddStudentBaseInfo, apiGetHeaderTeahcers } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
 import type { Student } from '@/model/studentModel'
@@ -30,9 +30,9 @@ const nilData: BaseHeader = {
   grade: '' as string | null,
   classNo: '' as string | null,
   email: '' as string | null,
-  headTeacherUsername: '' as string | null,
-  headTeacherName: '' as string | null,
-  headTeacherPhone: '' as string | null,
+  headerTeacherUsername: '' as string | null,
+  headerTeacherName: '' as string | null,
+  headerTeacherPhone: '' as string | null,
   birthdate: '' as string | null,
   householdRegistration: '' as string | null,
   householdType: '' as string | null,
@@ -78,11 +78,17 @@ const politicOptions = computed(() =>
   baseStore.getPoliticList().map((politic) => politic.politicStatus)
 )
 const majorOptions = computed(() => baseStore.getMajorList().map((major) => major.majorName))
+const headerTeacherOptions = computed(() =>
+  baseStore.getHeaderTeacherList().map((headerTeacher) => headerTeacher.headerTeacherUsername)
+)
 const refBaseHeaders = computed(() => {
   const degreeNameIndex = baseheaders.findIndex((header) => header.field === 'degreeName')
   const gradeNameIndex = baseheaders.findIndex((header) => header.field === 'gradeName')
   const politicStatusIndex = baseheaders.findIndex((header) => header.field === 'politicStatus')
   const majorNameIndex = baseheaders.findIndex((header) => header.field === 'majorName')
+  const headerTeacherUsernameIndex = baseheaders.findIndex(
+    (header) => header.field === 'headerTeacherUsername'
+  )
   baseheaders.splice(degreeNameIndex, 1, {
     ...baseheaders[degreeNameIndex],
     options: degreeOptions.value
@@ -99,8 +105,37 @@ const refBaseHeaders = computed(() => {
     ...baseheaders[majorNameIndex],
     options: majorOptions.value
   })
+  baseheaders.splice(headerTeacherUsernameIndex, 1, {
+    ...baseheaders[headerTeacherUsernameIndex],
+    options: headerTeacherOptions.value
+  })
   return baseheaders
 })
+
+const majorMap = computed(() =>
+  baseStore.getMajorList().reduce((majorMap, major) => {
+    majorMap.set(major.majorName, major.majorId)
+    return majorMap
+  }, new Map())
+)
+const degreeMap = computed(() =>
+  baseStore.getDegreeList().reduce((degreeMap, degree) => {
+    degreeMap.set(degree.degreeName, degree.degreeId)
+    return degreeMap
+  }, new Map())
+)
+const gradeMap = computed(() =>
+  baseStore.getGradeList().reduce((gradeMap, grade) => {
+    gradeMap.set(grade.gradeName, grade.gradeId)
+    return gradeMap
+  }, new Map())
+)
+const politicMap = computed(() =>
+  baseStore.getPoliticList().reduce((politicMap, politic) => {
+    politicMap.set(politic.politicStatus, politic.politicId)
+    return politicMap
+  }, new Map())
+)
 
 const analyzeHandler = async () => {
   loading.value = true
@@ -114,7 +149,6 @@ const analyzeHandler = async () => {
   }
   loading.value = false
 }
-
 // 检验用户权限用的
 const store = useUserStore()
 const has = (authority: string) => {
@@ -134,34 +168,14 @@ const uploadLogic = async () => {
     loading.value = false
     return
   }
-  // 名称转id, 方便后续设置属性
-  const majorMap = baseStore.getMajorList().reduce((majorMap, major) => {
-    majorMap.set(major.majorName, major.majorId)
-    return majorMap
-  }, new Map())
-
-  const degreeMap = baseStore.getDegreeList().reduce((degreeMap, degree) => {
-    degreeMap.set(degree.degreeName, degree.degreeId)
-    return degreeMap
-  }, new Map())
-
-  const gradeMap = baseStore.getGradeList().reduce((gradeMap, grade) => {
-    gradeMap.set(grade.gradeName, grade.gradeId)
-    return gradeMap
-  }, new Map())
-
-  const politicMap = baseStore.getPoliticList().reduce((politicMap, politic) => {
-    politicMap.set(politic.politicStatus, politic.politicId)
-    return politicMap
-  }, new Map())
-
   // 构造Student[]
   const students: Student[] = jsonData.value.map((student) => ({
     ...student,
-    majorId: majorMap.get(student.majorName),
-    gradeId: gradeMap.get(student.gradeName?.toString()),
-    degreeId: degreeMap.get(student.degreeName),
-    politicId: politicMap.get(student.politicStatus)
+    majorId: majorMap.value.get(student.majorName),
+    gradeId: gradeMap.value.get(student.gradeName?.toString()),
+    degreeId: degreeMap.value.get(student.degreeName),
+    politicId: politicMap.value.get(student.politicStatus),
+    headerTeacherUsername: student.headTeacherUsername
   }))
   // 判断是否需要批量传输数据
   const batchSize = 50
@@ -169,7 +183,16 @@ const uploadLogic = async () => {
     const batch = students.slice(i, i + batchSize)
     const { data: result } = await apiAddStudentBaseInfo(batch)
     if (result.code !== 200) {
-      console.log(result)
+      console.log(
+        '错误相应: ' +
+          result +
+          ', 在上传第' +
+          i +
+          '到' +
+          (i + batchSize) +
+          '条数据, 数据: ' +
+          JSON.stringify(batch)
+      )
       notify({ title: '错误', text: result.message, type: 'error' })
       loading.value = false
       uploadDialog.value = false
@@ -183,18 +206,21 @@ const uploadLogic = async () => {
 
 const getSelectableOptions = async () => {
   // 获取所有数据
-  const [DegreeResult, GradeResult, PoliticResult, MajorResult] = await Promise.all([
-    apiGetAllDegrees(),
-    apiGetAllGrades(),
-    apiGetAllPolitics(),
-    apiGetMajorList()
-  ])
+  const [DegreeResult, GradeResult, PoliticResult, MajorResult, HeaderTeacherResult] =
+    await Promise.all([
+      apiGetAllDegrees(),
+      apiGetAllGrades(),
+      apiGetAllPolitics(),
+      apiGetMajorList(),
+      apiGetHeaderTeahcers()
+    ])
 
   // 更新 store
   baseStore.updateDegreeList(DegreeResult.data.data)
   baseStore.updateGradeList(GradeResult.data.data)
   baseStore.updatePoliticList(PoliticResult.data.data)
   baseStore.updateMajorList(MajorResult.data.data)
+  baseStore.updateHeaderTeacherList(HeaderTeacherResult.data.data)
 }
 
 onMounted(async () => {

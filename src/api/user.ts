@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result } from '.'
 import { type AxiosResponse } from 'axios'
-import type { UserData, UserRecord, User } from '@/model/systemModel'
+import type { UserData, UserRecord, User, Role } from '@/model/systemModel'
 
 export function userDataCheck(obj: Object): UserData {
   const ud = obj as UserData
@@ -41,6 +41,10 @@ export async function apiGetUserList(query: {
 
 export async function apiAddUser(user: User): Promise<AxiosResponse<Result<null>>> {
   return http.post('/user/add', user)
+}
+
+export async function apiGetUserRoles(uid: string): Promise<AxiosResponse<Result<Role[]>>> {
+  return http.get(`/user/role/${uid}`)
 }
 
 export async function apiUpdateUserRole(userRole: {

@@ -1,5 +1,6 @@
 import { type TableHeader } from '.'
 import { type Student } from '@/model/studentModel'
+
 export interface BaseHeader extends Student {
   [key: string]: any
 }
@@ -96,14 +97,14 @@ export const tableHeaders = [
   },
   {
     label: '班主任姓名',
-    key: 'headTeacherName',
+    key: 'headerTeacherRealName',
     align: "center",
     showOverflowTooltip: false,
     width: 120
   },
   {
     label: '班主任联系方式',
-    key: 'headTeacherPhone',
+    key: 'headerTeacherPhone',
     align: "center",
     showOverflowTooltip: false,
     width: 120
@@ -450,11 +451,11 @@ export const baseheaders: TableHeader[] = [
     options: null
   },
   {
-    type: 'string',
-    field: 'headTeacherUsername',
+    type: 'select',
+    field: 'headerTeacherUsername',
     label: '班主任工号',
     require: true,
-    options: null
+    options: []
   },
   // 政治信息
   {
@@ -534,7 +535,7 @@ export const baseheaders: TableHeader[] = [
     field: 'isOnlyChild',
     label: '是否独生子女',
     require: false,
-    options: ['是', '否']
+    options: ['是', '否'],
   },
 
   // 父母信息
@@ -647,14 +648,16 @@ export const baseheaders: TableHeader[] = [
     field: 'isStudentLoans',
     label: '是否助学贷款',
     require: false,
-    options: ['是', '否']
+    options: ['是', '否'],
+
   },
   {
     type: 'select',
     field: 'disability',
     label: '是否残疾',
     require: false,
-    options: ['是', '否']
+    options: ['是', '否'],
+
   },
   {
     type: 'string',

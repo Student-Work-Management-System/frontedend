@@ -9,6 +9,7 @@ export * from './poverty-import-header'
 export * from './studentpoverty-import-header'
 export * from './competition-import-header'
 
+
 export interface TableHeader {
   type: string
   field: string
@@ -16,6 +17,8 @@ export interface TableHeader {
   require: boolean
   options: any[] | null
   validate?: (content: any, oldContent: any, record: any, field: any) => string
+  toText?: (content: any) => string
+  toValue?: (content: any) => any
 }
 
 export function HeaderValidChecker<T extends { [key: string]: any }>(instance: T, headers: TableHeader[]): boolean {
