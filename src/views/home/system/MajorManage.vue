@@ -2,10 +2,11 @@
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
-import { apiDeleteMajor, apiGetMajorList, type Major } from '@/api/major'
+import { apiDeleteMajor, apiGetMajorList } from '@/api/other'
 import MajorForm from '@/components/home/system/MajorForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { onMounted } from 'vue'
+import type { Major } from '@/model/otherModel'
 
 const headers = [
   {

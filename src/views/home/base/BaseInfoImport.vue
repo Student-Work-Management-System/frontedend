@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
@@ -9,6 +9,7 @@ import { apiGetMajorList, apiGetAllDegrees, apiGetAllGrades, apiGetAllPolitics }
 import { apiAddStudentBaseInfo } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
+import type { Student } from '@/model/studentModel'
 
 const excel = ref<File>()
 const jsonData = ref<BaseHeader[]>([])
@@ -53,63 +54,51 @@ const nilData: BaseHeader = {
   hobbies: '' as string | null,
   dormitory: '' as string | null,
   otherNotes: '' as string | null,
-  isCommunistYouthLeagueMember: null as boolean | null,
   joiningTime: '' as string | null,
-  isStudentLoans: null as boolean | null,
+  isStudentLoans: true as boolean | null,
   height: '' as string | null,
   weight: '' as string | null,
   religiousBeliefs: '' as string | null,
   location: '' as string | null,
   familyPopulation: '' as string | null,
-  isOnlyChild: null as boolean | null,
+  isOnlyChild: true as boolean | null,
   familyMembers: '' as string | null,
-  degreeId: null as string | null,
-  gradeId: null as string | null,
-  politicId: null as string | null,
-  disability: null as boolean | null,
+  degreeId: '' as string | null,
+  gradeId: '' as string | null,
+  politicId: '' as string | null,
+  disability: false as boolean | null,
   enabled: true,
-  statusId: null as string | null,
+  statusId: '' as string | null,
   gradeName: '' as string | null
 }
 const baseStore = useBaseStore()
-
 const degreeOptions = computed(() => baseStore.getDegreeList().map((degree) => degree.degreeName))
 const gradeOptions = computed(() => baseStore.getGradeList().map((grade) => grade.gradeName))
 const politicOptions = computed(() =>
   baseStore.getPoliticList().map((politic) => politic.politicStatus)
 )
-const majorNameOptions = computed(() => baseStore.getMajorList().map((major) => major.majorName))
-
+const majorOptions = computed(() => baseStore.getMajorList().map((major) => major.majorName))
 const refBaseHeaders = computed(() => {
-  const degreeIndex = baseheaders.findIndex((header) => header.field === 'degree')
-  const gradeIndex = baseheaders.findIndex((header) => header.field === 'grade')
-  const politicIndex = baseheaders.findIndex((header) => header.field === 'politicStatus')
+  const degreeNameIndex = baseheaders.findIndex((header) => header.field === 'degreeName')
+  const gradeNameIndex = baseheaders.findIndex((header) => header.field === 'gradeName')
+  const politicStatusIndex = baseheaders.findIndex((header) => header.field === 'politicStatus')
   const majorNameIndex = baseheaders.findIndex((header) => header.field === 'majorName')
-
-  if (degreeIndex !== -1) {
-    baseheaders[degreeIndex] = {
-      ...baseheaders[degreeIndex],
-      options: degreeOptions.value
-    }
-  }
-  if (gradeIndex !== -1) {
-    baseheaders[gradeIndex] = {
-      ...baseheaders[gradeIndex],
-      options: gradeOptions.value
-    }
-  }
-  if (politicIndex !== -1) {
-    baseheaders[politicIndex] = {
-      ...baseheaders[politicIndex],
-      options: politicOptions.value
-    }
-  }
-  if (majorNameIndex !== -1) {
-    baseheaders[majorNameIndex] = {
-      ...baseheaders[majorNameIndex],
-      options: majorNameOptions.value
-    }
-  }
+  baseheaders.splice(degreeNameIndex, 1, {
+    ...baseheaders[degreeNameIndex],
+    options: degreeOptions.value
+  })
+  baseheaders.splice(gradeNameIndex, 1, {
+    ...baseheaders[gradeNameIndex],
+    options: gradeOptions.value
+  })
+  baseheaders.splice(politicStatusIndex, 1, {
+    ...baseheaders[politicStatusIndex],
+    options: politicOptions.value
+  })
+  baseheaders.splice(majorNameIndex, 1, {
+    ...baseheaders[majorNameIndex],
+    options: majorOptions.value
+  })
   return baseheaders
 })
 
@@ -134,7 +123,7 @@ const has = (authority: string) => {
 
 const uploadLogic = async () => {
   loading.value = true
-  // valid data format before upload
+  // 传数据前的检查
   if (
     !jsonData.value.reduce(
       (valid, student) => (!valid ? false : HeaderValidChecker(student, refBaseHeaders.value)),
@@ -145,7 +134,7 @@ const uploadLogic = async () => {
     loading.value = false
     return
   }
-
+  // 名称转id, 方便后续设置属性
   const majorMap = baseStore.getMajorList().reduce((majorMap, major) => {
     majorMap.set(major.majorName, major.majorId)
     return majorMap
@@ -166,51 +155,30 @@ const uploadLogic = async () => {
     return politicMap
   }, new Map())
 
-  const students = jsonData.value.map((student) => ({
+  // 构造Student[]
+  const students: Student[] = jsonData.value.map((student) => ({
     ...student,
     majorId: majorMap.get(student.majorName),
     gradeId: gradeMap.get(student.gradeName?.toString()),
     degreeId: degreeMap.get(student.degreeName),
     politicId: politicMap.get(student.politicStatus)
   }))
-  let idx = 0
-  let idNumber = 123456789012345678n
-  students.forEach((student) => {
-    student.idNumber = (idNumber + BigInt(idx)).toString()
-    student.headTeacherUsername = '50'
-    student.statusId = '1'
-    if (student.majorId === null) {
-      student.majorId = '1'
+  // 判断是否需要批量传输数据
+  const batchSize = 50
+  for (let i = 0; i < students.length; i += batchSize) {
+    const batch = students.slice(i, i + batchSize)
+    const { data: result } = await apiAddStudentBaseInfo(batch)
+    if (result.code !== 200) {
+      console.log(result)
+      notify({ title: '错误', text: result.message, type: 'error' })
+      loading.value = false
+      uploadDialog.value = false
+      return
     }
-    idx++
-  })
-
-  console.log(students)
-
-  const size = students.length
-  if (size >= 100) {
-    const batchSize = 100 // 每批上传的大小
-    for (let i = 0; i < students.length; i += batchSize) {
-      const batch = students.slice(i, i + batchSize)
-      const { data: result2 } = await apiAddStudentBaseInfo(batch)
-      if (result2.code !== 200) {
-        console.log(result2)
-        notify({ title: '错误', text: result2.message, type: 'error' })
-        loading.value = false
-        return
-      }
-    }
-    return
-  }
-  const { data: result2 } = await apiAddStudentBaseInfo(students)
-
-  if (result2.code !== 200) {
-    console.log(result2)
-    notify({ title: '错误', text: result2.message, type: 'error' })
-    loading.value = false
-    return
   }
   notify({ title: '成功', text: '上传成功！', type: 'success' })
+  loading.value = false
+  uploadDialog.value = false
 }
 
 const getSelectableOptions = async () => {
@@ -229,8 +197,8 @@ const getSelectableOptions = async () => {
   baseStore.updateMajorList(MajorResult.data.data)
 }
 
-onMounted(() => {
-  getSelectableOptions()
+onMounted(async () => {
+  await getSelectableOptions()
 })
 </script>
 

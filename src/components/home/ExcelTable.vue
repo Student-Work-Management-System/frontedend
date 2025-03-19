@@ -14,6 +14,7 @@ const deleteSelectRows = () => {
   tableRef.value.deleteSelectedRecords()
 }
 onMounted(() => {
+  console.log(headers.value)
   tableRef.value.newRecord(JSON.parse(JSON.stringify(nilData)))
 })
 </script>
