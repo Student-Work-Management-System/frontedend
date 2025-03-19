@@ -27,6 +27,7 @@ const modifyInfo = ref<Student>({
   name: '',
   gender: '',
   statusId: '',
+  statusName: '',
   nativePlace: '',
   postalCode: '',
   phone: '',

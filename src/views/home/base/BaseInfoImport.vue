@@ -277,6 +277,8 @@ const jsonDataToStudentArray = (jsonData: BaseHeader[]): Student[] => {
     majorId: majorMap.value.get(student.majorName),
     statusName: student.statusName,
     gradeName: student.gradeName,
+    degreeName: student.degreeName,
+    politicsStatus: student.politicStatus,
     enabled: true
   }))
 }
