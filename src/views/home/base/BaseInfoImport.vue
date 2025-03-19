@@ -6,6 +6,7 @@ import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } 
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList, apiGetAllDegrees, apiGetAllGrades, apiGetAllPolitics } from '@/api/other'
+import { apiGetAllStatus } from '@/api/status'
 import { apiAddStudentBaseInfo, apiGetHeaderTeahcers } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
@@ -16,62 +17,67 @@ const jsonData = ref<BaseHeader[]>([])
 const uploadDialog = ref()
 const loading = ref(false)
 const nilData: BaseHeader = {
-  studentId: '' as string | null,
-  name: '' as string | null,
-  idNumber: '' as string | null,
-  gender: '' as string | null,
-  nativePlace: '' as string | null,
-  postalCode: '' as string | null,
-  politicStatus: '' as string | null,
-  phone: '' as string | null,
-  nation: '' as string | null,
-  majorName: '' as string | null,
-  majorId: '' as string | null,
-  grade: '' as string | null,
-  classNo: '' as string | null,
-  email: '' as string | null,
-  headerTeacherUsername: '' as string | null,
-  headerTeacherName: '' as string | null,
-  headerTeacherPhone: '' as string | null,
-  birthdate: '' as string | null,
-  householdRegistration: '' as string | null,
-  householdType: '' as string | null,
-  address: '' as string | null,
-  fatherName: '' as string | null,
-  fatherPhone: '' as string | null,
-  fatherOccupation: '' as string | null,
-  motherName: '' as string | null,
-  motherPhone: '' as string | null,
-  motherOccupation: '' as string | null,
-  guardian: '' as string | null,
-  guardianPhone: '' as string | null,
-  highSchool: '' as string | null,
-  examId: '' as string | null,
-  admissionBatch: '' as string | null,
-  totalExamScore: '' as string | null,
-  foreignLanguage: '' as string | null,
-  foreignScore: '' as string | null,
-  hobbies: '' as string | null,
-  dormitory: '' as string | null,
-  otherNotes: '' as string | null,
-  joiningTime: '' as string | null,
+  studentId: null as string | null,
+  name: null as string | null,
+  idNumber: null as string | null,
+  gender: null as string | null,
+  nativePlace: null as string | null,
+  postalCode: null as string | null,
+  politicStatus: null as string | null,
+  phone: null as string | null,
+  nation: null as string | null,
+  majorName: null as string | null,
+  majorId: null as string | null,
+  grade: null as string | null,
+  classNo: null as string | null,
+  email: null as string | null,
+  headerTeacherUsername: null as string | null,
+  headerTeacherName: null as string | null,
+  headerTeacherPhone: null as string | null,
+  birthdate: null as string | null,
+  householdRegistration: null as string | null,
+  householdType: null as string | null,
+  address: null as string | null,
+  fatherName: null as string | null,
+  fatherPhone: null as string | null,
+  fatherOccupation: null as string | null,
+  motherName: null as string | null,
+  motherPhone: null as string | null,
+  motherOccupation: null as string | null,
+  guardian: null as string | null,
+  guardianPhone: null as string | null,
+  highSchool: null as string | null,
+  examId: null as string | null,
+  admissionBatch: null as string | null,
+  totalExamScore: null as string | null,
+  foreignLanguage: null as string | null,
+  foreignScore: null as string | null,
+  hobbies: null as string | null,
+  dormitory: null as string | null,
+  otherNotes: null as string | null,
+  joiningTime: null as string | null,
   isStudentLoans: true as boolean | null,
-  height: '' as string | null,
-  weight: '' as string | null,
-  religiousBeliefs: '' as string | null,
-  location: '' as string | null,
-  familyPopulation: '' as string | null,
+  height: null as string | null,
+  weight: null as string | null,
+  religiousBeliefs: null as string | null,
+  location: null as string | null,
+  familyPopulation: null as string | null,
   isOnlyChild: true as boolean | null,
-  familyMembers: '' as string | null,
-  degreeId: '' as string | null,
-  gradeId: '' as string | null,
-  politicId: '' as string | null,
+  familyMembers: null as string | null,
+  degreeId: null as string | null,
+  gradeId: null as string | null,
+  politicId: null as string | null,
   disability: false as boolean | null,
-  enabled: true,
-  statusId: '' as string | null,
-  gradeName: '' as string | null
+  enabled: true as boolean,
+  statusId: '1' as string | null,
+  gradeName: null as string | null,
+  isOnlyChildText: '是' as string,
+  isStudentLoansText: '是' as string,
+  disabilityText: '否' as string,
+  statusName: null as string | null
 }
 const baseStore = useBaseStore()
+const statusOptions = computed(() => baseStore.getStatusList().map((status) => status.statusName))
 const degreeOptions = computed(() => baseStore.getDegreeList().map((degree) => degree.degreeName))
 const gradeOptions = computed(() => baseStore.getGradeList().map((grade) => grade.gradeName))
 const politicOptions = computed(() =>
@@ -89,6 +95,7 @@ const refBaseHeaders = computed(() => {
   const headerTeacherUsernameIndex = baseheaders.findIndex(
     (header) => header.field === 'headerTeacherUsername'
   )
+  const statusNameIndex = baseheaders.findIndex((header) => header.field === 'statusName')
   baseheaders.splice(degreeNameIndex, 1, {
     ...baseheaders[degreeNameIndex],
     options: degreeOptions.value
@@ -108,6 +115,10 @@ const refBaseHeaders = computed(() => {
   baseheaders.splice(headerTeacherUsernameIndex, 1, {
     ...baseheaders[headerTeacherUsernameIndex],
     options: headerTeacherOptions.value
+  })
+  baseheaders.splice(statusNameIndex, 1, {
+    ...baseheaders[statusNameIndex],
+    options: statusOptions.value
   })
   return baseheaders
 })
@@ -136,6 +147,16 @@ const politicMap = computed(() =>
     return politicMap
   }, new Map())
 )
+const statusMap = computed(() =>
+  baseStore.getStatusList().reduce((statusMap, status) => {
+    statusMap.set(status.statusName, status.statusId)
+    return statusMap
+  }, new Map())
+)
+const booleanMap = new Map([
+  ['是', true],
+  ['否', false]
+])
 
 const analyzeHandler = async () => {
   loading.value = true
@@ -168,15 +189,7 @@ const uploadLogic = async () => {
     loading.value = false
     return
   }
-  // 构造Student[]
-  const students: Student[] = jsonData.value.map((student) => ({
-    ...student,
-    majorId: majorMap.value.get(student.majorName),
-    gradeId: gradeMap.value.get(student.gradeName?.toString()),
-    degreeId: degreeMap.value.get(student.degreeName),
-    politicId: politicMap.value.get(student.politicStatus),
-    headerTeacherUsername: student.headTeacherUsername
-  }))
+  const students = jsonDataToStudentArray(jsonData.value)
   // 判断是否需要批量传输数据
   const batchSize = 50
   for (let i = 0; i < students.length; i += batchSize) {
@@ -204,15 +217,95 @@ const uploadLogic = async () => {
   uploadDialog.value = false
 }
 
+const jsonDataToStudentArray = (jsonData: BaseHeader[]): Student[] => {
+  return jsonData.map((student) => ({
+    studentId: student.studentId,
+    idNumber: student.idNumber,
+    name: student.name,
+    gender: student.gender,
+    nativePlace: checkValid(student.nativePlace) ? student.nativePlace : null,
+    postalCode: checkValid(student.postalCode) ? student.postalCode : null,
+    politicStatus: checkValid(student.politicStatus) ? student.politicStatus : null,
+    phone: checkValid(student.phone) ? student.phone : null,
+    nation: checkValid(student.nation) ? student.nation : null,
+    majorName: checkValid(student.majorName) ? student.majorName : null,
+    grade: checkValid(student.grade) ? student.grade : null,
+    classNo: checkValid(student.classNo) ? student.classNo : null,
+    email: checkValid(student.email) ? student.email : null,
+    headerTeacherUsername: checkValid(student.headerTeacherUsername)
+      ? student.headerTeacherUsername
+      : null,
+    headerTeacherName: checkValid(student.headerTeacherName) ? student.headerTeacherName : null,
+    headerTeacherPhone: checkValid(student.headerTeacherPhone) ? student.headerTeacherPhone : null,
+    birthdate: checkValid(student.birthdate) ? student.birthdate : null,
+    householdRegistration: checkValid(student.householdRegistration)
+      ? student.householdRegistration
+      : null,
+    householdType: checkValid(student.householdType) ? student.householdType : null,
+    address: checkValid(student.address) ? student.address : null,
+    fatherName: checkValid(student.fatherName) ? student.fatherName : null,
+    fatherPhone: checkValid(student.fatherPhone) ? student.fatherPhone : null,
+    fatherOccupation: checkValid(student.fatherOccupation) ? student.fatherOccupation : null,
+    motherName: checkValid(student.motherName) ? student.motherName : null,
+    motherPhone: checkValid(student.motherPhone) ? student.motherPhone : null,
+    motherOccupation: checkValid(student.motherOccupation) ? student.motherOccupation : null,
+    guardian: checkValid(student.guardian) ? student.guardian : null,
+    guardianPhone: checkValid(student.guardianPhone) ? student.guardianPhone : null,
+    highSchool: checkValid(student.highSchool) ? student.highSchool : null,
+    examId: checkValid(student.examId) ? student.examId : null,
+    admissionBatch: checkValid(student.admissionBatch) ? student.admissionBatch : null,
+    totalExamScore: checkValid(student.totalExamScore) ? student.totalExamScore : null,
+    foreignLanguage: checkValid(student.foreignLanguage) ? student.foreignLanguage : null,
+    foreignScore: checkValid(student.foreignScore) ? student.foreignScore : null,
+    hobbies: checkValid(student.hobbies) ? student.hobbies : null,
+    dormitory: checkValid(student.dormitory) ? student.dormitory : null,
+    otherNotes: checkValid(student.otherNotes) ? student.otherNotes : null,
+    joiningTime: checkValid(student.joiningTime) ? student.joiningTime : null,
+    isStudentLoans: booleanMap.get(student.isStudentLoansText) ?? true,
+    height: checkValid(student.height) ? student.height : null,
+    weight: checkValid(student.weight) ? student.weight : null,
+    religiousBeliefs: checkValid(student.religiousBeliefs) ? student.religiousBeliefs : null,
+    location: checkValid(student.location) ? student.location : null,
+    familyPopulation: checkValid(student.familyPopulation) ? student.familyPopulation : null,
+    isOnlyChild: booleanMap.get(student.isOnlyChildText) ?? true,
+    familyMembers: checkValid(student.familyMembers) ? student.familyMembers : null,
+    degreeId: degreeMap.value.get(student.degreeName),
+    politicId: politicMap.value.get(student.politicStatus),
+    disability: booleanMap.get(student.disabilityText) ?? false,
+    statusId: statusMap.value.get(student.statusName),
+    gradeId: gradeMap.value.get(student.gradeName),
+    majorId: majorMap.value.get(student.majorName),
+    statusName: student.statusName,
+    gradeName: student.gradeName,
+    enabled: true
+  }))
+}
+
+const checkValid = (content: any) => {
+  if (content === null || content === undefined) {
+    return false
+  }
+  if (content === '') {
+    return false
+  }
+  if (typeof content === 'string') {
+    if (content.startsWith('§')) {
+      return false
+    }
+  }
+  return true
+}
+
 const getSelectableOptions = async () => {
   // 获取所有数据
-  const [DegreeResult, GradeResult, PoliticResult, MajorResult, HeaderTeacherResult] =
+  const [DegreeResult, GradeResult, PoliticResult, MajorResult, HeaderTeacherResult, StatusResult] =
     await Promise.all([
       apiGetAllDegrees(),
       apiGetAllGrades(),
       apiGetAllPolitics(),
       apiGetMajorList(),
-      apiGetHeaderTeahcers()
+      apiGetHeaderTeahcers(),
+      apiGetAllStatus()
     ])
 
   // 更新 store
@@ -221,6 +314,7 @@ const getSelectableOptions = async () => {
   baseStore.updatePoliticList(PoliticResult.data.data)
   baseStore.updateMajorList(MajorResult.data.data)
   baseStore.updateHeaderTeacherList(HeaderTeacherResult.data.data)
+  baseStore.updateStatusList(StatusResult.data.data)
 }
 
 onMounted(async () => {

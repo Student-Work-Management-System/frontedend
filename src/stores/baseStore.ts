@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { type HeaderTeacher, type StudentQuery } from '@/model/studentModel'
 import type { Grade, Major, Degree, Politics } from '@/model/otherModel'
+import type { Status } from '@/api/status'
 
 export const useBaseStore = defineStore('base', () => {
     const studentQuery = reactive<StudentQuery>({
@@ -47,6 +48,7 @@ export const useBaseStore = defineStore('base', () => {
     const majorList = reactive<Major[]>([])
     const degreeList = reactive<Degree[]>([])
     const politicList = reactive<Politics[]>([])
+    const statusList = reactive<Status[]>([])
     const getGradeList = () => {
         return gradeList
     }
@@ -61,6 +63,9 @@ export const useBaseStore = defineStore('base', () => {
     }
     const getHeaderTeacherList = () => {
         return headerTeacherList
+    }
+    const getStatusList = () => {
+        return statusList
     }
     const updateGradeList = (grades: Grade[]) => {
         gradeList.length = 0
@@ -82,6 +87,10 @@ export const useBaseStore = defineStore('base', () => {
         headerTeacherList.length = 0
         headerTeacherList.push(...headerTeachers)
     }
+    const updateStatusList = (statuses: Status[]) => {
+        statusList.length = 0
+        statusList.push(...statuses)
+    }
     return {
         getStudentQuery,
         updateStudentQuery,
@@ -94,7 +103,9 @@ export const useBaseStore = defineStore('base', () => {
         updateMajorList,
         updateDegreeList,
         updatePoliticList,
-        updateHeaderTeacherList
+        updateHeaderTeacherList,
+        getStatusList,
+        updateStatusList
     }
 })
 

@@ -3,6 +3,9 @@ import { type Student } from '@/model/studentModel'
 
 export interface BaseHeader extends Student {
   [key: string]: any
+  isOnlyChildText: string
+  isStudentLoansText: string
+  disabilityText: string
 }
 
 export const tableHeaders = [
@@ -437,6 +440,13 @@ export const baseheaders: TableHeader[] = [
     options: []
   },
   {
+    type: 'select',
+    field: 'statusName',
+    label: '学籍状态',
+    require: true,
+    options: []
+  },
+  {
     type: 'string',
     field: 'classNo',
     label: '班级',
@@ -532,12 +542,11 @@ export const baseheaders: TableHeader[] = [
   },
   {
     type: 'select',
-    field: 'isOnlyChild',
+    field: 'isOnlyChildText',
     label: '是否独生子女',
     require: false,
-    options: ['是', '否'],
+    options: ['是', '否']
   },
-
   // 父母信息
   {
     type: 'string',
@@ -645,19 +654,18 @@ export const baseheaders: TableHeader[] = [
   // 其他信息
   {
     type: 'select',
-    field: 'isStudentLoans',
+    field: 'isStudentLoansText',
     label: '是否助学贷款',
     require: false,
-    options: ['是', '否'],
+    options: ['是', '否']
 
   },
   {
     type: 'select',
-    field: 'disability',
+    field: 'disabilityText',
     label: '是否残疾',
     require: false,
-    options: ['是', '否'],
-
+    options: ['是', '否']
   },
   {
     type: 'string',
