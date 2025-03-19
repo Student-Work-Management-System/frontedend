@@ -17,16 +17,13 @@ const props = defineProps<{
     | undefined
 }>()
 const items = ref<Major[]>([])
-const loading = ref(true)
 const getMajorListLogic = async () => {
-  loading.value = true
   const { data: result } = await apiGetMajorList()
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
   items.value = result.data
-  loading.value = false
 }
 onMounted(() => {
   getMajorListLogic()
@@ -36,7 +33,6 @@ onMounted(() => {
 <template>
   <v-select
     v-model="model"
-    :loading="loading"
     class="text-indigo"
     color="indigo"
     label="专业"

@@ -17,16 +17,13 @@ const props = defineProps<{
     | undefined
 }>()
 const items = ref<Politics[]>([])
-const loading = ref(true)
 const getPoliticsListLogic = async () => {
-  loading.value = true
   const { data: result } = await apiGetAllPolitics()
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
   items.value = result.data
-  loading.value = false
 }
 onMounted(() => {
   getPoliticsListLogic()
@@ -35,7 +32,6 @@ onMounted(() => {
 <template>
   <v-select
     v-model="model"
-    :loading="loading"
     class="text-indigo"
     color="indigo"
     label="政治面貌"

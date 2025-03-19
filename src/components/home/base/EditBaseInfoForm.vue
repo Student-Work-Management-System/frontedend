@@ -6,11 +6,20 @@ import { apiUpdateStudent } from '@/api/student'
 import { type Student } from '@/model/studentModel'
 import { notify } from '@kyvg/vue3-notification'
 import moment from 'moment'
+import { useUserStore } from '@/stores/userStore'
+import DegreeSelect from '../DegreeSelect.vue'
+import type { Degree } from '@/model/otherModel'
+import PoliticSelect from '../PoliticSelect.vue'
 
 const dialog = defineModel<boolean>()
 const info = defineModel<Student>('info')
 const emits = defineEmits(['onClosed'])
 const loading = ref(false)
+
+const store = useUserStore()
+const chargeGrades = store.getUserData.chargeGrades
+const chargeDegrees = store.getUserData.chargeDegrees
+
 const updateInfoLogic = async () => {
   loading.value = true
   if (info.value?.birthdate) {
@@ -87,9 +96,20 @@ const updateInfoLogic = async () => {
             <MajorSelect v-model="info!.majorId" class="text-indigo mb-6">
               <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </MajorSelect>
-            <GradeSelect v-model="info!.gradeId" class="text-indigo mb-6">
+            <GradeSelect
+              v-model="info!.gradeId"
+              :charge-grades="chargeGrades"
+              class="text-indigo mb-6"
+            >
               <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </GradeSelect>
+            <DegreeSelect
+              v-model="info!.degreeId"
+              :charge-degrees="chargeDegrees as Degree[]"
+              class="text-indigo mb-6"
+            >
+              <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+            </DegreeSelect>
             <v-text-field
               v-model="info!.classNo"
               label="班级"
@@ -185,29 +205,12 @@ const updateInfoLogic = async () => {
               color="indigo"
               clearable
             />
-            <v-select
-              v-model="info!.politicsStatus"
-              label="政治面貌"
-              class="text-indigo"
-              color="indigo"
-              clearable
-              :items="['群众', '共青团员', '中共党员(预备)', '中共党员']"
-              required
-            >
-              <template v-slot:prepend>
-                <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-              </template>
-            </v-select>
+            <PoliticSelect v-model="info!.politicId" label="政治面貌" class="text-indigo mb-6">
+              <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+            </PoliticSelect>
             <v-date-input
               v-model="info!.joiningTime"
               label="入团时间"
-              class="text-indigo"
-              color="indigo"
-              clearable
-            />
-            <v-text-field
-              v-model="info!.degree"
-              label="学历层次"
               class="text-indigo"
               color="indigo"
               clearable

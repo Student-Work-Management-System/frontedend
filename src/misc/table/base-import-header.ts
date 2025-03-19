@@ -72,7 +72,7 @@ export const tableHeaders = [
   // 学校信息
   {
     label: '年级',
-    key: 'grade',
+    key: 'gradeName',
     align: "center",
     showOverflowTooltip: false,
     width: 75
@@ -89,7 +89,7 @@ export const tableHeaders = [
     key: 'classNo',
     align: "center",
     showOverflowTooltip: false,
-    width: 75
+    width: 120
   },
   {
     label: '宿舍',
@@ -177,13 +177,6 @@ export const tableHeaders = [
     align: "center",
     showOverflowTooltip: false,
     width: 100
-  },
-  {
-    label: '是否独生子女',
-    key: 'isOnlyChild',
-    align: "center",
-    showOverflowTooltip: false,
-    width: 120
   },
   {
     label: '家庭成员',
@@ -298,13 +291,6 @@ export const tableHeaders = [
   },
 
   // 其他信息
-  {
-    label: '是否助学贷款',
-    key: 'isStudentLoans',
-    align: "center",
-    showOverflowTooltip: false,
-    width: 120
-  },
   {
     label: '宗教信仰',
     key: 'religiousBeliefs',
