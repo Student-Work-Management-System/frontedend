@@ -1,38 +1,13 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import { apiGetCadreList, apiDeleteCadre, apiUpdateCadreInfo, type Cadre } from '@/api/cadre'
+import { apiGetCadreList, apiDeleteCadre } from '@/api/cadre'
+import type { Cadre } from '@/model/cadreModel'
 import { notify } from '@kyvg/vue3-notification'
 import AddCadreForm from '@/components/home/cadre/AddCadreForm.vue'
 import EditCadreForm from '@/components/home/cadre/EditCadreForm.vue'
 import { useUserStore } from '@/stores/userStore'
-
-const headers = [
-  {
-    title: '职位ID',
-    align: 'start',
-    sortable: true,
-    key: 'cadreId'
-  },
-  {
-    title: '职位名称',
-    align: 'start',
-    sortable: false,
-    key: 'cadrePosition'
-  },
-  {
-    title: '职位级别',
-    align: 'start',
-    sortable: false,
-    key: 'cadreLevel'
-  },
-  {
-    title: '操作',
-    align: 'center',
-    sortable: false,
-    key: 'operations'
-  }
-]
+import { cadreHeaders } from '@/misc/table/cadre-import-headers'
 
 const selected = ref<Cadre[]>([])
 const loading = ref(true)
@@ -48,7 +23,8 @@ const editCadreInfoFormDialog = ref(false)
 const editInfo = ref<Cadre>({
   cadreId: '',
   cadrePosition: '',
-  cadreLevel: ','
+  cadreLevel: '',
+  cadreBelong: ''
 })
 
 const fetchCadreLogic = async () => {
@@ -111,6 +87,7 @@ onMounted(() => {
   window.onresize = fixHeight
 })
 </script>
+
 <template>
   <v-card elevation="10" height="100%" width="100%">
     <AddCadreForm v-model="addCadreFormDialog" @on-closed="afterCadre" />
@@ -158,7 +135,7 @@ onMounted(() => {
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="headers"
+          :headers="cadreHeaders"
           :height="tableHeight"
           :items="data"
           :loading="loading"
@@ -168,7 +145,7 @@ onMounted(() => {
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
-                v-if="'cadre:update'"
+                v-if="has('cadre:update')"
                 prepend-icon="mdi-pencil"
                 color="indigo"
                 @click="

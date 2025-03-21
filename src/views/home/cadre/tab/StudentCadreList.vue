@@ -1,120 +1,50 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import EditStudentCadreForm from '@/components/home/cadre/EditStudentCadre.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
 
-import {
-  apiGetStudentCadreList,
-  apiDeleteStudentCadre,
-  getCadreLevers,
-  type StudentCadreRecord
-} from '@/api/cadre'
-
+import { apiGetStudentCadreList, apiDeleteStudentCadre, getCadreLevers } from '@/api/cadre'
+import type { StudentCadreItem, CadreQuery } from '@/model/cadreModel'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-
-const headers = [
-  {
-    title: '学号',
-    align: 'start',
-    sortable: true,
-    key: 'studentId'
-  },
-  {
-    title: '姓名',
-    align: 'start',
-    sortable: false,
-    key: 'name'
-  },
-  {
-    title: '性别',
-    align: 'start',
-    sortable: false,
-    key: 'gender'
-  },
-  {
-    title: '专业',
-    align: 'start',
-    sortable: false,
-    key: 'majorName'
-  },
-  {
-    title: '年级',
-    align: 'start',
-    sortable: true,
-    key: 'grade'
-  },
-  {
-    title: '具体职位',
-    align: 'start',
-    sortable: true,
-    key: 'cadrePosition'
-  },
-  {
-    title: '职位级别',
-    align: 'start',
-    sortable: false,
-    key: 'cadreLevel'
-  },
-  {
-    title: '任职开始学期',
-    align: 'start',
-    sortable: false,
-    key: 'appointmentStartTerm'
-  },
-  {
-    title: '任职结束学期',
-    align: 'start',
-    sortable: false,
-    key: 'appointmentEndTerm'
-  },
-  {
-    title: '备注',
-    align: 'start',
-    sortable: false,
-    key: 'comment'
-  },
-  {
-    title: '操作',
-    align: 'start',
-    sortable: false,
-    key: 'operations'
-  }
-]
+import { studentCadreHeaders } from '@/misc/table/cadre-import-headers'
 
 const loading = ref(false)
 const selected = ref<any[]>([])
-const data = ref<StudentCadreRecord[]>([])
+const data = ref<StudentCadreItem[]>([])
 const CadreLevels = ref<String[]>(getCadreLevers())
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
 const editStudentCadreFormDialog = ref(false)
-
-const query = reactive({
-  search: null,
+const store = useUserStore()
+const chargeGrades = store.user.chargeGrades
+const query = reactive<CadreQuery>({
+  search: '' as string,
   majorId: null,
-  grade: null,
+  gradeId: null,
   cadreLevel: null,
   appointmentStartTerm: null,
   appointmentEndTerm: null,
   pageNo: 1,
   pageSize: 10
 })
-const store = useUserStore()
-const editInfo = ref<StudentCadreRecord>({
+
+const editInfo = ref<StudentCadreItem>({
   studentCadreId: '',
   studentId: '',
-  cadreId: '',
   name: '',
   gender: '',
   majorName: '',
-  grade: '',
+  gradeName: '',
+  cadreId: '',
   cadrePosition: '',
   cadreLevel: '',
+  cadreBelong: '',
   appointmentStartTerm: '',
   appointmentEndTerm: '',
   comment: ''
@@ -145,7 +75,7 @@ const fetchStudentCadreLogic = async () => {
 }
 onMounted(fetchStudentCadreLogic)
 
-const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
+const loadItems = () => {
   fetchStudentCadreLogic()
 }
 
@@ -172,32 +102,57 @@ const deleteStudentCadreLogic = async () => {
   fetchStudentCadreLogic()
 }
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
+const onClosed = () => {
+  editStudentCadreFormDialog.value = false
+  fetchStudentCadreLogic()
 }
+
+const onEdit = (item: StudentCadreItem) => {
+  editInfo.value = item
+  editStudentCadreFormDialog.value = true
+}
+
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tabs')) {
+        tabsHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+  const tabs = document.querySelector('.tabs')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+  if (tabs) resizeObserver.observe(tabs)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
     <EditStudentCadreForm
       v-model="editStudentCadreFormDialog"
       :info="editInfo"
-      @on-closed="
-        () => {
-          editStudentCadreFormDialog = false
-          fetchStudentCadreLogic()
-        }
-      "
+      @on-closed="onClosed"
     />
 
     <v-dialog width="500" v-model="deleteDialog">
@@ -212,8 +167,9 @@ onMounted(() => {
             :disabled="selected.length === 0"
             color="error"
             @click="deleteStudentCadreLogic"
-            >删除</v-btn
           >
+            删除
+          </v-btn>
           <v-btn @click="deleteDialog = false">取消</v-btn>
         </v-card-actions>
       </v-card>
@@ -224,7 +180,7 @@ onMounted(() => {
         <MajorSelect v-model="query.majorId" variant="underlined" />
       </span>
       <span class="w-10">
-        <GradeSelect v-model="query.grade" variant="underlined" />
+        <GradeSelect v-model="query.gradeId" :chargeGrades="chargeGrades" variant="underlined" />
       </span>
       <span class="w-10">
         <v-select
@@ -236,23 +192,26 @@ onMounted(() => {
           hide-details
           clearable
           variant="underlined"
+          density="compact"
         >
         </v-select>
       </span>
       <span class="w-10 text-indigo">
         <SemesterSelect
-          v-model="query.appointmentStartTerm"
+          v-model="query.appointmentStartTerm as string"
           color="'indigo'"
           :label="'任职开始学期'"
           variant="underlined"
+          density="compact"
         />
       </span>
       <span class="w-10 text-indigo">
         <SemesterSelect
-          v-model="query.appointmentEndTerm"
+          v-model="query.appointmentEndTerm as string"
           :color="'indigo'"
           :label="'任职结束学期'"
           variant="underlined"
+          density="compact"
         />
       </span>
 
@@ -268,6 +227,7 @@ onMounted(() => {
           prepend-inner-icon="mdi-magnify"
           variant="underlined"
           hide-details
+          density="compact"
         >
           <v-tooltip activator="parent" location="top">以学号/姓名/职位名称搜索</v-tooltip>
         </v-text-field>
@@ -297,7 +257,7 @@ onMounted(() => {
       <v-card>
         <v-data-table-server
           v-model="selected"
-          :headers="headers"
+          :headers="studentCadreHeaders as any"
           :height="tableHeight"
           :items="data"
           :items-length="dataLength"
@@ -308,20 +268,17 @@ onMounted(() => {
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
                 v-if="has('student_cadre:update')"
                 prepend-icon="mdi-pencil"
                 color="indigo"
-                @click="
-                  () => {
-                    editInfo = JSON.parse(JSON.stringify(item))
-                    editStudentCadreFormDialog = true
-                  }
-                "
-                >编辑</v-btn
+                @click="onEdit(item)"
               >
+                编辑
+              </v-btn>
             </div>
           </template>
         </v-data-table-server>

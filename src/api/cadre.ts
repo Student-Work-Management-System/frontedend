@@ -1,39 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-
-// 职位
-export interface Cadre {
-  cadreId: string
-  cadrePosition: string
-  cadreLevel: string
-}
-
-// 学生职位任期
-export interface StudentCadre {
-  studentCadreId: string
-  studentId: string
-  cadreId: string
-  appointmentStartTerm: string
-  appointmentEndTerm: string
-  comment: string
-}
-
-// 学生职位任期列表相关数据
-export interface StudentCadreRecord {
-  studentCadreId: string
-  studentId: string
-  cadreId: string
-  name: string
-  gender: string
-  majorName: string
-  grade: string
-  cadrePosition: string
-  cadreLevel: string
-  appointmentStartTerm: string
-  appointmentEndTerm: string
-  comment: string
-}
+import type { Cadre, StudentCadre, StudentCadreItem, CadreQuery } from '@/model/cadreModel'
 
 // 职位等级
 export function getCadreLevers(): string[] {
@@ -43,16 +11,7 @@ export function getCadreLevers(): string[] {
 export async function apiGetCadreList(): Promise<AxiosResponse<Result<Cadre[]>>> {
   return http.get('/cadre/gets')
 }
-export async function apiGetStudentCadreList(query: {
-  search: string | null
-  majorId: string | null
-  grade: string | null
-  cadreLevel: string | null
-  appointmentStartTerm: string | null
-  appointmentEndTerm: string | null
-  pageNo: number
-  pageSize: number
-}): Promise<AxiosResponse<Result<RecordsPage<StudentCadreRecord>>>> {
+export async function apiGetStudentCadreList(query: CadreQuery): Promise<AxiosResponse<Result<RecordsPage<StudentCadreItem>>>> {
   return http.post('/student_cadre/gets', query)
 }
 

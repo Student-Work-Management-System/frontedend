@@ -53,8 +53,6 @@ const has = (authority: string) => {
 
 const uploadLogic = async () => {
   loading.value = true
-  // valid data format before upload
-
   if (
     !jsonData.value.reduce(
       (valid, studentcadre) =>

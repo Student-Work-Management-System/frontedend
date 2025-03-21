@@ -23,7 +23,7 @@ export default {
     {
       path: '/cadre/list',
       name: 'cadre-list',
-      component: () => import('@/views/home/cadre/StudentCadreList.vue'),
+      component: () => import('@/views/home/cadre/StudentCadreTab.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '职位信息统计',

@@ -1,16 +1,22 @@
 <script lang="ts" setup>
-import { apiUpdateCadreInfo ,getCadreLevers,type Cadre} from '@/api/cadre'
+import { apiUpdateCadreInfo, getCadreLevers } from '@/api/cadre'
 import { watchEffect } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { reactive } from 'vue'
+import type { Cadre } from '@/model/cadreModel'
 
 const model = defineModel<boolean>()
 const emits = defineEmits(['onClosed'])
 const form = ref(false)
 const props = defineProps<{ info: Cadre }>()
 const loading = ref(false)
-const cadreInfo = reactive({ cadreId: '', cadrePosition: '', cadreLevel: '' })
+const cadreInfo = reactive<Cadre>({
+  cadreId: '',
+  cadrePosition: '',
+  cadreLevel: '',
+  cadreBelong: ''
+})
 const CadreLevels = getCadreLevers()
 const updateInfoLogic = async () => {
   loading.value = true
@@ -27,15 +33,16 @@ const updateInfoLogic = async () => {
 }
 
 watchEffect(() => {
-    cadreInfo.cadreId = props.info.cadreId
-    cadreInfo.cadrePosition = props.info.cadrePosition
-    cadreInfo.cadreLevel = props.info.cadreLevel
+  cadreInfo.cadreId = props.info.cadreId
+  cadreInfo.cadrePosition = props.info.cadrePosition
+  cadreInfo.cadreLevel = props.info.cadreLevel
+  cadreInfo.cadreBelong = props.info.cadreBelong
 })
 </script>
 
 <template>
   <v-dialog width="auto" min-width="500" height="auto" v-model="model">
-    <v-window >
+    <v-window>
       <v-window-item :value="1">
         <v-card width="auto" prepend-icon="mdi-content-save-edit-outline" title="职位信息">
           <v-container>
@@ -48,24 +55,29 @@ watchEffect(() => {
                 :rules="[() => !!cadreInfo.cadrePosition || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                    
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
                 </template>
               </v-text-field>
-            <v-select
-            label="职位等级"
-            v-model="cadreInfo.cadreLevel"
-            :items="CadreLevels"
-            :rules="[() => !!cadreInfo.cadrePosition || '该选项必填！']"
-            >
-            <template v-slot:prepend>
-        
+              <v-text-field
+                label="所属组织"
+                v-model="cadreInfo.cadreBelong"
+                required
+                :rules="[() => !!cadreInfo.cadreBelong || '该选项必填！']"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                </template>
+              </v-text-field>
+              <v-select
+                label="职位等级"
+                v-model="cadreInfo.cadreLevel"
+                :items="CadreLevels"
+                :rules="[() => !!cadreInfo.cadrePosition || '该选项必填！']"
+              >
+                <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
                 </template>
               </v-select>
-
-
-              
             </v-form>
           </v-container>
           <v-divider></v-divider>
@@ -78,7 +90,6 @@ watchEffect(() => {
               variant="plain"
             ></v-btn>
             <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
-         
           </v-container>
         </v-card>
       </v-window-item>

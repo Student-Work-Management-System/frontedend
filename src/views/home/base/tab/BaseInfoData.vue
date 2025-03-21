@@ -148,7 +148,6 @@ const selectMenuHeight = ref(0)
 const tabsHeight = ref(0)
 
 const tableHeight = computed(() => {
-  if (!containerHeight.value || !selectMenuHeight.value || !tabsHeight.value) return 560
   return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 60
 })
 
