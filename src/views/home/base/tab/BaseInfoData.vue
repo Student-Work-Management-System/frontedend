@@ -146,7 +146,6 @@ const exportData = () => {
 const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
 const tabsHeight = ref(0)
-
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 60
 })

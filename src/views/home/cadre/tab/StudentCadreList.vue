@@ -3,16 +3,21 @@
 import { computed, onUnmounted, ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import EditStudentCadreForm from '@/components/home/cadre/EditStudentCadre.vue'
+import EditStudentCadre from '@/components/home/cadre/EditStudentCadre.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
-
-import { apiGetStudentCadreList, apiDeleteStudentCadre, getCadreLevers } from '@/api/cadre'
+import {
+  apiGetStudentCadreList,
+  apiDeleteStudentCadre,
+  getCadreLevers,
+  apiGetCadreList
+} from '@/api/cadre'
 import type { StudentCadreItem, CadreQuery } from '@/model/cadreModel'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-import { studentCadreHeaders } from '@/misc/table/cadre-import-headers'
+import { studentCadreTableHeaders } from '@/misc/table'
+import { useCadreStore } from '@/stores/cadreStore'
 
 const loading = ref(false)
 const selected = ref<any[]>([])
@@ -20,11 +25,12 @@ const data = ref<StudentCadreItem[]>([])
 const CadreLevels = ref<String[]>(getCadreLevers())
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
-const editStudentCadreFormDialog = ref(false)
+const editDialog = ref(false)
 const store = useUserStore()
 const chargeGrades = store.user.chargeGrades
+const cadreStore = useCadreStore()
 const query = reactive<CadreQuery>({
-  search: '' as string,
+  search: '',
   majorId: null,
   gradeId: null,
   cadreLevel: null,
@@ -33,8 +39,7 @@ const query = reactive<CadreQuery>({
   pageNo: 1,
   pageSize: 10
 })
-
-const editInfo = ref<StudentCadreItem>({
+const modifyInfo = ref<StudentCadreItem>({
   studentCadreId: '',
   studentId: '',
   name: '',
@@ -102,14 +107,14 @@ const deleteStudentCadreLogic = async () => {
   fetchStudentCadreLogic()
 }
 
-const onClosed = () => {
-  editStudentCadreFormDialog.value = false
+const closeHandler = () => {
+  editDialog.value = false
   fetchStudentCadreLogic()
 }
 
 const onEdit = (item: StudentCadreItem) => {
-  editInfo.value = item
-  editStudentCadreFormDialog.value = true
+  modifyInfo.value = item
+  editDialog.value = true
 }
 
 // 高度计算相关
@@ -146,14 +151,16 @@ onMounted(() => {
     resizeObserver.disconnect()
   })
 })
+
+onMounted(async () => {
+  const { data: cadreList } = await apiGetCadreList()
+  cadreStore.setCadreList(cadreList.data)
+})
 </script>
+
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <EditStudentCadreForm
-      v-model="editStudentCadreFormDialog"
-      :info="editInfo"
-      @on-closed="onClosed"
-    />
+    <EditStudentCadre v-model="editDialog" :info="modifyInfo" @on-closed="closeHandler" />
 
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
@@ -257,7 +264,7 @@ onMounted(() => {
       <v-card>
         <v-data-table-server
           v-model="selected"
-          :headers="studentCadreHeaders as any"
+          :headers="studentCadreTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :items-length="dataLength"

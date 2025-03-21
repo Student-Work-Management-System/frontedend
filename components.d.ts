@@ -14,6 +14,7 @@ declare module 'vue' {
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     AwardLevelSelect: typeof import('./src/components/home/competition/AwardLevelSelect.vue')['default']
+    CadreSelect: typeof import('./src/components/home/cadre/CadreSelect.vue')['default']
     CompetitionAuditDialog: typeof import('./src/components/home/competition/CompetitionAuditDialog.vue')['default']
     CompetitionAuditSelect: typeof import('./src/components/home/competition/CompetitionAuditSelect.vue')['default']
     CompetitionLevelSelect: typeof import('./src/components/home/competition/CompetitionLevelSelect.vue')['default']

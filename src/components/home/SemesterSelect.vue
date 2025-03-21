@@ -5,7 +5,6 @@ const model = defineModel<string>()
 const props = withDefaults(
   defineProps<{
     label: string
-    color: string
     variant?:
       | 'filled'
       | 'underlined'
@@ -31,7 +30,7 @@ items.value = items.value.reverse()
 <template>
   <v-select
     v-model="model"
-    :color="props.color"
+    color="indigo"
     :label="props.label"
     :items="items"
     :variant="props.variant"

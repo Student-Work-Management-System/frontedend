@@ -3,12 +3,11 @@ import * as XLSX from 'xlsx'
 export { chLabel } from './table-label-ch'
 export * from './base-import-header'
 export * from './employ-import-header'
-export * from './studentcadre-import-header'
 export * from './enroll-import-header'
 export * from './poverty-import-header'
 export * from './studentpoverty-import-header'
 export * from './competition-import-header'
-
+export * from './cadre-import-headers'
 
 export interface TableHeader {
   type: string
@@ -49,4 +48,19 @@ export async function AnalyzeFileToTable(file: File, headers: TableHeader[], not
     Object.keys(row).forEach((key) => (newRow[fieldKeyMap.get(key)] = row[key]))
     return newRow
   })
+}
+
+export const checkValid = (content: any) => {
+  if (content === null || content === undefined) {
+    return false
+  }
+  if (content === '') {
+    return false
+  }
+  if (typeof content === 'string') {
+    if (content.startsWith('§')) {
+      return false
+    }
+  }
+  return true
 }

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -7,7 +8,7 @@ import { notify } from '@kyvg/vue3-notification'
 import AddCadreForm from '@/components/home/cadre/AddCadreForm.vue'
 import EditCadreForm from '@/components/home/cadre/EditCadreForm.vue'
 import { useUserStore } from '@/stores/userStore'
-import { cadreHeaders } from '@/misc/table/cadre-import-headers'
+import { cadreTableHeaders } from '@/misc/table/cadre-import-headers'
 
 const selected = ref<Cadre[]>([])
 const loading = ref(true)
@@ -111,37 +112,39 @@ onMounted(() => {
       </v-card>
     </v-dialog>
     <section class="menu">
-      <v-btn v-if="has('cadre:select')" prepend-icon="mdi-refresh" @click="fetchCadreLogic"
-        >刷新</v-btn
-      >
+      <v-btn v-if="has('cadre:select')" prepend-icon="mdi-refresh" @click="fetchCadreLogic">
+        刷新
+      </v-btn>
       <v-btn
         v-if="has('cadre:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
         @click="addCadreFormDialog = true"
-        >添加</v-btn
       >
-
+        添加
+      </v-btn>
       <v-btn
         v-if="has('cadre:delete')"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
-        >删除</v-btn
       >
+        删除
+      </v-btn>
     </section>
 
     <section class="pa-4 d-inline-block w-100" ref="tableDom">
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="cadreHeaders"
+          :headers="cadreTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn

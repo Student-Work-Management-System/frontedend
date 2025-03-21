@@ -15,43 +15,23 @@ export async function apiGetStudentCadreList(query: CadreQuery): Promise<AxiosRe
   return http.post('/student_cadre/gets', query)
 }
 
-export async function apiAddCadre(cadre: {
-  cadrePosition: string
-  cadreLevel: string
-}): Promise<AxiosResponse<Result<null>>> {
+export async function apiAddCadre(cadre: Cadre): Promise<AxiosResponse<Result<null>>> {
   return http.post('/cadre/add', cadre)
 }
-export async function apiAddCadreInfo(
-  cadres: Cadre[]
-): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/cadre/adds', { cadres })
-}
 
-export async function apiAddStudentCadre(studentCadre: {
-  studentId: string
-  cadreId: string
-  appointmentStartTerm: string
-  appointmentEndTerm: string
-  comment: string
-}): Promise<AxiosResponse<Result<null>>> {
+export async function apiAddStudentCadre(studentCadre: StudentCadre): Promise<AxiosResponse<Result<null>>> {
   return http.post('/student_cadre/add', studentCadre)
 }
 
-export async function apiAddStudentCadreInfo(
-  insertStudentCadreDTOList: StudentCadre[]
-): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student_cadre/adds', { insertStudentCadreDTOList })
+export async function apiAddStudentCadres(studentCadres: StudentCadre[]): Promise<AxiosResponse<Result<null>>> {
+  return http.post('/student_cadre/adds', studentCadres)
 }
 
-export async function apiUpdateCadreInfo(cadreInfo: {
-  cadreId: string
-  cadrePosition: string
-  cadreLevel: string
-}) {
-  return http.put('/cadre/update', cadreInfo)
+export async function apiUpdateCadre(cadre: Cadre) {
+  return http.put('/cadre/update', cadre)
 }
-export async function apiUpdateStudentCadreInfo(studentCadreInfo: StudentCadre) {
-  return http.put('/student_cadre/update', studentCadreInfo)
+export async function apiUpdateStudentCadre(studentCadre: StudentCadre) {
+  return http.put('/student_cadre/update', studentCadre)
 }
 export async function apiDeleteCadre(cadreId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/cadre/delete/${cadreId}`)

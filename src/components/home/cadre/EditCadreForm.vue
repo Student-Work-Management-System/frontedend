@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { apiUpdateCadreInfo, getCadreLevers } from '@/api/cadre'
+import { apiUpdateCadre, getCadreLevers } from '@/api/cadre'
 import { watchEffect } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
@@ -20,9 +20,7 @@ const cadreInfo = reactive<Cadre>({
 const CadreLevels = getCadreLevers()
 const updateInfoLogic = async () => {
   loading.value = true
-  const { data: result } = await apiUpdateCadreInfo({
-    ...cadreInfo
-  })
+  const { data: result } = await apiUpdateCadre(cadreInfo)
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return

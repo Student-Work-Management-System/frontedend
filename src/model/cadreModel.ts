@@ -6,7 +6,7 @@ export interface Cadre {
 }
 
 export interface StudentCadre {
-    studentCadreId: string
+    studentCadreId?: string
     studentId: string
     cadreId: string
     appointmentStartTerm: string
@@ -15,7 +15,7 @@ export interface StudentCadre {
 }
 
 export interface StudentCadreItem {
-    studentCadreId: string
+    studentCadreId?: string
     studentId: string
     name: string
     gender: string

@@ -2,7 +2,13 @@
 import { onMounted, computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { baseheaders, type BaseHeader, HeaderValidChecker, AnalyzeFileToTable } from '@/misc/table'
+import {
+  baseheaders,
+  type BaseHeader,
+  HeaderValidChecker,
+  AnalyzeFileToTable,
+  checkValid
+} from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { apiGetMajorList, apiGetAllDegrees, apiGetAllGrades, apiGetAllPolitics } from '@/api/other'
@@ -281,21 +287,6 @@ const jsonDataToStudentArray = (jsonData: BaseHeader[]): Student[] => {
     politicsStatus: student.politicStatus,
     enabled: true
   }))
-}
-
-const checkValid = (content: any) => {
-  if (content === null || content === undefined) {
-    return false
-  }
-  if (content === '') {
-    return false
-  }
-  if (typeof content === 'string') {
-    if (content.startsWith('§')) {
-      return false
-    }
-  }
-  return true
 }
 
 const getSelectableOptions = async () => {

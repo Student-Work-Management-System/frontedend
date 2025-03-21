@@ -1,12 +1,68 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { type TableHeader } from '.'
-import { type Cadre } from '@/model/cadreModel'
+import { type Cadre, type StudentCadre } from '@/model/cadreModel'
 export interface CadreHeader extends Cadre {
   [key: string]: any,
 
 }
+export interface StudentCadreHeader extends StudentCadre {
+  [key: string]: any,
+  cadreInfo: string
+}
 
-export const cadreheaders: TableHeader[] = [
+export const studentCadreHeaders: TableHeader[] = [
+  {
+    type: 'string',
+    field: 'studentId',
+    label: '学号',
+    require: true,
+    options: null,
+    validate: (content, oldContent, record, field) => {
+      if (content === '') return '学号不能为空！'
+      return ''
+    }
+  },
+  {
+    type: 'select',
+    field: 'cadreInfo',
+    label: '职位信息',
+    require: true,
+    options: [],
+  },
+  {
+    type: 'select',
+    field: 'appointmentStartTerm',
+    label: '开始学期',
+    require: true,
+    options: null,
+    validate: (content, oldContent, record, field) => {
+      if (content === '') return '格式应该为2xxx-2xxx_x'
+      if (!/^2\d{3}-2\d{3}_(1|2)$/.test(content)) return '格式应该为2xxx-2xxx_x'
+      return ''
+    }
+  },
+  {
+    type: 'select',
+    field: 'appointmentEndTerm',
+    label: '结束学期',
+    require: true,
+    options: null,
+    validate: (content, oldContent, record, field) => {
+      if (content === '') return '格式应该为2xxx-2xxx_x'
+      if (!/^2\d{3}-2\d{3}_(1|2)$/.test(content)) return '格式应该为2xxx-2xxx_x'
+      return ''
+    }
+  },
+  {
+    type: 'string',
+    field: 'comment',
+    label: '备注',
+    require: false,
+    options: null
+  },
+]
+
+export const cadreHeaders: TableHeader[] = [
   {
     type: 'string',
     field: 'cadrePosition',
@@ -37,7 +93,7 @@ export const cadreheaders: TableHeader[] = [
 
 ]
 
-export const cadreHeaders = [
+export const cadreTableHeaders = [
   {
     title: '职位ID',
     align: 'start',
@@ -70,7 +126,7 @@ export const cadreHeaders = [
   }
 ]
 
-export const studentCadreHeaders = [
+export const studentCadreTableHeaders = [
   {
     title: '学号',
     align: 'start',
