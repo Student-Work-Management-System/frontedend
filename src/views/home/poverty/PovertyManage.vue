@@ -1,48 +1,13 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
-import {
-  apiGetPovertyAssistanceList,
-  apiDeletePovertyAssistance,
-  type PovertyAssistance
-} from '@/api/poverty'
+import { apiGetPovertyAssistanceList, apiDeletePovertyAssistance } from '@/api/poverty'
 import { notify } from '@kyvg/vue3-notification'
 import AddPovertyForm from '@/components/home/poverty/AddPovertyForm.vue'
 import EditPovertyForm from '@/components/home/poverty/EditPovertyForm.vue'
 import { useUserStore } from '@/stores/userStore'
-
-const headers = [
-  {
-    title: '贫困类型ID',
-    align: 'start',
-    sortable: true,
-    key: 'povertyAssistanceId'
-  },
-  {
-    title: '贫困类型',
-    align: 'start',
-    sortable: false,
-    key: 'povertyType'
-  },
-  {
-    title: '贫困等级',
-    align: 'start',
-    sortable: false,
-    key: 'povertyLevel'
-  },
-  {
-    title: '资助标准',
-    align: 'start',
-    sortable: false,
-    key: 'povertyAssistanceStandard'
-  },
-  {
-    title: '操作',
-    align: 'center',
-    sortable: false,
-    key: 'operations'
-  }
-]
+import type { PovertyAssistance } from '@/model/povertyModel'
+import { povertyTableHeaders } from '@/misc/table/poverty-import-header'
 
 const selected = ref<PovertyAssistance[]>([])
 const loading = ref(true)
@@ -89,7 +54,7 @@ const deletePovertyLogic = async () => {
   let reqs = selected.value.map((p) =>
     (async (p) => {
       const povertyAssistanceId = p.povertyAssistanceId
-      const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId)
+      const { data: result } = await apiDeletePovertyAssistance(povertyAssistanceId!!)
       if (result.code !== 200) {
         console.error(result)
         notify({ type: 'error', title: '错误', text: result.message })
@@ -104,31 +69,54 @@ const deletePovertyLogic = async () => {
   loading.value = false
 }
 
+const onEdit = (item: PovertyAssistance) => {
+  editInfo.value = item
+  editPovertyInfoFormDialog.value = true
+}
+
 onMounted(fetchPovertyLogic)
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddPovertyForm v-model="addPovertyFormDialog" @on-closed="afterPoverty" />
+    
     <EditPovertyForm
       v-model="editPovertyInfoFormDialog"
       :info="editInfo"
       @on-closed="afterPoverty"
     />
+
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -138,64 +126,60 @@ onMounted(() => {
         <v-card-actions class="mx-auto">
           <v-btn
             :loading="loading"
+            text="删除"
             :disabled="selected.length === 0"
             color="error"
             @click="deletePovertyLogic"
-            >删除</v-btn
-          >
-          <v-btn @click="deleteDialog = false">取消</v-btn>
+          />
+          <v-btn @click="deleteDialog = false" text="取消" />
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <section class="menu">
       <v-btn
         v-if="has('poverty_assistance:select')"
+        text="刷新"
         prepend-icon="mdi-refresh"
         @click="fetchPovertyLogic"
-        >刷新</v-btn
-      >
+      />
       <v-btn
         v-if="has('poverty_assistance:insert')"
+        text="添加"
         prepend-icon="mdi-plus-circle"
         color="primary"
         @click="addPovertyFormDialog = true"
-        >添加</v-btn
-      >
-
+      />
       <v-btn
         v-if="has('poverty_assistance:delete')"
+        text="删除"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
-        >删除</v-btn
-      >
+      />
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="headers"
+          :headers="povertyTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
                 v-if="has('poverty_assistance:update')"
+                text="编辑"
                 prepend-icon="mdi-pencil"
                 color="indigo"
-                @click="
-                  () => {
-                    editInfo = JSON.parse(JSON.stringify(item))
-                    editPovertyInfoFormDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+                @click="onEdit(item as PovertyAssistance)"
+              />
             </div>
           </template>
         </v-data-table>

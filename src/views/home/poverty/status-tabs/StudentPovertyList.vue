@@ -1,78 +1,20 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import EditStudentPovertyForm from '@/components/home/poverty/EditStudentPovertyForm.vue'
 import AcademicYearSelect from '@/components/home/poverty/AcademicYearSelect.vue'
-
 import {
   apiDeleteStudentPovertyAssistance,
   getPovertyLevels,
-  apiGetStudentPovertyAssistanceList,
-  type StudentPovertyAssistanceRecord
+  apiGetStudentPovertyAssistanceList
 } from '@/api/poverty'
-
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-
-const headers = [
-  {
-    title: '学号',
-    align: 'start',
-    sortable: true,
-    key: 'studentId'
-  },
-  {
-    title: '姓名',
-    align: 'start',
-    sortable: false,
-    key: 'name'
-  },
-  {
-    title: '专业',
-    align: 'start',
-    sortable: false,
-    key: 'majorName'
-  },
-  {
-    title: '年级',
-    align: 'start',
-    sortable: true,
-    key: 'grade'
-  },
-  {
-    title: '贫困类型',
-    align: 'start',
-    sortable: true,
-    key: 'povertyType'
-  },
-  {
-    title: '贫困级别',
-    align: 'start',
-    sortable: false,
-    key: 'povertyLevel'
-  },
-  {
-    title: '资助标准',
-    align: 'start',
-    sortable: false,
-    key: 'povertyAssistanceStandard'
-  },
-  {
-    title: '认证学年',
-    align: 'start',
-    sortable: false,
-    key: 'assistanceYear'
-  },
-  {
-    title: '操作',
-    align: 'start',
-    sortable: false,
-    key: 'operations'
-  }
-]
+import type { StudentPovertyAssistanceRecord, PovertyAssistanceQuery } from '@/model/povertyModel'
+import { studentPovertyTableHeaders } from '@/misc/table/poverty-import-header'
 
 const loading = ref(false)
 const selected = ref<any[]>([])
@@ -83,21 +25,23 @@ const deleteDialog = ref(false)
 const addStudentPovertyDialog = ref(false)
 const editStudentPovertyFormDialog = ref(false)
 
-const query = reactive({
-  search: null,
-  majorId: null,
-  grade: null,
-  povertyLevel: null,
-  assistanceYear: null,
+const query = reactive<PovertyAssistanceQuery>({
+  search: '',
+  majorId: null as string | null,
+  gradeId: null as string | null,
+  povertyLevel: null as string | null,
+  assistanceYear: null as string | null,
   pageNo: 1,
   pageSize: 10
 })
 const store = useUserStore()
+const chargeGrades = store.getUserData.chargeGrades
 const editInfo = ref<StudentPovertyAssistanceRecord>({
   studentPovertyAssistanceId: '',
   studentId: '',
   povertyAssistanceId: '',
   name: '',
+  gradeName: '',
   majorName: '',
   povertyLevel: '',
   povertyType: '',
@@ -112,7 +56,7 @@ const fetchStudentPovertyLogic = async () => {
   loading.value = true
   if (query.pageSize === -1) query.pageSize = 9999
 
-  const { data: result } = await apiGetStudentPovertyAssistanceList(query)
+  const { data: result } = await apiGetStudentPovertyAssistanceList(query as PovertyAssistanceQuery)
 
   if (result.code !== 200) {
     console.error(result)
@@ -127,11 +71,10 @@ const fetchStudentPovertyLogic = async () => {
   dataLength.value = result.data.totalRow
   deleteDialog.value = false
   loading.value = false
-  console.log(data.value)
 }
 onMounted(fetchStudentPovertyLogic)
 
-const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
+const loadItems = () => {
   fetchStudentPovertyLogic()
 }
 
@@ -157,41 +100,59 @@ const deleteStudentPovertyLogic = async () => {
   fetchStudentPovertyLogic()
 }
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
+const onClose = () => {
+  addStudentPovertyDialog.value = false
+  fetchStudentPovertyLogic()
 }
+
+const onEdit = (item: StudentPovertyAssistanceRecord) => {
+  editInfo.value = item
+  editStudentPovertyFormDialog.value = true
+}
+
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tabs')) {
+        tabsHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+  const tabs = document.querySelector('.tabs')
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+  if (tabs) resizeObserver.observe(tabs)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
+
 <template>
-  <v-card elevation="10" height="100%" width="100%">
-    <AddStudentPovertyForm
-      v-model="addStudentPovertyDialog"
-      @on-closed="
-        () => {
-          addStudentPovertyDialog = false
-          fetchStudentPovertyLogic()
-        }
-      "
-    />
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
+    <AddStudentPovertyForm v-model="addStudentPovertyDialog" @on-closed="onClose" />
+
     <EditStudentPovertyForm
       v-model="editStudentPovertyFormDialog"
       :info="editInfo"
-      @on-closed="
-        () => {
-          editStudentPovertyFormDialog = false
-          fetchStudentPovertyLogic()
-        }
-      "
+      @on-closed="onClose"
     />
 
     <v-dialog width="500" v-model="deleteDialog">
@@ -205,10 +166,10 @@ onMounted(() => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
+            text="删除"
             @click="deleteStudentPovertyLogic"
-            >删除</v-btn
-          >
-          <v-btn @click="deleteDialog = false">取消</v-btn>
+          />
+          <v-btn @click="deleteDialog = false" text="取消" />
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -217,9 +178,11 @@ onMounted(() => {
       <span class="w-10">
         <MajorSelect v-model="query.majorId" variant="underlined" />
       </span>
+
       <span class="w-10">
-        <GradeSelect v-model="query.grade" variant="underlined" />
+        <GradeSelect v-model="query.gradeId" :charge-grades="chargeGrades" variant="underlined" />
       </span>
+
       <span class="w-10">
         <v-select
           label="贫困等级"
@@ -230,12 +193,17 @@ onMounted(() => {
           hide-details
           clearable
           variant="underlined"
-        >
-        </v-select>
+          density="compact"
+        />
       </span>
 
       <span class="w-10 text-indigo">
-        <AcademicYearSelect v-model="query.assistanceYear" color="indigo" variant="underlined" />
+        <AcademicYearSelect
+          v-model="query.assistanceYear as string"
+          color="indigo"
+          variant="underlined"
+          density="compact"
+        />
       </span>
 
       <span class="w-15 text-indigo">
@@ -250,13 +218,19 @@ onMounted(() => {
           prepend-inner-icon="mdi-magnify"
           variant="underlined"
           hide-details
+          density="compact"
         >
-          <v-tooltip activator="parent" location="top">按贫困类型/资助标准搜索</v-tooltip>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            text="按 贫困类型/资助标准/学生学号/学生姓名 搜索"
+          />
         </v-text-field>
       </span>
 
       <v-btn
         prepend-icon="mdi-refresh"
+        text="刷新"
         v-if="
           has('student:select') &&
           has('student_poverty_assistance:select') &&
@@ -264,23 +238,22 @@ onMounted(() => {
           has('major:select')
         "
         @click="fetchStudentPovertyLogic"
-        >刷新</v-btn
-      >
+      />
 
       <v-btn
         v-if="has('student_poverty_assistance:delete')"
         prepend-icon="mdi-delete"
+        text="删除"
         color="error"
         @click="deleteDialog = true"
-        >删除</v-btn
-      >
+      />
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table-server
           v-model="selected"
-          :headers="headers"
+          :headers="studentPovertyTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :items-length="dataLength"
@@ -291,20 +264,16 @@ onMounted(() => {
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
                 v-if="has('student_poverty_assistance:update')"
                 prepend-icon="mdi-pencil"
                 color="indigo"
-                @click="
-                  () => {
-                    editInfo = JSON.parse(JSON.stringify(item))
-                    editStudentPovertyFormDialog = true
-                  }
-                "
-                >编辑</v-btn
-              >
+                @click="onEdit(item)"
+                text="编辑"
+              />
             </div>
           </template>
         </v-data-table-server>

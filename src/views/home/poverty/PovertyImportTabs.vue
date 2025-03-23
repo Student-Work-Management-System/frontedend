@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import PovertyInfoImport from './import-tabs/PovertyInfoImport.vue';
-import StudentPovertyInfoImport from './import-tabs/StudentPovertyInfoImport.vue';
+import StudentPovertyInfoImport from './import-tabs/StudentPovertyImport.vue';
 
 
 const tab = ref(null)

@@ -41,3 +41,10 @@ export interface CadreQuery {
     pageSize: number
 }
 
+export interface StudentCadreStatusItem {
+
+}
+
+export interface CadreStatusQuery {
+
+}

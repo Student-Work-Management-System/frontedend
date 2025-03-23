@@ -98,8 +98,8 @@ const uploadLogic = async () => {
   loading.value = false
 }
 
-const createStudentCadreList = (RawStudentCadres: StudentCadreHeader[]): StudentCadre[] => {
-  return RawStudentCadres.map((studentCadre) => ({
+const createStudentCadreList = (rawStudentCadres: StudentCadreHeader[]): StudentCadre[] => {
+  return rawStudentCadres.map((studentCadre) => ({
     studentId: checkValid(studentCadre.studentId) ? studentCadre.studentId : '',
     cadreId: checkValid(studentCadre.cadreInfo) ? cadreMap.value.get(studentCadre.cadreInfo) : '',
     appointmentStartTerm: checkValid(studentCadre.appointmentStartTerm)

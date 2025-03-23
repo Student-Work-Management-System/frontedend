@@ -5,7 +5,6 @@ export * from './base-import-header'
 export * from './employ-import-header'
 export * from './enroll-import-header'
 export * from './poverty-import-header'
-export * from './studentpoverty-import-header'
 export * from './competition-import-header'
 export * from './cadre-import-headers'
 

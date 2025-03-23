@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
 import { apiGetCadreList, apiDeleteCadre } from '@/api/cadre'
 import type { Cadre } from '@/model/cadreModel'
@@ -73,24 +73,40 @@ const deleteCadreLogic = async () => {
 
 onMounted(fetchCadreLogic)
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddCadreForm v-model="addCadreFormDialog" @on-closed="afterCadre" />
     <EditCadreForm v-model="editCadreInfoFormDialog" :info="editInfo" @on-closed="afterCadre" />
     <v-dialog width="500" v-model="deleteDialog">

@@ -12,7 +12,7 @@ export default {
     {
       path: '/cadre/import',
       name: 'cadre-import',
-      component: () => import('@/views/home/cadre/StudentCadreInfoImpot.vue'),
+      component: () => import('@/views/home/cadre/StudentCadreImpot.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '职位信息录入',

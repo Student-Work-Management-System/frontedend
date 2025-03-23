@@ -1,28 +1,23 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-
 import {
-  povertyheaders,
+  povertyHeaders,
   type PovertyHeader,
   HeaderValidChecker,
   AnalyzeFileToTable
 } from '@/misc/table'
-
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
-import { apiAddPovertyAssistanceInfo } from '@/api/poverty'
+import { apiAddPovertyAssistances } from '@/api/poverty'
 
 import { useUserStore } from '@/stores/userStore'
 
-const excel = ref<File[]>()
+const excel = ref<File>()
 const jsonData = ref<PovertyHeader[]>([])
-const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const uploadDialog = ref()
 const loading = ref(false)
 const nilData: PovertyHeader = {
-  povertyAssistanceId: '',
   povertyLevel: '',
   povertyType: '',
   povertyAssistanceStandard: ''
@@ -31,8 +26,8 @@ const nilData: PovertyHeader = {
 const analyzeHandler = async () => {
   loading.value = true
   const ret = (await AnalyzeFileToTable(
-    file.value as File,
-    povertyheaders,
+    excel.value as File,
+    povertyHeaders,
     notify
   )) as PovertyHeader[]
   if (ret !== undefined) {
@@ -49,11 +44,9 @@ const has = (authority: string) => {
 
 const uploadLogic = async () => {
   loading.value = true
-  // valid data format before upload
-
   if (
     !jsonData.value.reduce(
-      (valid, poverty) => (!valid ? false : HeaderValidChecker(poverty, povertyheaders)),
+      (valid, poverty) => (!valid ? false : HeaderValidChecker(poverty, povertyHeaders)),
       true
     )
   ) {
@@ -62,7 +55,7 @@ const uploadLogic = async () => {
     return
   }
 
-  const { data: result } = await apiAddPovertyAssistanceInfo(jsonData.value)
+  const { data: result } = await apiAddPovertyAssistances(jsonData.value)
   if (result.code !== 200) {
     console.log(result)
     notify({ title: '错误', text: result.message, type: 'error' })
@@ -88,22 +81,29 @@ const uploadLogic = async () => {
           free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           label="Excel 文件选择"
-        ></v-file-input>
+        />
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
+      <v-btn
+        text="解析文件"
+        prepend-icon="mdi-calculator-variant"
+        color="indigo"
+        @click="analyzeHandler"
+      />
       <v-btn
         v-if="has('poverty_assistance:insert')"
+        text="上传数据"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
-        >上传数据</v-btn
-      >
-      <v-btn prepend-icon="mdi-download" href="/template/贫困类型信息上传模板.xlsx">下载模板</v-btn>
+      />
+      <v-btn
+        prepend-icon="mdi-download"
+        href="/template/贫困类型信息上传模板.xlsx"
+        text="下载模板"
+      />
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="povertyheaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="povertyHeaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

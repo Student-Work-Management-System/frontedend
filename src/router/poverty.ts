@@ -23,7 +23,7 @@ export default {
     {
       path: '/poverty/list',
       name: 'poverty-list',
-      component: () => import('@/views/home/poverty/StudentPovertyList.vue'),
+      component: () => import('@/views/home/poverty/PovertyStatusTab.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '贫困信息统计',

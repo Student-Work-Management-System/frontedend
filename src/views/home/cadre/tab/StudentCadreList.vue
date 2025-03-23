@@ -173,11 +173,10 @@ onMounted(async () => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
+            text="删除"
             @click="deleteStudentCadreLogic"
-          >
-            删除
-          </v-btn>
-          <v-btn @click="deleteDialog = false">取消</v-btn>
+          />
+          <v-btn @click="deleteDialog = false" text="取消" />
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -200,8 +199,7 @@ onMounted(async () => {
           clearable
           variant="underlined"
           density="compact"
-        >
-        </v-select>
+        />
       </span>
       <span class="w-10 text-indigo">
         <SemesterSelect
@@ -247,17 +245,17 @@ onMounted(async () => {
           has('cadre:select') &&
           has('major:select')
         "
+        text="刷新"
         @click="fetchStudentCadreLogic"
-        >刷新</v-btn
-      >
+      />
 
       <v-btn
         v-if="has('student_cadre:delete')"
         prepend-icon="mdi-delete"
         color="error"
+        text="删除"
         @click="deleteDialog = true"
-        >删除</v-btn
-      >
+      />
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
@@ -280,12 +278,11 @@ onMounted(async () => {
             <div>
               <v-btn
                 v-if="has('student_cadre:update')"
+                text="编辑"
                 prepend-icon="mdi-pencil"
                 color="indigo"
                 @click="onEdit(item)"
-              >
-                编辑
-              </v-btn>
+              />
             </div>
           </template>
         </v-data-table-server>
