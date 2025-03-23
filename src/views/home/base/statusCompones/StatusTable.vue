@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import type { StudentStatusItem } from '@/model/studentModel'

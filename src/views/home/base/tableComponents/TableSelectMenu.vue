@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import StatusSelect from '@/components/home/StatusSelect.vue'
@@ -102,6 +103,7 @@ watch(
               hide-details
               clearable
             />
+
             <v-text-field
               :model-value="studentQuery.nation"
               @update:model-value="(v) => updateQuery('nation', v as string | null)"
@@ -354,9 +356,11 @@ watch(
                 class="search-input"
                 margin-right="8px"
               >
-                <v-tooltip activator="parent" location="top">
-                  学号、姓名、身份证、邮箱、手机号、父母姓名、父母手机号、监护人姓名、监护人电话
-                </v-tooltip>
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  text="按 学号/姓名/身份证/邮箱/手机号/父母姓名/父母手机号/监护人姓名/监护人电话 搜索"
+                />
               </v-text-field>
               <v-btn
                 v-if="has('student:select')"

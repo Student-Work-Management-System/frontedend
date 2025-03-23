@@ -137,17 +137,24 @@ onMounted(async () => {
           label="Excel 文件选择"
         />
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
+      <v-btn
+        prepend-icon="mdi-calculator-variant"
+        color="indigo"
+        @click="analyzeHandler"
+        text="解析文件"
+      />
       <v-btn
         v-if="has('student_cadre:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
-        >上传数据</v-btn
-      >
-      <v-btn prepend-icon="mdi-download" href="/template/学生任职信息上传模板.xlsx">下载模板</v-btn>
+        text="上传数据"
+      />
+      <v-btn
+        prepend-icon="mdi-download"
+        href="/template/学生任职信息上传模板.xlsx"
+        text="下载模板"
+      />
     </section>
     <section class="pa-4 w-100">
       <ExcelTable v-model="jsonData" :headers="refStudentCadreHeaders" :nil-data="nilData" />
