@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { apiUpdateStudentCadre } from '@/api/cadre'
-import type { StudentCadre, StudentCadreItem } from '@/model/cadreModel'
 import { notify } from '@kyvg/vue3-notification'
 import { ref, watchEffect } from 'vue'
+import LanguageSelect from '@/components/home/foreign/LanguageSelect.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
-import CadreSelect from '@/components/home/cadre/CadreSelect.vue'
+import { apiUpdateForeignLanguage } from '@/api/foreign'
+import { type ForeignLanguageItem, type ForeignLanguage } from '@/model/foreignModel'
 
 const model = defineModel<boolean>()
-const info = defineModel<StudentCadreItem>('info')
-const localInfo = ref<StudentCadreItem>()
+const info = defineModel<ForeignLanguageItem>('info')
+const localInfo = ref<ForeignLanguageItem>()
 // 当弹窗打开时，创建副本
 watchEffect(() => {
   if (model.value && info.value) {
@@ -25,7 +25,7 @@ const onCancel = () => {
 
 const updateInfoLogic = async () => {
   loading.value = true
-  const { data: result } = await apiUpdateStudentCadre(localInfo.value as StudentCadre)
+  const { data: result } = await apiUpdateForeignLanguage(localInfo.value as ForeignLanguage)
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
@@ -38,32 +38,27 @@ const updateInfoLogic = async () => {
 
 <template>
   <v-dialog width="auto" min-width="500" height="auto" v-model="model">
-    <v-card width="auto" prepend-icon="mdi-account-edit" :title="localInfo!.name + '的任职信息'">
+    <v-card
+      width="auto"
+      prepend-icon="mdi-account-edit"
+      :title="localInfo!.name + '的外语考试成绩'"
+    >
       <v-container>
         <v-form v-model="form" class="px-8">
-          <CadreSelect
-            class="mb-1"
-            v-model="localInfo!.cadreId"
+          <LanguageSelect
+            class="mb-4"
+            v-model="localInfo!.languageId"
+            label="语言"
             variant="filled"
             density="comfortable"
           >
             <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-          </CadreSelect>
+          </LanguageSelect>
 
           <SemesterSelect
-            class="mb-1"
-            v-model="localInfo!.appointmentStartTerm"
-            label="任职开始学期"
-            variant="filled"
-            density="comfortable"
-          >
-            <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-          </SemesterSelect>
-
-          <SemesterSelect
-            class="mb-1"
-            v-model="localInfo!.appointmentEndTerm"
-            label="任职结束学期"
+            class="mb-4"
+            v-model="localInfo!.date"
+            label="考试时间"
             variant="filled"
             density="comfortable"
           >
@@ -71,14 +66,30 @@ const updateInfoLogic = async () => {
           </SemesterSelect>
 
           <v-text-field
+            label="证书编号"
             class="text-indigo"
             color="indigo"
-            label="备注"
-            v-model="localInfo!.comment"
+            v-model="localInfo!.certificate"
             required
+            variant="filled"
+            density="comfortable"
           >
             <template v-slot:prepend>
-              <v-icon size="smaller" icon="mdi-format-color-highlight" />
+              <v-icon size="smaller" icon="mdi-asterisk" />
+            </template>
+          </v-text-field>
+
+          <v-text-field
+            label="成绩"
+            class="text-indigo"
+            color="indigo"
+            v-model="localInfo!.score"
+            required
+            variant="filled"
+            density="comfortable"
+          >
+            <template v-slot:prepend>
+              <v-icon size="smaller" icon="mdi-asterisk" />
             </template>
           </v-text-field>
         </v-form>

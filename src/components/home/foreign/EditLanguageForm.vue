@@ -1,26 +1,27 @@
 <script lang="ts" setup>
-import { apiUpdateCadre, getCadreLevers } from '@/api/cadre'
+import { apiUpdateLanguage } from '@/api/foreign'
+import { computed } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { computed, ref } from 'vue'
-import type { Cadre } from '@/model/cadreModel'
+import { ref } from 'vue'
+import type { Language } from '@/model/foreignModel'
 
 const model = defineModel<boolean>()
 const emits = defineEmits(['onClosed'])
+const info = defineModel<Language>('info')
 const form = ref(false)
-const info = defineModel<Cadre>('info')
+const loading = ref(false)
 const modifyInfo = computed(() => {
   return {
-    cadreId: info.value!.cadreId,
-    cadrePosition: info.value!.cadrePosition,
-    cadreBelong: info.value!.cadreBelong,
-    cadreLevel: info.value!.cadreLevel
+    languageId: info.value!.languageId,
+    languageName: info.value!.languageName,
+    type: info.value!.type,
+    total: info.value!.total
   }
 })
-const loading = ref(false)
-const CadreLevels = getCadreLevers()
+
 const updateInfoLogic = async () => {
   loading.value = true
-  const { data: result } = await apiUpdateCadre(modifyInfo.value)
+  const { data: result } = await apiUpdateLanguage(modifyInfo.value)
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
@@ -35,40 +36,39 @@ const updateInfoLogic = async () => {
   <v-dialog width="auto" min-width="500" height="auto" v-model="model">
     <v-window>
       <v-window-item :value="1">
-        <v-card width="auto" prepend-icon="mdi-content-save-edit-outline" title="职位信息">
+        <v-card width="auto" prepend-icon="mdi-pencil" title="语言信息">
           <v-container>
             <v-form v-model="form" class="px-8 form">
               <v-text-field
-                label="职位名称"
-                v-model="modifyInfo.cadrePosition"
-                :counter="20"
+                label="语言名称"
+                v-model="modifyInfo.languageName"
                 required
-                :rules="[() => !!modifyInfo.cadrePosition || '该选项必填！']"
+                :rules="[() => !!modifyInfo.languageName || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
               <v-text-field
-                label="所属组织"
-                v-model="modifyInfo.cadreBelong"
+                label="语言类型"
+                v-model="modifyInfo.type"
                 required
-                :rules="[() => !!modifyInfo.cadreBelong || '该选项必填！']"
+                :rules="[() => !!modifyInfo.type || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
-              <v-select
-                label="职位等级"
-                v-model="modifyInfo.cadreLevel"
-                :items="CadreLevels"
-                :rules="[() => !!modifyInfo.cadreLevel || '该选项必填！']"
+              <v-text-field
+                label="满分"
+                v-model="modifyInfo.total"
+                required
+                :rules="[() => !!modifyInfo.total || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
-              </v-select>
+              </v-text-field>
             </v-form>
           </v-container>
           <v-divider></v-divider>

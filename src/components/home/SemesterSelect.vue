@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const model = defineModel<string>()
+const model = defineModel<string | null>()
 const props = withDefaults(
   defineProps<{
     label: string
@@ -14,6 +14,7 @@ const props = withDefaults(
       | 'solo-inverted'
       | 'solo-filled'
       | undefined
+    density?: 'compact' | 'default' | 'comfortable' | undefined
   }>(),
   { label: '学期' }
 )
@@ -30,12 +31,14 @@ items.value = items.value.reverse()
 <template>
   <v-select
     v-model="model"
+    class="text-indigo"
     color="indigo"
     :label="props.label"
     :items="items"
     :variant="props.variant"
     hide-details
     clearable
+    :density="props.density"
   >
     <template v-slot:prepend>
       <slot></slot>

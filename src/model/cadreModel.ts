@@ -1,5 +1,5 @@
 export interface Cadre {
-    cadreId: string
+    cadreId?: string
     cadrePosition: string
     cadreLevel: string
     cadreBelong: string

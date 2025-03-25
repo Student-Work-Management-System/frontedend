@@ -3,66 +3,55 @@
 import { computed, onUnmounted, ref } from 'vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import EditStudentCadre from '@/components/home/cadre/EditStudentCadre.vue'
+import DegreeSelect from '@/components/home/DegreeSelect.vue'
+import { apiGetForeignLanguages, apiDeleteForeignLanguage } from '@/api/foreign'
+import { type ForeignLanguageQuery, type ForeignLanguageItem } from '@/model/foreignModel'
+import LanguageSelect from '@/components/home/foreign/LanguageSelect.vue'
 import SemesterSelect from '@/components/home/SemesterSelect.vue'
-import {
-  apiGetStudentCadreList,
-  apiDeleteStudentCadre,
-  getCadreLevers,
-  apiGetCadreList
-} from '@/api/cadre'
-import type { StudentCadreItem, CadreQuery } from '@/model/cadreModel'
+import EditForeignLanguage from '@/components/home/foreign/EditForeignLanguageFrom.vue'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-import { studentCadreTableHeaders } from '@/misc/table'
-import { useCadreStore } from '@/stores/cadreStore'
+import { foreignLanguageTableHeaders } from '@/misc/table'
 
 const loading = ref(false)
 const selected = ref<any[]>([])
-const data = ref<StudentCadreItem[]>([])
-const CadreLevels = ref<String[]>(getCadreLevers())
+const data = ref<ForeignLanguageItem[]>([])
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
 const editDialog = ref(false)
 const store = useUserStore()
 const chargeGrades = store.user.chargeGrades
-const cadreStore = useCadreStore()
-const query = reactive<CadreQuery>({
+const chargeDegrees = store.user.chargeDegrees
+const query = reactive<ForeignLanguageQuery>({
   search: '',
   majorId: null,
   gradeId: null,
-  cadreLevel: null,
-  appointmentStartTerm: null,
-  appointmentEndTerm: null,
+  degreeId: null,
+  languageId: null,
+  date: null,
+  certificate: null,
   pageNo: 1,
   pageSize: 10
 })
-const modifyInfo = ref<StudentCadreItem>({
-  studentCadreId: '',
-  studentId: '',
-  name: '',
-  gender: '',
-  majorName: '',
-  gradeName: '',
-  cadreId: '',
-  cadrePosition: '',
-  cadreLevel: '',
-  cadreBelong: '',
-  appointmentStartTerm: '',
-  appointmentEndTerm: '',
-  comment: ''
+const modifyInfo = ref<ForeignLanguageItem>({
+  foreignLanguageId: '',
+  languageId: '',
+  score: '',
+  type: '',
+  date: '',
+  certificate: ''
 })
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
-const fetchStudentCadreLogic = async () => {
+const fetchForeignLanguageLogic = async () => {
   loading.value = true
   if (query.pageSize === -1) query.pageSize = 9999
 
-  const { data: result } = await apiGetStudentCadreList(query)
+  const { data: result } = await apiGetForeignLanguages(query)
 
   if (result.code !== 200) {
     console.error(result)
@@ -78,19 +67,19 @@ const fetchStudentCadreLogic = async () => {
   deleteDialog.value = false
   loading.value = false
 }
-onMounted(fetchStudentCadreLogic)
+onMounted(fetchForeignLanguageLogic)
 
 const loadItems = () => {
-  fetchStudentCadreLogic()
+  fetchForeignLanguageLogic()
 }
 
-const deleteStudentCadreLogic = async () => {
+const deleteForeignLanguageLogic = async () => {
   loading.value = true
   const studentIds = selected.value.map((v) => v.studentCadreId)
 
   let reqs = studentIds.map((id) =>
     (async () => {
-      const { data: result } = await apiDeleteStudentCadre(id)
+      const { data: result } = await apiDeleteForeignLanguage(id)
       if (result.code !== 200) {
         console.error(result.message)
         notify({ type: 'error', title: '错误', text: result.message })
@@ -104,15 +93,16 @@ const deleteStudentCadreLogic = async () => {
   notify({ type: 'success', title: '成功', text: `删除成功！` })
   deleteDialog.value = false
   loading.value = false
-  fetchStudentCadreLogic()
+  fetchForeignLanguageLogic()
 }
 
 const closeHandler = () => {
   editDialog.value = false
-  fetchStudentCadreLogic()
+  fetchForeignLanguageLogic()
 }
 
-const onEdit = (item: StudentCadreItem) => {
+const onEdit = (item: ForeignLanguageItem) => {
+  console.log(item)
   modifyInfo.value = item
   editDialog.value = true
 }
@@ -124,7 +114,6 @@ const tabsHeight = ref(0)
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 100
 })
-
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -151,16 +140,11 @@ onMounted(() => {
     resizeObserver.disconnect()
   })
 })
-
-onMounted(async () => {
-  const { data: cadreList } = await apiGetCadreList()
-  cadreStore.setCadreList(cadreList.data)
-})
 </script>
 
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <EditStudentCadre v-model="editDialog" :info="modifyInfo" @on-closed="closeHandler" />
+    <EditForeignLanguage v-model="editDialog" :info="modifyInfo" @on-closed="closeHandler" />
 
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
@@ -174,7 +158,7 @@ onMounted(async () => {
             :disabled="selected.length === 0"
             color="error"
             text="删除"
-            @click="deleteStudentCadreLogic"
+            @click="deleteForeignLanguageLogic"
           />
           <v-btn @click="deleteDialog = false" text="取消" />
         </v-card-actions>
@@ -183,48 +167,40 @@ onMounted(async () => {
 
     <section class="menu">
       <span class="w-10">
-        <MajorSelect v-model="query.majorId" variant="underlined" />
+        <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
       </span>
       <span class="w-10">
-        <GradeSelect v-model="query.gradeId" :chargeGrades="chargeGrades" variant="underlined" />
+        <GradeSelect
+          v-model="query.gradeId"
+          :chargeGrades="chargeGrades"
+          variant="underlined"
+          density="compact"
+        />
       </span>
       <span class="w-10">
-        <v-select
-          label="职位等级"
-          v-model="query.cadreLevel"
-          :items="CadreLevels"
-          class="text-indigo"
-          color="indigo"
-          hide-details
-          clearable
+        <DegreeSelect
+          v-model="query.degreeId"
+          :chargeDegrees="chargeDegrees"
           variant="underlined"
           density="compact"
         />
       </span>
-      <span class="w-10 text-indigo">
+      <span class="w-10">
+        <LanguageSelect v-model="query.languageId" variant="underlined" density="compact" />
+      </span>
+      <span class="w-10">
         <SemesterSelect
-          v-model="query.appointmentStartTerm as string"
-          color="'indigo'"
-          :label="'任职开始学期'"
+          v-model="query.date"
           variant="underlined"
+          label="考试时间"
           density="compact"
         />
       </span>
-      <span class="w-10 text-indigo">
-        <SemesterSelect
-          v-model="query.appointmentEndTerm as string"
-          :color="'indigo'"
-          :label="'任职结束学期'"
-          variant="underlined"
-          density="compact"
-        />
-      </span>
-
       <span class="w-15 text-indigo">
         <v-text-field
           v-model="query.search"
           color="indigo"
-          @update:modelValue="fetchStudentCadreLogic"
+          @update:modelValue="fetchForeignLanguageLogic"
           :loading="loading"
           :counter="15"
           clearable
@@ -234,7 +210,7 @@ onMounted(async () => {
           hide-details
           density="compact"
         >
-          <v-tooltip activator="parent" location="top">以学号/姓名/职位名称搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top">以学号/姓名/证书编号搜索</v-tooltip>
         </v-text-field>
       </span>
       <v-btn
@@ -246,9 +222,8 @@ onMounted(async () => {
           has('major:select')
         "
         text="刷新"
-        @click="fetchStudentCadreLogic"
+        @click="fetchForeignLanguageLogic"
       />
-
       <v-btn
         v-if="has('student_cadre:delete')"
         prepend-icon="mdi-delete"
@@ -262,7 +237,7 @@ onMounted(async () => {
       <v-card>
         <v-data-table-server
           v-model="selected"
-          :headers="studentCadreTableHeaders as any"
+          :headers="foreignLanguageTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :items-length="dataLength"

@@ -15,6 +15,7 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
 const items = ref<Major[]>([])
 const getMajorListLogic = async () => {
@@ -42,7 +43,7 @@ onMounted(() => {
     :variant="props.variant"
     hide-details
     clearable
-    density="compact"
+    :density="props.density"
   >
     <template v-slot:prepend>
       <slot></slot>

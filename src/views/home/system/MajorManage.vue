@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
-import { ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { apiDeleteMajor, apiGetMajorList } from '@/api/other'
 import MajorForm from '@/components/home/system/MajorForm.vue'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
@@ -29,7 +29,6 @@ const headers = [
   }
 ]
 
-const collegeName = ref('计算机与信息安全学院')
 const majorFormDialog = ref(false)
 const deleteDialog = ref(false)
 const selected = ref<Major[]>([])
@@ -58,9 +57,6 @@ const fetchMajorLogic = async () => {
   loading.value = false
 }
 
-const updateCollegeNameHandler = () => {
-  notify({ type: 'success', title: '成功', text: '修改成功！' })
-}
 onMounted(() => {
   fetchMajorLogic()
 })
@@ -93,23 +89,38 @@ const deleteLogic = async () => {
   fetchMajorLogic()
 }
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.78 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column card-container">
     <MajorForm
       v-model="majorFormDialog"
       v-model:info="editInfo"
@@ -117,55 +128,47 @@ onMounted(() => {
       @on-closed="afterForm"
     />
     <DeleteDialog v-model="deleteDialog" v-model:length="selected.length" @delete="deleteLogic" />
-    <section class="menu">
-      <span class="w-20 text-indigo">
-        <v-text-field
-          v-model="collegeName"
-          color="indigo"
-          variant="outlined"
-          label="学院名称"
-          hide-details
-        ></v-text-field>
-      </span>
-      <!-- 假的 uwu -->
-      <v-btn color="primary" text="修改" @click="updateCollegeNameHandler"></v-btn>
-    </section>
+
     <section class="menu">
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchMajorLogic"
-          >刷新</v-btn
-        >
+        <v-btn
+          v-if="has('user:select')"
+          prepend-icon="mdi-refresh"
+          @click="fetchMajorLogic"
+          text="刷新"
+        />
         <v-btn
           v-if="has('major:insert')"
           prepend-icon="mdi-plus-circle"
           color="primary"
+          text="添加"
           @click="
             (formType = 'add'),
               (editInfo = { majorId: '', majorName: '' }),
               (majorFormDialog = true)
           "
-          >添加</v-btn
-        >
+        />
         <v-btn
           v-if="has('major:delete')"
           prepend-icon="mdi-delete"
           color="error"
           @click="deleteDialog = true"
-          >删除</v-btn
-        >
+          text="删除"
+        />
       </span>
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="headers"
+          :headers="headers as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
@@ -179,8 +182,8 @@ onMounted(() => {
                     majorFormDialog = true
                   }
                 "
-                >编辑</v-btn
-              >
+                text="编辑"
+              />
             </div>
           </template>
         </v-data-table>

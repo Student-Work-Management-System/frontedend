@@ -2,35 +2,34 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
-import { apiGetCadreList, apiDeleteCadre } from '@/api/cadre'
-import type { Cadre } from '@/model/cadreModel'
+import { apiGetLanguages, apiDeleteLanguage } from '@/api/foreign'
+import type { Language } from '@/model/foreignModel'
 import { notify } from '@kyvg/vue3-notification'
-import AddCadreForm from '@/components/home/cadre/AddCadreForm.vue'
-import EditCadreForm from '@/components/home/cadre/EditCadreForm.vue'
+import AddLanguageForm from '@/components/home/foreign/AddLanguageFrom.vue'
+import EditLanguageForm from '@/components/home/foreign/EditLanguageForm.vue'
 import { useUserStore } from '@/stores/userStore'
-import { cadreTableHeaders } from '@/misc/table/cadre-import-headers'
+import { languageTableHeaders } from '@/misc/table/foreign-import.header'
 
-const selected = ref<Cadre[]>([])
+const selected = ref<Language[]>([])
 const loading = ref(true)
 const data = ref<any>([])
-const addCadreFormDialog = ref(false)
+const addLanguageFormDialog = ref(false)
 const selectPermissionDialog = ref(false)
 const deleteDialog = ref(false)
 const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
-const editCadreInfoFormDialog = ref(false)
-const editInfo = ref<Cadre>({
-  cadreId: '',
-  cadrePosition: '',
-  cadreLevel: '',
-  cadreBelong: ''
+const editLanguageInfoFormDialog = ref(false)
+const editInfo = ref<Language>({
+  languageName: '',
+  type: '',
+  total: ''
 })
 
-const fetchCadreLogic = async () => {
+const fetchLanguageLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetCadreList()
+  const { data: result } = await apiGetLanguages()
   if (result.code !== 200) {
     console.log(result.message)
     notify({ title: '错误', text: result.message, type: 'error' })
@@ -41,42 +40,42 @@ const fetchCadreLogic = async () => {
   loading.value = false
 }
 
-const afterCadre = () => {
-  addCadreFormDialog.value = false
+const afterLanguage = () => {
+  addLanguageFormDialog.value = false
   selectPermissionDialog.value = false
-  editCadreInfoFormDialog.value = false
+  editLanguageInfoFormDialog.value = false
   deleteDialog.value = false
   selected.value = []
-  fetchCadreLogic()
+  fetchLanguageLogic()
 }
 
-const deleteCadreLogic = async () => {
+const deleteLanguageLogic = async () => {
   loading.value = true
   let reqs = selected.value.map((c) =>
     (async (c) => {
-      const cadrePosition = c.cadrePosition
-      const cadreId = c.cadreId
-      const { data: result } = await apiDeleteCadre(cadreId!)
+      const languageName = c.languageName
+      const languageId = c.languageId
+      const { data: result } = await apiDeleteLanguage(languageId!!)
       if (result.code !== 200) {
         console.error(result)
         notify({ type: 'error', title: '错误', text: result.message })
         return
       }
-      notify({ type: 'success', title: '成功', text: `职位:${cadrePosition} 删除成功！` })
+      notify({ type: 'success', title: '成功', text: `语言:${languageName} 删除成功！` })
     })(c)
   )
 
   await Promise.all(reqs)
-  afterCadre()
+  afterLanguage()
   loading.value = false
 }
 
-const onEdit = (item: Cadre) => {
+const onEdit = (item: Language) => {
   editInfo.value = item
-  editCadreInfoFormDialog.value = true
+  editLanguageInfoFormDialog.value = true
 }
 
-onMounted(fetchCadreLogic)
+onMounted(fetchLanguageLogic)
 
 // 高度计算相关
 const containerHeight = ref(0)
@@ -111,8 +110,12 @@ onMounted(() => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <AddCadreForm v-model="addCadreFormDialog" @on-closed="afterCadre" />
-    <EditCadreForm v-model="editCadreInfoFormDialog" :info="editInfo" @on-closed="afterCadre" />
+    <AddLanguageForm v-model="addLanguageFormDialog" @on-closed="afterLanguage" />
+    <EditLanguageForm
+      v-model="editLanguageInfoFormDialog"
+      :info="editInfo"
+      @on-closed="afterLanguage"
+    />
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -124,7 +127,7 @@ onMounted(() => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
-            @click="deleteCadreLogic"
+            @click="deleteLanguageLogic"
             text="删除"
           />
           <v-btn @click="deleteDialog = false" text="取消" />
@@ -133,20 +136,20 @@ onMounted(() => {
     </v-dialog>
     <section class="menu">
       <v-btn
-        v-if="has('cadre:select')"
+        v-if="has('foreign:select')"
         prepend-icon="mdi-refresh"
-        @click="fetchCadreLogic"
+        @click="fetchLanguageLogic"
         text="刷新"
       />
       <v-btn
-        v-if="has('cadre:insert')"
+        v-if="has('foreign:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
-        @click="addCadreFormDialog = true"
+        @click="addLanguageFormDialog = true"
         text="添加"
       />
       <v-btn
-        v-if="has('cadre:delete')"
+        v-if="has('foreign:delete')"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
@@ -158,7 +161,7 @@ onMounted(() => {
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="cadreTableHeaders as any"
+          :headers="languageTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
@@ -169,10 +172,10 @@ onMounted(() => {
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
-                v-if="has('cadre:update')"
+                v-if="has('foreign:update')"
                 prepend-icon="mdi-pencil"
                 color="indigo"
-                @click="onEdit(item as Cadre)"
+                @click="() => onEdit(item as Language)"
                 text="编辑"
               />
             </div>

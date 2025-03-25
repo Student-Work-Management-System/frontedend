@@ -12,7 +12,8 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
-  chargeDegrees: Degree[]
+  chargeDegrees: Degree[] | null
+  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
 </script>
 <template>
@@ -27,7 +28,7 @@ const props = defineProps<{
     :variant="props.variant"
     hide-details
     clearable
-    density="compact"
+    :density="props.density"
   >
     <template v-slot:prepend>
       <slot></slot>

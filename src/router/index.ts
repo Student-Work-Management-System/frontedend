@@ -12,7 +12,7 @@ import scholarship from './scholarship'
 import competition from './competition'
 import academic from './academic'
 import punishment from './punishment'
-import cet from './cet'
+import foreign from './foreign'
 import precaution from './precaution'
 import status from './status'
 import system from './system'
@@ -27,7 +27,7 @@ export const routes: RouteRecordRaw[] = [
   competition,
   academic,
   punishment,
-  cet,
+  foreign,
   precaution,
   enrollment,
   status,

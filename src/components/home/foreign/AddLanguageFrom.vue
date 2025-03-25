@@ -1,25 +1,23 @@
 <script lang="ts" setup>
-import { apiAddCadre, getCadreLevers } from '@/api/cadre'
-import type { Cadre } from '@/model/cadreModel'
+import { apiAddLanguage } from '@/api/foreign'
+import type { Language } from '@/model/foreignModel'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
 import { reactive } from 'vue'
-const emits = defineEmits(['onClosed'])
 
-const CadreLevels = ref<String[]>(getCadreLevers())
+const emits = defineEmits(['onClosed'])
 const form = ref(false)
 const loading = ref(false)
 const model = defineModel<boolean>()
-
-const newCadre = reactive<Cadre>({
-  cadrePosition: '',
-  cadreLevel: '',
-  cadreBelong: ''
+const newLanguage = reactive<Language>({
+  languageName: '',
+  type: '',
+  total: ''
 })
 
-const AddCadreLogic = async () => {
+const AddLanguageLogic = async () => {
   loading.value = true
-  const { data: result } = await apiAddCadre(newCadre as Cadre)
+  const { data: result } = await apiAddLanguage(newLanguage as Language)
   if (result.code !== 200) {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })
@@ -28,13 +26,14 @@ const AddCadreLogic = async () => {
   }
   notify({ type: 'success', title: '成功', text: '添加成功！' })
   emits('onClosed')
-  clearCadreInfo()
+  clearLanguageInfo()
   loading.value = false
 }
 
-const clearCadreInfo = () => {
-  newCadre.cadrePosition = ''
-  newCadre.cadreLevel = ''
+const clearLanguageInfo = () => {
+  newLanguage.languageName = ''
+  newLanguage.type = ''
+  newLanguage.total = ''
 }
 </script>
 
@@ -46,26 +45,35 @@ const clearCadreInfo = () => {
           <v-container>
             <v-form v-model="form" class="px-8 form">
               <v-text-field
-                label="职位名称"
-                v-model="newCadre.cadrePosition"
-                :counter="20"
+                label="语言名称"
+                v-model="newLanguage.languageName"
                 required
-                :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
+                :rules="[() => !!newLanguage.languageName || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
-              <v-select
-                label="职位等级"
-                v-model="newCadre.cadreLevel"
-                :items="CadreLevels"
-                :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
+              <v-text-field
+                label="语言类型"
+                v-model="newLanguage.type"
+                required
+                :rules="[() => !!newLanguage.type || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
-              </v-select>
+              </v-text-field>
+              <v-text-field
+                label="满分"
+                v-model="newLanguage.total"
+                required
+                :rules="[() => !!newLanguage.total || '该选项必填！']"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </template>
+              </v-text-field>
             </v-form>
           </v-container>
           <v-divider></v-divider>
@@ -74,10 +82,10 @@ const clearCadreInfo = () => {
               :disabled="!form"
               text="确定"
               color="indigo"
-              @click="AddCadreLogic"
+              @click="AddLanguageLogic"
               variant="plain"
-            ></v-btn>
-            <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
+            />
+            <v-btn text="取消" @click="model = false" variant="plain" />
           </v-container>
         </v-card>
       </v-window-item>
