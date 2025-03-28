@@ -1,148 +1,44 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
+import type { Competition, CompetitionQuery, StudentCompetitionAudit, StudentCompetitionItem, StudentCompetitionQuery, StudentCompetitionWithMember, } from '@/model/competitionModel'
 
-type competitionLevel = "A类" | "B类" | "C类" | "D类" | "其他" | null
-export const competitionOptions = ["A类", "B类", "C类", "D类", "其他"]
-
-export interface Competition {
-  competitionId: string
-  competitionName: string
-  competitionNature: string | null
-  competitionLevel: competitionLevel
+export async function apiGetCompetitions(query: CompetitionQuery): Promise<AxiosResponse<Result<RecordsPage<Competition>>>> {
+  return http.post('/competition/gets', query)
 }
 
-export interface Memeber {
-  order: number
-  studentId: string
-  realName: string
+export async function apiImportCompetition(competitions: Competition[]): Promise<AxiosResponse<Result<void>>> {
+  return http.post('/competition/adds', competitions)
 }
 
-export interface StudentCompetition {
-  studentCompetitionId: string
-  competitionName: string
-  /**
-   * 竞赛性质： 团队/单人
-   */
-  competitionNature: string
-  /**
-   * 竞赛级别
-   */
-  competitionLevel: string
-  /**
-   * 填报人学号/队长学号
-   */
-  headerId: string
-  headerName: string
-  /**
-   * 证明材料，这里填写文件地址
-   */
-  evidence: string
-  /**
-   * 奖项级别，由学生填报
-   */
-  awardLevel: string
-  /**
-   * 获奖日期
-   */
-  awardDate: Date
-  /**
-   * 团队成员, 单人比赛时为空。团队赛时应该填入的格式为 [{ order: 1, studentId:"",realName:""}....]
-   */
-  members: Memeber[]
-  /**
-   * 上报后审核状态
-   */
-  reviewState: string
-  /**
-   * 仅当状态预修改为 已拒绝 时才可以填写
-   */
-  rejectReason: string
-}
-
-
-export interface StudentCompetitionUpload {
-  competitionId: string
-  headerId: string
-  evidence: string
-  awardDate: string
-  awardLevel: string
-  members: Memeber[]
-}
-
-export interface StudentCompetitionPass {
-  studentId: string
-  studentName: string
-  awards: StudentCompetition[]
-}
-
-
-export async function apiAddCompetitions(competitions: Competition[]): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/competition/adds', { competitions })
-}
-
-export async function apiAddCompetition(competition: Competition): Promise<AxiosResponse<Result<null>>> {
+export async function apiAddCompetition(competition: Competition): Promise<AxiosResponse<Result<void>>> {
   return http.post('/competition/add', competition)
 }
 
-export async function apiGetCompetitions(query: { pageNo: number, pageSize: number }): Promise<AxiosResponse<Result<RecordsPage<Competition>>>> {
-  return http.get('/competition/gets', { params: query })
-}
-
-export async function apiUpdateCompetition(competition: Competition): Promise<AxiosResponse<Result<null>>> {
+export async function apiUpdateCompetition(competition: Competition): Promise<AxiosResponse<Result<void>>> {
   return http.put('/competition/update', competition)
 }
 
-export async function apiDeleteCometition(competitionId: string): Promise<AxiosResponse<Result<null>>> {
+export async function apiDeleteCompetition(competitionId: string): Promise<AxiosResponse<Result<void>>> {
   return http.delete(`/competition/delete/${competitionId}`)
 }
 
-export async function apiGetStudentOwnCompetition(studentId: string): Promise<AxiosResponse<Result<StudentCompetition[]>>> {
-  return http.get(`/student_competition/get/${studentId}`)
+export async function apiGetOwnCompetition(): Promise<AxiosResponse<Result<StudentCompetitionItem[]>>> {
+  return http.get('/student_competition/getOwn')
 }
 
-export async function apiAddStudentOwnCompetition(upload: StudentCompetitionUpload): Promise<AxiosResponse<Result<null>>> {
-  return http.post('/student_competition/add', upload)
+export async function apiAddStudentCompetition(studentCompetitionWithMember: StudentCompetitionWithMember): Promise<AxiosResponse<Result<void>>> {
+  return http.post('/student_competition/add', studentCompetitionWithMember)
 }
 
-export async function apiGetStudentAuditCompetition(
-  query: {
-    search: string | null
-    grade: string | null
-    majorId: string | null
-    startDate: string | null
-    endDate: string | null
-    pageNo: number
-    pageSize: number
-  }
-): Promise<AxiosResponse<Result<RecordsPage<StudentCompetition>>>> {
-  return http.post('/student_competition/gets', query)
-}
-
-export async function apiAuditStudentCompetition(audit: {
-  studentCompetitionId: string,
-  reviewState: "已通过" | "已拒绝",
-  rejectReason: string | null
-}): Promise<AxiosResponse<Result<null>>> {
-  return http.put('/student_competition/audit', audit)
-}
-
-export async function apiDeleteStudentCompetition(studentCompetitionId: string): Promise<AxiosResponse<Result<null>>> {
+export async function apiDeleteStudentCompetition(studentCompetitionId: string): Promise<AxiosResponse<Result<void>>> {
   return http.delete(`/student_competition/delete/${studentCompetitionId}`)
 }
 
-export async function apiGetPassStudentCompetition(
-  query: {
-    search: string | null
-    grade: string | null
-    majorId: string | null
-    startDate: string | null
-    endDate: string | null
-    pageNo: number
-    pageSize: number
-  }
-): Promise<AxiosResponse<Result<RecordsPage<StudentCompetitionPass>>>> {
-  return http.post('/student_competition/gets/pass', query)
+export async function apiUpdateStudentCompetition(StudentCompetitionAudit: StudentCompetitionAudit): Promise<AxiosResponse<Result<void>>> {
+  return http.post('/student_competition/update', StudentCompetitionAudit)
 }
 
-
+export async function apiGetStudentCompetitions(query: StudentCompetitionQuery): Promise<AxiosResponse<Result<RecordsPage<StudentCompetitionItem>>>> {
+  return http.post('/student_competition/gets', query)
+}

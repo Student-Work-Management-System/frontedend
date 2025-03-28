@@ -81,19 +81,20 @@ const editPermissionLogic = async () => {
   loading.value = true
   const nodes: IInnerTreeNode[] = treeRef.value!.treeFactory.getCheckedNodes()
   const permissions = nodes.filter((n) => n.isLeaf).map((n) => n.id)
-  console.log(permissions)
-  let reqs = props.ridList.map(riq => (async (rid) => {
-    const { data: result } = await apiUpdateRolePermissions({
-      rid,
-      permissions: permissions as string[]
-    })
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
-      return
-    }
-    notify({ type: 'success', title: '成功', text: `角色:${rid} 权限更新！` })
-  })(riq))
+  let reqs = props.ridList.map((riq) =>
+    (async (rid) => {
+      const { data: result } = await apiUpdateRolePermissions({
+        rid,
+        permissions: permissions as string[]
+      })
+      if (result.code !== 200) {
+        console.error(result)
+        notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
+        return
+      }
+      notify({ type: 'success', title: '成功', text: `角色:${rid} 权限更新！` })
+    })(riq)
+  )
 
   await Promise.all(reqs)
 
@@ -122,7 +123,13 @@ watch(model, () => {
   <v-dialog v-model="model" width="600">
     <v-card title="选择权限" prepend-icon="mdi-cog" :loading="loading" style="overflow-y: hidden">
       <v-container>
-        <d-search class="mb-1" style="width: 100%" is-keyup-search placeholder="搜索权限..." @search="onSearch"></d-search>
+        <d-search
+          class="mb-1"
+          style="width: 100%"
+          is-keyup-search
+          placeholder="搜索权限..."
+          @search="onSearch"
+        ></d-search>
         <d-tree ref="treeRef" :height="400" :loading="loading" :data="data" check />
       </v-container>
       <v-card-actions class="d-flex justify-space-evenly">

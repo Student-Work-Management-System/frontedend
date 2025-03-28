@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { competitionNatureOptions } from '@/model/competitionModel'
+import { competitionTypeOptions } from '@/model/competitionModel'
 
 const model = defineModel<string>()
 const props = defineProps<{
@@ -19,10 +19,10 @@ const props = defineProps<{
 <template>
   <v-select
     v-model="model"
+    label="竞赛类别"
     class="text-indigo"
     color="indigo"
-    label="竞赛性质"
-    :items="competitionNatureOptions"
+    :items="competitionTypeOptions"
     :variant="props.variant"
     hide-details
     clearable

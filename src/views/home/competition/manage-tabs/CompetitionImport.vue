@@ -1,31 +1,32 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import {
-  competitionheaders,
+  competitionHeaders,
   type CompetitionHeader,
   AnalyzeFileToTable,
-  HeaderValidChecker
+  HeaderValidChecker,
+  checkValid
 } from '@/misc/table'
 import { notify } from '@kyvg/vue3-notification'
-import { apiAddCompetitions } from '@/api/competition'
+import { apiImportCompetition } from '@/api/competition'
+import type { Competition } from '@/model/competitionModel'
 
 const nilData = {
   competitionId: '',
   competitionName: '',
   competitionNature: '',
-  competitionLevel: ''
+  competitionType: ''
 }
-
-const excel = ref<File[]>()
-const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
+const excel = ref<File>()
 const jsonData = ref<CompetitionHeader[]>([])
 const loading = ref(false)
 const uploadDialog = ref(false)
 
 const uploadLogic = async () => {
   loading.value = true
-  const { data: result } = await apiAddCompetitions(jsonData.value)
+  const competitions = jsonData.value.map(createCompetition)
+  const { data: result } = await apiImportCompetition(competitions)
   if (result.code !== 200) {
     console.error(result)
     notify({ title: '错误', text: result.message, type: 'error' })
@@ -38,6 +39,15 @@ const uploadLogic = async () => {
   loading.value = false
 }
 
+const createCompetition = (data: CompetitionHeader): Competition => {
+  return {
+    competitionName: checkValid(data.competitionName) ? data.competitionName : '',
+    competitionNature: checkValid(data.competitionNature) ? data.competitionNature : '',
+    competitionType: checkValid(data.competitionType) ? data.competitionType : '',
+    comment: checkValid(data.comment) ? data.comment : ''
+  }
+}
+
 const store = useUserStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
@@ -45,10 +55,9 @@ const has = (authority: string) => {
 
 const analyzeHandler = async () => {
   loading.value = true
-  // valid data format before upload
   if (
     !jsonData.value.reduce(
-      (valid, e) => (!valid ? false : HeaderValidChecker(e, competitionheaders)),
+      (valid, e) => (!valid ? false : HeaderValidChecker(e, competitionHeaders)),
       true
     )
   ) {
@@ -57,8 +66,8 @@ const analyzeHandler = async () => {
     return
   }
   const ret = (await AnalyzeFileToTable(
-    file.value as File,
-    competitionheaders,
+    excel.value as File,
+    competitionHeaders,
     notify
   )) as CompetitionHeader[]
   if (ret !== undefined) {
@@ -67,6 +76,7 @@ const analyzeHandler = async () => {
   loading.value = false
 }
 </script>
+
 <template>
   <UploadDialog v-model="uploadDialog" v-model:length="jsonData.length" @upload="uploadLogic" />
   <section class="menu">
@@ -79,22 +89,25 @@ const analyzeHandler = async () => {
         free-select
         accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         label="Excel 文件选择"
-      ></v-file-input>
+      />
     </span>
-    <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-      >解析文件</v-btn
-    >
+    <v-btn
+      prepend-icon="mdi-calculator-variant"
+      color="indigo"
+      @click="analyzeHandler"
+      text="解析文件"
+    />
     <v-btn
       v-if="has('competition:insert')"
       prepend-icon="mdi-upload"
       color="primary"
       @click="uploadDialog = true"
-      >上传数据</v-btn
-    >
-    <v-btn prepend-icon="mdi-download" href="/template/竞赛信息上传模板.xlsx">下载模板</v-btn>
+      text="上传数据"
+    />
+    <v-btn prepend-icon="mdi-download" href="/template/竞赛信息上传模板.xlsx" text="下载模板" />
   </section>
   <section class="pa-4 w-100">
-    <ExcelTable v-model="jsonData" :headers="competitionheaders" :nil-data="nilData" />
+    <ExcelTable v-model="jsonData" :headers="competitionHeaders" :nil-data="nilData" />
   </section>
 </template>
 

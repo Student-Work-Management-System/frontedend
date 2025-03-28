@@ -1,3 +1,12 @@
+export interface StudentBasicItem {
+    studentId: string
+    name: string
+    gender: string
+    majorName: string
+    gradeName: string
+    degreeName: string
+}
+
 export interface Student {
     // 学号
     studentId: string | null

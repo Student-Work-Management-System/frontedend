@@ -53,7 +53,7 @@ const clearCadreInfo = () => {
                 :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk"/>
                 </template>
               </v-text-field>
               <v-select
@@ -63,7 +63,7 @@ const clearCadreInfo = () => {
                 :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-select>
             </v-form>
@@ -76,8 +76,8 @@ const clearCadreInfo = () => {
               color="indigo"
               @click="AddCadreLogic"
               variant="plain"
-            ></v-btn>
-            <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
+            />
+            <v-btn text="取消" @click="model = false" variant="plain" />
           </v-container>
         </v-card>
       </v-window-item>

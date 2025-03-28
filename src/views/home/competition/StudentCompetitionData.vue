@@ -2,73 +2,10 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { apiDownloadFile } from '@/api/file'
-import { apiGetPassStudentCompetition, apiDeleteStudentCompetition } from '@/api/competition'
-
+import { apiGetStudentCompetition, apiDeleteStudentCompetition } from '@/api/competition'
+import type { StudentCompetitionItem } from '@/model/competitionModel'
 import { notify } from '@kyvg/vue3-notification'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
-
-const headers = [
-  {
-    title: '竞赛上报ID',
-    align: 'start',
-    sortable: true,
-    key: 'studentCompetitionId'
-  },
-  {
-    title: '获奖学生',
-    align: 'start',
-    sortable: false,
-    key: 'headerInfo'
-  },
-  {
-    title: '竞赛名称',
-    align: 'start',
-    sortable: true,
-    key: 'competitionName'
-  },
-  {
-    title: '竞赛性质',
-    align: 'start',
-    sortable: false,
-    key: 'competitionNature'
-  },
-  {
-    title: '竞赛级别',
-    align: 'start',
-    sortable: false,
-    key: 'competitionLevel'
-  },
-  {
-    title: '奖项级别',
-    align: 'start',
-    sortable: false,
-    key: 'awardLevel'
-  },
-  {
-    title: '获奖日期',
-    align: 'start',
-    sortable: true,
-    key: 'awardDate'
-  },
-  {
-    title: '审核状态',
-    align: 'start',
-    sortable: false,
-    key: 'reviewState'
-  },
-  {
-    title: '审核备注',
-    align: 'start',
-    sortable: false,
-    key: 'rejectReason'
-  },
-  {
-    title: '操作',
-    align: 'start',
-    sortable: false,
-    key: 'operations'
-  }
-]
 
 const loading = ref(false)
 const deleteDialog = ref(false)
@@ -79,15 +16,14 @@ const selectedGrade = ref<string | null>(null)
 const selectMajor = ref<string | null>(null)
 const selectStartDate = ref<Date | null>(null)
 const selectEndDate = ref<Date | null>(null)
-
-const data = ref<any[]>([])
+const data = ref<StudentCompetitionItem[]>([])
 const dataLength = ref(0)
 const pageOptions = reactive({
   pageSize: 10,
   pageNo: 1
 })
 
-const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
+const loadItems = () => {
   fetchStudentCompetitionLogic()
 }
 
@@ -118,7 +54,7 @@ const deleteLogic = async () => {
 }
 
 const fetchStudentCompetitionLogic = async () => {
-  const { data: result } = await apiGetPassStudentCompetition({
+  const { data: result } = await apiGetStudentCompetition({
     search: search.value?.length ? search.value : null,
     grade: selectedGrade.value,
     majorId: selectMajor.value,

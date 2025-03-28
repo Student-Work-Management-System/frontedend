@@ -17,7 +17,7 @@ export default {
         icon: 'mdi-cloud-upload',
         title: '学生获奖上报',
         hasPage: true,
-        auth: 'student_competition:insert'
+        auth: 'student_competition:select:own'
       }
     },
     {
@@ -28,18 +28,18 @@ export default {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
         hasPage: true,
-        auth: 'student_competition_claim:update'
+        auth: 'student_competition:update'
       }
     },
     {
       path: '/competition/list',
       name: 'competition-list',
-      component: () => import('@/views/home/competition/CompetitionData.vue'),
+      component: () => import('@/views/home/competition/StudentCompetitionData.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '获奖情况统计',
         hasPage: true,
-        auth: 'student_competition_claim:select'
+        auth: 'student_competition:select'
       }
     },
     {

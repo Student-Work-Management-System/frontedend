@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { competitionNatureOptions } from '@/model/competitionModel'
-
-const model = defineModel<string>()
+const model = defineModel<string | null>()
 const props = defineProps<{
   variant?:
     | 'filled'
@@ -12,21 +10,33 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
-  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
+const items = [
+  '国家一等奖',
+  '国家二等奖',
+  '国家三等奖',
+  '省部一等奖',
+  '省部二等奖',
+  '省部三等奖',
+  '校级一等奖',
+  '校级二等奖',
+  '校级三等奖',
+  '院级一等奖',
+  '院级二等奖',
+  '院级三等奖',
+  '其他'
+]
 </script>
-
 <template>
   <v-select
     v-model="model"
     class="text-indigo"
     color="indigo"
-    label="竞赛性质"
-    :items="competitionNatureOptions"
+    label="奖项级别"
+    :items="items"
     :variant="props.variant"
     hide-details
     clearable
-    :density="props.density"
   >
     <template v-slot:prepend>
       <slot></slot>

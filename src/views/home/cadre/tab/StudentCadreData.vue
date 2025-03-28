@@ -159,7 +159,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-card elevation="10" height="100%" width="100%" class="card-container">
+  <v-card elevation="10" height="100%" width="100%">
     <EditStudentCadre v-model="editDialog" :info="modifyInfo" @on-closed="closeHandler" />
 
     <v-dialog width="500" v-model="deleteDialog">
@@ -185,6 +185,7 @@ onMounted(async () => {
       <span class="w-10">
         <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
       </span>
+      
       <span class="w-10">
         <GradeSelect
           v-model="query.gradeId"
@@ -193,6 +194,7 @@ onMounted(async () => {
           density="compact"
         />
       </span>
+
       <span class="w-10">
         <v-select
           label="职位等级"
@@ -206,6 +208,7 @@ onMounted(async () => {
           density="compact"
         />
       </span>
+
       <span class="w-10 text-indigo">
         <SemesterSelect
           v-model="query.appointmentStartTerm as string"
@@ -215,6 +218,7 @@ onMounted(async () => {
           density="compact"
         />
       </span>
+
       <span class="w-10 text-indigo">
         <SemesterSelect
           v-model="query.appointmentEndTerm as string"

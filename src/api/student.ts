@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Student, StudentQuery, StudentStatusItem, StudentStatusQuery, HeaderTeacher } from '@/model/studentModel'
+import type { Student, StudentQuery, StudentStatusItem, StudentStatusQuery, HeaderTeacher, StudentBasicItem } from '@/model/studentModel'
 
 export async function apiAddStudentBaseInfo(
   students: Student[]
@@ -35,4 +35,12 @@ export function apiGetStudentStatus(query: StudentStatusQuery): Promise<AxiosRes
 
 export function apiGetHeaderTeahcers(): Promise<AxiosResponse<Result<HeaderTeacher[]>>> {
   return http.get('/student/gets/headerTeacher')
+}
+
+export function apiGetStudentBasic(studentId: string): Promise<AxiosResponse<Result<StudentBasicItem[]>>> {
+  return http.get(`/student/basic/get/${studentId}`)
+}
+
+export function apiGetStudentBasicList(studentIds: string[]): Promise<AxiosResponse<Result<StudentBasicItem[]>>> {
+  return http.post('/student/basic/gets', studentIds)
 }
