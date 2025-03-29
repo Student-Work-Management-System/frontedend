@@ -35,8 +35,8 @@ export async function apiDeleteStudentCompetition(studentCompetitionId: string):
   return http.delete(`/student_competition/delete/${studentCompetitionId}`)
 }
 
-export async function apiUpdateStudentCompetition(StudentCompetitionAudit: StudentCompetitionAudit): Promise<AxiosResponse<Result<void>>> {
-  return http.post('/student_competition/update', StudentCompetitionAudit)
+export async function apiUpdateStudentCompetition(studentCompetitionAudits: StudentCompetitionAudit[]): Promise<AxiosResponse<Result<void>>> {
+  return http.put('/student_competition/update', studentCompetitionAudits)
 }
 
 export async function apiGetStudentCompetitions(query: StudentCompetitionQuery): Promise<AxiosResponse<Result<RecordsPage<StudentCompetitionItem>>>> {

@@ -28,16 +28,21 @@ const pageOptions = reactive({
   pageNo: 1
 })
 const fetchStudentCompetitionLogic = async () => {
-  const { data: result } = await apiGetOwnCompetition()
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
+  try {
+    if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
+    const { data: result } = await apiGetOwnCompetition()
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      return
+    }
+    selected.value = []
+    data.value = result.data
+  } catch (error) {
+    console.error(error)
+  } finally {
     loading.value = false
-    return
   }
-  selected.value = []
-  data.value = result.data
-  loading.value = false
 }
 onMounted(fetchStudentCompetitionLogic)
 const downloadEvidence = async (filename: string) => {
@@ -194,7 +199,7 @@ onMounted(() => {
           <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">
-              {{ item.headerInfo }}
+              {{ item.headerId }} - {{ item.headerName }}
             </v-chip>
           </template>
           <!-- eslint-disable-next-line vue/valid-v-slot -->

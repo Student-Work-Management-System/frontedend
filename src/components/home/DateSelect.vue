@@ -19,6 +19,7 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
 
 const selectedDate = ref<Date>()

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { competitionTypeOptions } from '@/model/competitionModel'
 
-const model = defineModel<string>()
+const model = defineModel<string | null>()
 const props = defineProps<{
   variant?:
     | 'filled'

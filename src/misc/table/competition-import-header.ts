@@ -59,16 +59,10 @@ export const studentCompetitionTableHeaders = [
     key: 'competitionType'
   },
   {
-    title: '填报人学号',
-    align: 'start',
+    title: '填报人信息',
+    align: 'center',
     sortable: false,
-    key: 'headerId'
-  },
-  {
-    title: '填报人姓名',
-    align: 'start',
-    sortable: false,
-    key: 'headerName'
+    key: 'headerInfo'
   },
   {
     title: '奖项级别',
@@ -144,4 +138,55 @@ export const competitionHeaders: TableHeader[] = [
     options: null,
   }
 
+]
+
+export const studentCompetitionAuditHeaders = [
+  {
+    title: '竞赛名称',
+    align: 'start',
+    sortable: true,
+    key: 'competitionName'
+  },
+  {
+    title: '竞赛性质',
+    align: 'start',
+    sortable: false,
+    key: 'competitionNature'
+  },
+  {
+    title: '竞赛类别',
+    align: 'start',
+    sortable: false,
+    key: 'competitionType'
+  },
+  {
+    title: '填报人信息',
+    align: 'center',
+    sortable: false,
+    key: 'headerInfo'
+  },
+  {
+    title: '奖项级别',
+    align: 'start',
+    sortable: false,
+    key: 'level'
+  },
+  {
+    title: '获奖日期',
+    align: 'start',
+    sortable: true,
+    key: 'date'
+  },
+  {
+    title: '审核状态',
+    align: 'start',
+    sortable: false,
+    key: 'state'
+  },
+  {
+    title: '操作',
+    align: 'center',
+    sortable: false,
+    key: 'operations'
+  }
 ]

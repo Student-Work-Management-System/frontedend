@@ -27,7 +27,7 @@ const query = ref<CompetitionQuery>({
   search: '',
   competitionNature: null,
   competitionType: null,
-  page: 1,
+  pageNo: 1,
   pageSize: 10
 })
 const data = ref<Competition[]>([])
@@ -207,7 +207,7 @@ onMounted(() => {
           :items="data"
           :items-length="dataLength"
           :loading="loading"
-          v-model:page="query.page"
+          v-model:page="query.pageNo"
           v-model:items-per-page="query.pageSize"
           @update:options="loadItems"
           show-select
