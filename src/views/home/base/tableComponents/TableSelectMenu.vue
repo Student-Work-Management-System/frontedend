@@ -66,6 +66,7 @@ watch(
               @update:model-value="(v) => updateQuery('majorId', v as string | null)"
               label="专业"
               variant="underlined"
+              density="compact"
             />
             <GradeSelect
               :model-value="studentQuery.gradeId"
@@ -73,12 +74,14 @@ watch(
               @update:model-value="(v) => updateQuery('gradeId', v as string | null)"
               label="年级"
               variant="underlined"
+              density="compact"
             />
             <ItemSelect
               :model-value="studentQuery.gender"
               @update:model-value="(v) => updateQuery('gender', v as string | null)"
               label="性别"
               variant="underlined"
+              density="compact"
               :items="['男', '女']"
             />
             <v-text-field
@@ -121,6 +124,7 @@ watch(
               @update:model-value="(v) => updateQuery('politicId', v as string | null)"
               label="政治面貌"
               variant="underlined"
+              density="compact"
             />
 
             <v-text-field
@@ -313,18 +317,21 @@ watch(
               @update:model-value="(v) => updateQuery('degreeId', v as string | null)"
               label="学历"
               variant="underlined"
+              density="compact"
             />
             <StatusSelect
               :model-value="studentQuery.statusId"
               @update:model-value="(v) => updateQuery('statusId', v as string | null)"
               label="学籍状态"
               variant="underlined"
+              density="compact"
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.disability"
               @update:model-value="(v) => updateQuery('disability', v as boolean)"
               label="是否残疾"
               variant="underlined"
+              density="compact"
               :items="[
                 { key: '是', value: true },
                 { key: '否', value: false }
@@ -335,6 +342,7 @@ watch(
               @update:model-value="(v) => updateQuery('enabled', v as boolean)"
               label="学生状态"
               variant="underlined"
+              density="compact"
               :items="[
                 { key: '正常', value: true },
                 { key: '已删除', value: false }
@@ -367,6 +375,7 @@ watch(
                 icon="mdi-refresh"
                 variant="text"
                 color="indigo"
+                density="compact"
                 @click="refreshData"
               />
               <v-btn
@@ -374,6 +383,7 @@ watch(
                 icon="mdi-delete"
                 variant="text"
                 color="error"
+                density="compact"
                 @click="deleteStudent"
               />
               <v-btn
@@ -381,6 +391,7 @@ watch(
                 icon="mdi-file-export-outline"
                 variant="text"
                 color="indigo"
+                density="compact"
                 @click="exportData"
               />
             </div>

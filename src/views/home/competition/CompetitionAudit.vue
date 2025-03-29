@@ -30,6 +30,7 @@ const has = (permission: string) => {
   return store.hasAuthorized(permission)
 }
 const competitionStore = useCompetitionStore()
+const deleteDialog = ref(false)
 const membersDialog = ref(false)
 const membersDialogStudentIds = ref<string[]>([])
 const auditDialog = ref(false)
@@ -238,7 +239,7 @@ onMounted(() => {
       <span class="w-8">
         <CompetitionAuditSelect variant="underlined" v-model="query.state" :show-waiting="true" />
       </span>
-      <span class="w-20 text-indigo">
+      <span class="w-10 text-indigo">
         <v-text-field
           v-model="query.search"
           color="indigo"
@@ -266,6 +267,13 @@ onMounted(() => {
         color="primary"
         @click="auditDialog = true"
         text="审核"
+      />
+      <v-btn
+        v-if="has('student_competition:delete')"
+        prepend-icon="mdi-delete"
+        color="error"
+        @click="deleteDialog = true"
+        text="删除"
       />
     </section>
 
@@ -339,8 +347,8 @@ onMounted(() => {
   margin-right: 0.5rem;
 }
 
-.w-20 {
-  width: 15% !important;
+.w-10 {
+  width: 10% !important;
 }
 
 .w-8 {
