@@ -5,7 +5,20 @@ export interface StudentStatusHeader extends StudentStatus {
 }
 
 export const studentStatusHeader: TableHeader[] = [
-
+    {
+        type: "string",
+        field: "studentId",
+        label: "学号",
+        require: true,
+        options: null
+    },
+    {
+        type: "select",
+        field: "statusName",
+        label: "学籍状态",
+        require: true,
+        options: []
+    },
 ]
 
 export const statusTableHeaders = [

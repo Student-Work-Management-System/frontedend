@@ -7,8 +7,8 @@ export interface StudentStatus {
     studentStatusId?: string,
     studentId: string,
     statusId: string,
-    log: string,
-    modifedTime: string
+    log?: string,
+    modifedTime?: string
 }
 
 export interface StudentStatusQuery {
