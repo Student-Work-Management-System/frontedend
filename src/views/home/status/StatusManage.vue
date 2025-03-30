@@ -2,78 +2,87 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted } from 'vue'
 import { ref } from 'vue'
-import { apiGetCadreList, apiDeleteCadre } from '@/api/cadre'
-import type { Cadre } from '@/model/cadreModel'
+import { apiGetAllStatus, apiDeleteStatus } from '@/api/status'
 import { notify } from '@kyvg/vue3-notification'
-import AddCadreForm from '@/components/home/cadre/AddCadreForm.vue'
-import EditCadreForm from '@/components/home/cadre/EditCadreForm.vue'
+import AddStatusForm from '@/components/home/status/AddStatusForm.vue'
+import { useBaseStore } from '@/stores/baseStore'
+import EditStatusForm from '@/components/home/status/EditStatusForm.vue'
 import { useUserStore } from '@/stores/userStore'
-import { cadreTableHeaders } from '@/misc/table/cadre-import-headers'
+import { statusTableHeaders } from '@/misc/table'
+import type { Status } from '@/model/statusModel'
 
-const selected = ref<Cadre[]>([])
-const loading = ref(true)
+const selected = ref<Status[]>([])
+const loading = ref(false)
 const data = ref<any>([])
-const addCadreFormDialog = ref(false)
-const deleteDialog = ref(false)
 const store = useUserStore()
+const baseStore = useBaseStore()
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
-const editCadreInfoFormDialog = ref(false)
-const editInfo = ref<Cadre>({
-  cadreId: '',
-  cadrePosition: '',
-  cadreLevel: '',
-  cadreBelong: ''
+const deleteDialog = ref(false)
+const addStatusFormDialog = ref(false)
+const editStatusFormDialog = ref(false)
+const editInfo = ref<Status>({
+  statusName: ''
 })
 
-const fetchCadreLogic = async () => {
-  loading.value = true
-  const { data: result } = await apiGetCadreList()
-  if (result.code !== 200) {
-    console.log(result.message)
-    notify({ title: '错误', text: result.message, type: 'error' })
-    return
+const fetchStatusLogic = async () => {
+  try {
+    loading.value = true
+    const { data: result } = await apiGetAllStatus()
+    if (result.code !== 200) {
+      console.log(result.message)
+      notify({ title: '错误', text: result.message, type: 'error' })
+    }
+    baseStore.updateStatusList(result.data)
+    data.value = result.data
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loading.value = false
   }
-  selected.value = []
-  data.value = result.data
-  loading.value = false
 }
 
-const afterCadre = () => {
-  addCadreFormDialog.value = false
-  editCadreInfoFormDialog.value = false
+const afterStatus = () => {
+  editStatusFormDialog.value = false
+  addStatusFormDialog.value = false
   deleteDialog.value = false
   selected.value = []
-  fetchCadreLogic()
+  fetchStatusLogic()
 }
 
-const deleteCadreLogic = async () => {
-  loading.value = true
-  let reqs = selected.value.map((c) =>
-    (async (c) => {
-      const cadrePosition = c.cadrePosition
-      const cadreId = c.cadreId
-      const { data: result } = await apiDeleteCadre(cadreId!)
-      if (result.code !== 200) {
-        console.error(result)
-        notify({ type: 'error', title: '错误', text: result.message })
-        return
-      }
-      notify({ type: 'success', title: '成功', text: `职位:${cadrePosition} 删除成功！` })
-    })(c)
-  )
-  await Promise.all(reqs)
-  afterCadre()
-  loading.value = false
+const deleteStatusLogic = async () => {
+  try {
+    loading.value = true
+    let reqs = selected.value.map((item: Status) =>
+      (async (item) => {
+        const statusId = item.statusId!!
+        const statusName = item.statusName
+        const { data: result } = await apiDeleteStatus(statusId)
+        if (result.code !== 200) {
+          console.error(result)
+          notify({ type: 'error', title: '错误', text: result.message })
+          return
+        }
+        notify({ type: 'success', title: '成功', text: `学籍状态:${statusName} 删除成功！` })
+      })(item)
+    )
+    await Promise.all(reqs)
+    deleteDialog.value = false
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loading.value = false
+    fetchStatusLogic()
+  }
 }
 
-const onEdit = (item: Cadre) => {
+const onEdit = (item: Status) => {
   editInfo.value = item
-  editCadreInfoFormDialog.value = true
+  editStatusFormDialog.value = true
 }
 
-onMounted(fetchCadreLogic)
+onMounted(fetchStatusLogic)
 
 // 高度计算相关
 const containerHeight = ref(0)
@@ -108,8 +117,8 @@ onMounted(() => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <AddCadreForm v-model="addCadreFormDialog" @on-closed="afterCadre" />
-    <EditCadreForm v-model="editCadreInfoFormDialog" :info="editInfo" @on-closed="afterCadre" />
+    <AddStatusForm v-model="addStatusFormDialog" @on-closed="afterStatus" />
+    <EditStatusForm v-model="editStatusFormDialog" :info="editInfo" @on-closed="afterStatus" />
     <v-dialog width="500" v-model="deleteDialog">
       <v-card
         prepend-icon="mdi-delete"
@@ -121,7 +130,7 @@ onMounted(() => {
             :loading="loading"
             :disabled="selected.length === 0"
             color="error"
-            @click="deleteCadreLogic"
+            @click="deleteStatusLogic"
             text="删除"
           />
           <v-btn @click="deleteDialog = false" text="取消" />
@@ -130,20 +139,20 @@ onMounted(() => {
     </v-dialog>
     <section class="menu">
       <v-btn
-        v-if="has('cadre:select')"
+        v-if="has('student_status:select')"
         prepend-icon="mdi-refresh"
-        @click="fetchCadreLogic"
+        @click="fetchStatusLogic"
         text="刷新"
       />
       <v-btn
-        v-if="has('cadre:insert')"
+        v-if="has('student_status:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
-        @click="addCadreFormDialog = true"
+        @click="addStatusFormDialog = true"
         text="添加"
       />
       <v-btn
-        v-if="has('cadre:delete')"
+        v-if="has('student_status:delete')"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
@@ -155,7 +164,7 @@ onMounted(() => {
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="cadreTableHeaders as any"
+          :headers="statusTableHeaders as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
@@ -166,10 +175,10 @@ onMounted(() => {
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
-                v-if="has('cadre:update')"
+                v-if="has('student_status:update')"
                 prepend-icon="mdi-pencil"
                 color="indigo"
-                @click="onEdit(item as Cadre)"
+                @click="onEdit(item as Status)"
                 text="编辑"
               />
             </div>

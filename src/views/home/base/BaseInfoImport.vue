@@ -16,7 +16,9 @@ import { apiGetAllStatus } from '@/api/status'
 import { apiAddStudentBaseInfo, apiGetHeaderTeahcers } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
-import type { Student } from '@/model/studentModel'
+import type { HeaderTeacher, Student } from '@/model/studentModel'
+import type { Degree, Grade, Major, Politics } from '@/model/otherModel'
+import type { Status } from '@/model/statusModel'
 
 const excel = ref<File>()
 const jsonData = ref<BaseHeader[]>([])
@@ -128,7 +130,6 @@ const refBaseHeaders = computed(() => {
   })
   return baseheaders
 })
-
 const majorMap = computed(() =>
   baseStore.getMajorList().reduce((majorMap, major) => {
     majorMap.set(major.majorName, major.majorId)
@@ -290,24 +291,55 @@ const jsonDataToStudentArray = (jsonData: BaseHeader[]): Student[] => {
 }
 
 const getSelectableOptions = async () => {
-  // 获取所有数据
-  const [DegreeResult, GradeResult, PoliticResult, MajorResult, HeaderTeacherResult, StatusResult] =
-    await Promise.all([
-      apiGetAllDegrees(),
-      apiGetAllGrades(),
-      apiGetAllPolitics(),
-      apiGetMajorList(),
-      apiGetHeaderTeahcers(),
-      apiGetAllStatus()
-    ])
+  const store = baseStore
+  const requests = []
 
-  // 更新 store
-  baseStore.updateDegreeList(DegreeResult.data.data)
-  baseStore.updateGradeList(GradeResult.data.data)
-  baseStore.updatePoliticList(PoliticResult.data.data)
-  baseStore.updateMajorList(MajorResult.data.data)
-  baseStore.updateHeaderTeacherList(HeaderTeacherResult.data.data)
-  baseStore.updateStatusList(StatusResult.data.data)
+  // 检查各个列表长度，只请求空列表的数据
+  if (!store.getDegreeList().length) {
+    requests.push(apiGetAllDegrees())
+  }
+  if (!store.getGradeList().length) {
+    requests.push(apiGetAllGrades())
+  }
+  if (!store.getPoliticList().length) {
+    requests.push(apiGetAllPolitics())
+  }
+  if (!store.getMajorList().length) {
+    requests.push(apiGetMajorList())
+  }
+  if (!store.getHeaderTeacherList().length) {
+    requests.push(apiGetHeaderTeahcers())
+  }
+  if (!store.getStatusList().length) {
+    requests.push(apiGetAllStatus())
+  }
+
+  // 如果没有需要请求的数据，直接返回
+  if (!requests.length) return
+
+  // 获取需要更新的数据
+  const results = await Promise.all(requests)
+
+  // 根据请求顺序更新对应的store
+  let index = 0
+  if (!store.getDegreeList().length) {
+    store.updateDegreeList(results[index++].data.data as Degree[])
+  }
+  if (!store.getGradeList().length) {
+    store.updateGradeList(results[index++].data.data as Grade[])
+  }
+  if (!store.getPoliticList().length) {
+    store.updatePoliticList(results[index++].data.data as Politics[])
+  }
+  if (!store.getMajorList().length) {
+    store.updateMajorList(results[index++].data.data as Major[])
+  }
+  if (!store.getHeaderTeacherList().length) {
+    store.updateHeaderTeacherList(results[index++].data.data as HeaderTeacher[])
+  }
+  if (!store.getStatusList().length) {
+    store.updateStatusList(results[index++].data.data as Status[])
+  }
 }
 
 onMounted(async () => {
@@ -330,7 +362,11 @@ onMounted(async () => {
           label="Excel 文件选择"
         />
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler" text="解析文件"
+      <v-btn
+        prepend-icon="mdi-calculator-variant"
+        color="indigo"
+        @click="analyzeHandler"
+        text="解析文件"
       />
       <v-btn
         v-if="has('student:insert')"
@@ -339,7 +375,10 @@ onMounted(async () => {
         @click="uploadDialog = true"
         text="上传数据"
       />
-      <v-btn prepend-icon="mdi-download" href="/template/学生基本信息上传模板.xlsx" text="下载模板"
+      <v-btn
+        prepend-icon="mdi-download"
+        href="/template/学生基本信息上传模板.xlsx"
+        text="下载模板"
       />
     </section>
     <section class="pa-4 w-100">

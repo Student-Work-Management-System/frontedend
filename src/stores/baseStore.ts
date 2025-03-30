@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { type HeaderTeacher, type StudentQuery } from '@/model/studentModel'
 import type { Grade, Major, Degree, Politics } from '@/model/otherModel'
-import type { Status } from '@/api/status'
+import type { Status } from '@/model/statusModel'
 
 export const useBaseStore = defineStore('base', () => {
     const studentQuery = reactive<StudentQuery>({

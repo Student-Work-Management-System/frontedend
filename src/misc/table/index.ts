@@ -8,6 +8,7 @@ export * from './poverty-import-header'
 export * from './competition-import-header'
 export * from './cadre-import-headers'
 export * from './foreign-import.header'
+export * from "./status-import-header"
 
 export interface TableHeader {
   type: string
