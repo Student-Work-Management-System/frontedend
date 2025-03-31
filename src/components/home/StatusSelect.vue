@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { type Status, apiGetAllStatus } from '@/api/status'
+import { computed, onMounted } from 'vue'
+import { apiGetAllStatus } from '@/api/status'
 import { notify } from '@kyvg/vue3-notification'
-import { ref } from 'vue'
-import { onMounted } from 'vue'
+import { useBaseStore } from '@/stores/baseStore'
 
 const model = defineModel<string | null>()
 const props = defineProps<{
@@ -15,28 +15,23 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
-const items = ref<Status[]>([])
-const loading = ref(true)
-const getAllStatusLogic = async () => {
-  loading.value = true
+
+const baseStore = useBaseStore()
+const items = computed(() => baseStore.getStatusList())
+onMounted(async () => {
+  if (baseStore.getStatusList.length > 0) return
   const { data: result } = await apiGetAllStatus()
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
-    return
   }
-  items.value = result.data
-  loading.value = false
-}
-onMounted(() => {
-  getAllStatusLogic()
+  baseStore.updateStatusList(result.data)
 })
 </script>
-
 <template>
   <v-select
     v-model="model"
-    :loading="loading"
     class="text-indigo"
     color="indigo"
     label="学籍状态"
@@ -46,7 +41,7 @@ onMounted(() => {
     :variant="props.variant"
     hide-details
     clearable
-    density="compact"
+    :density="props.density"
   >
     <template v-slot:prepend>
       <slot></slot>

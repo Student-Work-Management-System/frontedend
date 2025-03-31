@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import BaseInfoData from './tab/BaseInfoData.vue'
-import BaseInfoStatus from './tab/BaseInfoStatus.vue'
+import BaseInfoStat from './tab/BaseInfoStat.vue'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
 const tab = ref<number>(1)
@@ -30,7 +30,7 @@ onMounted(() => {
         <BaseInfoData />
       </v-window-item>
       <v-window-item :value="2">
-        <BaseInfoStatus />
+        <BaseInfoStat />
       </v-window-item>
     </v-window>
   </v-card>

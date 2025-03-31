@@ -179,7 +179,7 @@ export interface StudentQuery {
     pageSize: number
 }
 
-export interface StudentStatusItem {
+export interface StudentStatItem {
     majorName: string
     // 总人数
     totalCount: number
@@ -228,7 +228,7 @@ export interface StudentStatusItem {
     originData: Student[]
 }
 
-export interface StudentStatusQuery {
+export interface StudentStatQuery {
     gradeId: string | null
     degreeId: string | null
 }

@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import type { StudentStatusItem } from '@/model/studentModel'
-import { apiGetStudentStatus } from '@/api/student'
+import { apiGetStudentStat } from '@/api/student'
 import { useBaseStore } from '@/stores/baseStore'
 import { debounce } from '@visactor/vchart/esm/util'
 import { notify } from '@kyvg/vue3-notification'
@@ -32,113 +32,7 @@ const tableTitle = computed(() => {
   return `${currentGradeName.value}${currentDegreeName.value}学生信息统计`
 })
 
-// Mock数据 - 2021级各专业统计
-const tableData = ref<StudentStatusItem[]>([
-  {
-    majorName: '计算机科学与技术',
-    totalCount: 120,
-    normalCount: 110,
-    suspendCount: 2,
-    militaryCount: 3,
-    returnCount: 1,
-    transferInCount: 4,
-    transferOutCount: 2,
-    dropOfEnrollmentCount: 0,
-    retainEnrollmentCount: 1,
-    graduationCount: 0,
-    gradCount: 0,
-    droppedCount: 1,
-    rechristenCount: 0,
-    deathCount: 0,
-    maleCount: 85,
-    femaleCount: 35,
-    massCount: 40,
-    leagueCount: 65,
-    partyCount: 10,
-    prepareCount: 5,
-    disabilityCount: 0,
-    minorityCount: 8,
-    originData: []
-  },
-  {
-    majorName: '软件工程',
-    totalCount: 110,
-    normalCount: 102,
-    suspendCount: 1,
-    militaryCount: 2,
-    returnCount: 2,
-    transferInCount: 3,
-    transferOutCount: 1,
-    dropOfEnrollmentCount: 0,
-    retainEnrollmentCount: 0,
-    graduationCount: 0,
-    gradCount: 0,
-    droppedCount: 0,
-    rechristenCount: 0,
-    deathCount: 0,
-    maleCount: 75,
-    femaleCount: 35,
-    massCount: 35,
-    leagueCount: 60,
-    partyCount: 8,
-    prepareCount: 7,
-    disabilityCount: 1,
-    minorityCount: 0,
-    originData: []
-  },
-  {
-    majorName: '网络工程',
-    totalCount: 90,
-    normalCount: 85,
-    suspendCount: 1,
-    militaryCount: 1,
-    returnCount: 0,
-    transferInCount: 2,
-    transferOutCount: 2,
-    dropOfEnrollmentCount: 0,
-    retainEnrollmentCount: 0,
-    graduationCount: 0,
-    gradCount: 0,
-    droppedCount: 0,
-    rechristenCount: 0,
-    deathCount: 0,
-    maleCount: 60,
-    femaleCount: 30,
-    massCount: 30,
-    leagueCount: 50,
-    partyCount: 6,
-    prepareCount: 4,
-    disabilityCount: 0,
-    minorityCount: 0,
-    originData: []
-  },
-  {
-    majorName: '人工智能',
-    totalCount: 100,
-    normalCount: 95,
-    suspendCount: 0,
-    militaryCount: 2,
-    returnCount: 1,
-    transferInCount: 2,
-    transferOutCount: 1,
-    dropOfEnrollmentCount: 0,
-    retainEnrollmentCount: 0,
-    graduationCount: 0,
-    gradCount: 0,
-    droppedCount: 0,
-    rechristenCount: 0,
-    deathCount: 0,
-    maleCount: 70,
-    femaleCount: 30,
-    massCount: 32,
-    leagueCount: 55,
-    partyCount: 8,
-    prepareCount: 5,
-    disabilityCount: 0,
-    minorityCount: 0,
-    originData: []
-  }
-])
+const tableData = ref<StudentStatusItem[]>([])
 
 // 表格合计行
 const getSummaries = (param: any) => {
@@ -171,7 +65,7 @@ onMounted(() => {
 })
 
 const refreshData = async () => {
-  const { data: result } = await apiGetStudentStatus(studentQuery)
+  const { data: result } = await apiGetStudentStat(studentQuery)
   if (result.code !== 200) {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })

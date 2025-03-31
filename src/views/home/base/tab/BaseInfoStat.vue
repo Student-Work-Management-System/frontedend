@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import StatusSelectMenu from '../statusCompones/StatusSelectMenu.vue'
-import StatusTable from '../statusCompones/StatusTable.vue'
+import StatusSelectMenu from '../statusCompones/StatSelectMenu.vue'
+import StatusTable from '../statusCompones/StatTable.vue'
 
 // 高度计算相关
 const containerHeight = ref(0)

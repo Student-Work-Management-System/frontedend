@@ -6,7 +6,7 @@ import {
   HeaderValidChecker,
   AnalyzeFileToTable,
   type StudentStatusHeader,
-  studentStatusHeader
+  statusHeader
 } from '@/misc/table'
 import ExcelTable from '@/components/home/ExcelTable.vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
@@ -34,19 +34,19 @@ const statusMap = computed(() => {
     return statusMap
   }, new Map())
 })
-const refStudentStatusHeaders = computed(() => {
-  const statusNameIndex = studentStatusHeader.findIndex((header) => header.field === 'statusName')
-  studentStatusHeader.splice(statusNameIndex, 1, {
-    ...studentStatusHeader[statusNameIndex],
+const refstatusHeaders = computed(() => {
+  const statusNameIndex = statusHeader.findIndex((header) => header.field === 'statusName')
+  statusHeader.splice(statusNameIndex, 1, {
+    ...statusHeader[statusNameIndex],
     options: statusOptions.value
   })
-  return studentStatusHeader
+  return statusHeader
 })
 const analyzeHandler = async () => {
   loading.value = true
   const ret = (await AnalyzeFileToTable(
     excel.value as File,
-    studentStatusHeader,
+    statusHeader,
     notify
   )) as StudentStatusHeader[]
   if (ret !== undefined) {
@@ -64,8 +64,7 @@ const uploadLogic = async () => {
   loading.value = true
   if (
     !jsonData.value.reduce(
-      (valid, studentStatus) =>
-        !valid ? false : HeaderValidChecker(studentStatus, studentStatusHeader),
+      (valid, studentStatus) => (!valid ? false : HeaderValidChecker(studentStatus, statusHeader)),
       true
     )
   ) {
@@ -142,7 +141,7 @@ onMounted(async () => {
       />
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="refStudentStatusHeaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="refstatusHeaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

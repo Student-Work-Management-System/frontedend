@@ -13,6 +13,7 @@ export interface StudentStatus {
 
 export interface StudentStatusQuery {
     search: string,
+    statusId: string | null
     majorId: string | null
     gradeId: string | null
     pageNo: number
@@ -25,6 +26,7 @@ export interface StudentStatusItem {
     name: string
     majorName: string
     gradeName: string
+    statusId: string
     statusName: string
     log: string
     modifiedTime: string

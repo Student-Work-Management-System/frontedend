@@ -44,6 +44,9 @@ declare module 'vue' {
     EditStudentCet: typeof import('./src/components/home/cet/EditStudentCet.vue')['default']
     EditStudentCompetitionState: typeof import('./src/components/home/competition/EditStudentCompetitionState.vue')['default']
     EditStudentPovertyForm: typeof import('./src/components/home/poverty/EditStudentPovertyForm.vue')['default']
+    EditStudentStatus: typeof import('./src/components/home/status/EditStudentStatus.vue')['default']
+    EditStudentStatusDialog: typeof import('./src/components/home/status/EditStudentStatusDialog.vue')['default']
+    EditStudentStatusForm: typeof import('./src/components/home/status/EditStudentStatusForm.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
     EmployForm: typeof import('./src/components/home/employ/EmployForm.vue')['default']
@@ -76,6 +79,7 @@ declare module 'vue' {
     StatusSelect: typeof import('./src/components/home/StatusSelect.vue')['default']
     StudentCompetitionMember: typeof import('./src/components/home/competition/StudentCompetitionMember.vue')['default']
     StudentSelect: typeof import('./src/components/home/competition/StudentSelect.vue')['default']
+    StudentStatusDetailDialog: typeof import('./src/components/home/status/StudentStatusDetailDialog.vue')['default']
     TrueOrFalseSelect: typeof import('./src/components/home/TrueOrFalseSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
   }
