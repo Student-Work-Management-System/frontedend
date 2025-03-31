@@ -166,23 +166,38 @@ const recoverUser = async (id: string) => {
   return
 }
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.8 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+
+  onMounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddUserForm v-model="addUserFormDialog" @on-closed="afterUser" />
     <EditUserRoleForm
       v-model="editUserRoleFormDialog"
@@ -224,33 +239,36 @@ onMounted(() => {
         </v-text-field>
       </span>
       <span>
-        <v-btn v-if="has('user:select')" prepend-icon="mdi-refresh" @click="fetchUserLogic">
-          刷新
-        </v-btn>
+        <v-btn
+          v-if="has('user:select')"
+          prepend-icon="mdi-refresh"
+          @click="fetchUserLogic"
+          text="刷新"
+        />
+
         <v-btn
           v-if="has('user:insert')"
           prepend-icon="mdi-plus-circle"
           color="primary"
           @click="addUserFormDialog = true"
-        >
-          添加
-        </v-btn>
+          text="添加"
+        />
+
         <v-btn
           v-if="has('user_role:insert') && has('user_role:delete')"
           prepend-icon="mdi-card-multiple"
           color="indigo"
           @click="editUserRoleBtnHandler"
-        >
-          设置角色
-        </v-btn>
+          text="设置角色"
+        />
+
         <v-btn
           v-if="has('user:delete')"
           prepend-icon="mdi-delete"
           color="error"
           @click="deleteDialog = true"
-        >
-          删除
-        </v-btn>
+          text="删除"
+        />
       </span>
     </section>
     <section class="pa-4 w-100" ref="tableDom">
@@ -266,6 +284,7 @@ onMounted(() => {
           show-select
           return-object
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.roles="{ item }">
             <v-chip
               class="mr-1"
@@ -276,7 +295,7 @@ onMounted(() => {
               {{ r.roleName }}
             </v-chip>
           </template>
-
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
@@ -290,18 +309,16 @@ onMounted(() => {
                     editUserInfoFormDialog = true
                   }
                 "
-              >
-                编辑
-              </v-btn>
+                text="编辑"
+              />
               <v-btn
                 v-if="has('user:update:all') && !(item as UserRecord).enabled"
                 prepend-icon="mdi-refresh"
                 color="warning"
                 variant="plain"
                 @click="recoverUser((item as UserRecord).uid)"
-              >
-                恢复删除
-              </v-btn>
+                text="恢复删除"
+              />
             </div>
           </template>
         </v-data-table>

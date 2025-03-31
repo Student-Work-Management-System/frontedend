@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { ref } from 'vue'
-import { apiGetRoleList, apiDeleteRole, type Role } from '@/api/role'
+import { apiGetRoleList, apiDeleteRole } from '@/api/role'
+import { type Role } from '@/model/systemModel'
 import { notify } from '@kyvg/vue3-notification'
 import AddRoleForm from '@/components/home/system/AddRoleForm.vue'
 import SelectPermission from '@/components/home/system/SelectPermission.vue'
@@ -108,23 +109,38 @@ const editRoleBtnHandler = () => {
 
 onMounted(fetchRoleLogic)
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.805 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - 100
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+
+  onMounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%">
+  <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddRoleForm v-model="addRoleFormDialog" :role-info="editRoleInfo" @on-closed="afterRole" />
     <SelectPermission
       v-model="selectPermissionDialog"
@@ -137,44 +153,51 @@ onMounted(() => {
       v-model:length="selected.length"
       @delete="deleteRolerLogic"
     />
+
     <section class="menu">
-      <v-btn v-if="has('role:select')" prepend-icon="mdi-refresh" @click="fetchRoleLogic"
-        >刷新</v-btn
+      <v-btn
+        v-if="has('role:select')"
+        prepend-icon="mdi-refresh"
+        @click="fetchRoleLogic"
+        text="刷新"
+      />
       >
       <v-btn
         v-if="has('role:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
         @click="addRoleFormDialog = true"
-        >添加</v-btn
+        text="添加"
+      />
       >
       <v-btn
         v-if="has('role_permission:insert') && has('role_permission:delete')"
         prepend-icon="mdi-card-multiple"
         color="indigo"
         @click="editRoleBtnHandler"
-        >设置权限</v-btn
+        text="设置权限"
+      />
       >
       <v-btn
         v-if="has('role:delete')"
         prepend-icon="mdi-delete"
         color="error"
         @click="deleteDialog = true"
-        >删除</v-btn
+        text="删除"
+      />
       >
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="headers"
+          :headers="headers as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
           show-select
           return-object
-        >
-        </v-data-table>
+        />
       </v-card>
     </section>
   </v-card>
