@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { apiGetRoleList } from '@/api/role'
-import { apiAddUser, type User } from '@/api/user'
+import { apiAddUser } from '@/api/user'
+import { type User } from '@/model/systemModel'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { watch } from 'vue'

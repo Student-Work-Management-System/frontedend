@@ -49,7 +49,7 @@ const fetchStudentStatusLogic = async () => {
     const { data: result } = await apiGetStudentStatusList(query)
 
     if (result.code !== 200) {
-      console.error(result)
+      console.error(result.message)
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }

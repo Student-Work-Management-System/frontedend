@@ -26,10 +26,9 @@ const deleteHandler = () => {
           :disabled="selectedLength === 0"
           color="error"
           @click="deleteHandler"
-        >
-          删除
-        </v-btn>
-        <v-btn @click="dialog = false">取消</v-btn>
+          text="删除"
+        />
+        <v-btn @click="dialog = false" text="取消" />
       </v-card-actions>
     </v-card>
   </v-dialog>

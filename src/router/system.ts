@@ -10,6 +10,17 @@ export default {
   },
   children: [
     {
+      path: "/system/counselor/manage",
+      name: "counselor-manage",
+      component: () => import("@/views/home/system/CounselorManage.vue"),
+      meta: {
+        icon: 'mdi-book-cog',
+        title: '学院辅导员管理',
+        hasPage: true,
+        auth: 'counselor:update'
+      }
+    },
+    {
       path: '/system/major/manage',
       name: 'major-manage',
       component: () => import('@/views/home/system/MajorManage.vue'),

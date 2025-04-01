@@ -161,7 +161,6 @@ onMounted(() => {
         @click="fetchRoleLogic"
         text="刷新"
       />
-      >
       <v-btn
         v-if="has('role:insert')"
         prepend-icon="mdi-plus-circle"
@@ -169,7 +168,6 @@ onMounted(() => {
         @click="addRoleFormDialog = true"
         text="添加"
       />
-      >
       <v-btn
         v-if="has('role_permission:insert') && has('role_permission:delete')"
         prepend-icon="mdi-card-multiple"
@@ -177,7 +175,6 @@ onMounted(() => {
         @click="editRoleBtnHandler"
         text="设置权限"
       />
-      >
       <v-btn
         v-if="has('role:delete')"
         prepend-icon="mdi-delete"
@@ -185,7 +182,6 @@ onMounted(() => {
         @click="deleteDialog = true"
         text="删除"
       />
-      >
     </section>
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>

@@ -72,7 +72,7 @@ const deleteLogic = async () => {
   let reqs = selected.value.map((u) =>
     (async (u) => {
       const majorId = u.majorId
-      const { data: result } = await apiDeleteMajor(majorId)
+      const { data: result } = await apiDeleteMajor(majorId as string)
       if (result.code !== 200) {
         console.error(result)
         notify({ type: 'error', title: '错误', text: `专业: ${majorId}, ` + result.message })
@@ -157,6 +157,7 @@ onMounted(() => {
         />
       </span>
     </section>
+
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table
