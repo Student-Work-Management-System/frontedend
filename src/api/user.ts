@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result } from '.'
 import { type AxiosResponse } from 'axios'
-import type { UserData, UserRecord, User, Role } from '@/model/systemModel'
+import type { UserData, UserRecord, User, RoleItem, UserRoleRequest } from '@/model/systemModel'
 
 export function userDataCheck(obj: Object): UserData {
   const ud = obj as UserData
@@ -43,14 +43,11 @@ export async function apiAddUser(user: User): Promise<AxiosResponse<Result<null>
   return http.post('/user/add', user)
 }
 
-export async function apiGetUserRoles(uid: string): Promise<AxiosResponse<Result<Role[]>>> {
+export async function apiGetUserRoles(uid: string): Promise<AxiosResponse<Result<RoleItem[]>>> {
   return http.get(`/user/role/${uid}`)
 }
 
-export async function apiUpdateUserRole(userRole: {
-  uid: string
-  roles: string[]
-}): Promise<AxiosResponse<Result<null>>> {
+export async function apiUpdateUserRole(userRole: UserRoleRequest): Promise<AxiosResponse<Result<null>>> {
   return http.put('/user/update/role', userRole)
 }
 
@@ -68,9 +65,7 @@ export async function apiUpdateUserInfo(userInfo: {
   return http.put('/user/update', userInfo)
 }
 
-export async function apiFindBackPassword(
-  username: string
-): Promise<AxiosResponse<Result<{ email: string }>>> {
+export async function apiFindBackPassword(username: string): Promise<AxiosResponse<Result<{ email: string }>>> {
   return http.get(`/user/findBackPassword/${username}`)
 }
 

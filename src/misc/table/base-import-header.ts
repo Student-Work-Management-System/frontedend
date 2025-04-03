@@ -75,7 +75,7 @@ export const tableHeaders = [
     key: 'gradeName',
     align: "center",
     showOverflowTooltip: false,
-    width: 75
+    width: 150
   },
   {
     label: '专业',

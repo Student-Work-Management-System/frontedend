@@ -7,9 +7,7 @@ const emits = defineEmits(['delete'])
 const loading = ref(false)
 
 const deleteHandler = () => {
-  loading.value = true
   emits('delete')
-  loading.value = false
   dialog.value = false
 }
 </script>

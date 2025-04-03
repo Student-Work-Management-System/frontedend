@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { apiAddRole, apiGetPermissionTree, type PermissionTree, type Permission } from '@/api/role'
+import { apiAddRole, apiGetPermissionTree, type PermissionTree } from '@/api/role'
+import type { Permission, RoleItem } from '@/model/systemModel'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted, ref } from 'vue'
 import { reactive } from 'vue'
@@ -60,7 +61,12 @@ const AddRoleLogic = async () => {
   const permissions = nodes
     .filter((n) => n.isLeaf)
     .map((node) => ({ pid: node.id, permissionDesc: '', permissionName: '' }) as Permission)
-  const { data: result } = await apiAddRole({ ...newRole, permissions })
+  const data: RoleItem = {
+    roleName: newRole.roleName,
+    roleDesc: newRole.roleDesc,
+    permissionList: permissions
+  }
+  const { data: result } = await apiAddRole(data)
   if (result.code !== 200) {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })
@@ -122,7 +128,7 @@ onMounted(fetchPermissionLogic)
                 :rules="[() => !!newRole.roleName || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
               <v-textarea
@@ -133,7 +139,7 @@ onMounted(fetchPermissionLogic)
                 :rules="[() => !!newRole.roleDesc || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-textarea>
             </v-form>
@@ -146,8 +152,8 @@ onMounted(fetchPermissionLogic)
               color="indigo"
               @click="NextBtnHandler"
               variant="plain"
-            ></v-btn>
-            <v-btn text="取消" @click="model = false" variant="plain"></v-btn>
+            />
+            <v-btn text="取消" @click="model = false" variant="plain" />
           </v-container>
         </v-card>
       </v-window-item>
@@ -165,12 +171,12 @@ onMounted(fetchPermissionLogic)
               is-keyup-search
               placeholder="搜索权限..."
               @search="onSearch"
-            ></d-search>
+            />
             <d-tree ref="treeRef" :height="400" :loading="loading" :data="data" check />
           </v-container>
           <v-card-actions class="d-flex justify-space-evenly">
-            <v-btn :loading="loading" color="indigo" @click="AddRoleLogic">提交</v-btn>
-            <v-btn @click="(step = 1), (model = false)">取消</v-btn>
+            <v-btn :loading="loading" color="indigo" @click="AddRoleLogic" text="提交" />
+            <v-btn @click="(step = 1), (model = false)" text="取消" />
           </v-card-actions>
         </v-card>
       </v-window-item>

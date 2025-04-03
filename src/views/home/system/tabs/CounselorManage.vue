@@ -1,13 +1,22 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
-import { computed, onUnmounted, ref } from 'vue'
-import { apiGetCounselors } from '@/api/other'
+import { computed, onUnmounted, reactive, ref } from 'vue'
+import {
+  apiDeleteCounselor,
+  apiGetAllDegrees,
+  apiGetAllGrades,
+  apiGetCounselors
+} from '@/api/other'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { onMounted } from 'vue'
 import type { CounselorItem, CounselorQuery } from '@/model/otherModel'
 import EditCounselorForm from '@/components/home/system/EditCounselorForm.vue'
-import CounselorFrom from '@/components/home/system/CounselorFrom.vue'
+import { debounce } from '@/utils/debounce'
+import AddCounselorForm from '@/components/home/system/AddCounselorForm.vue'
+import AddOtherForm from '@/components/home/system/AddOtherForm.vue'
+import { useBaseStore } from '@/stores/baseStore'
+import { it } from 'node:test'
 
 const headers = [
   {
@@ -29,14 +38,8 @@ const headers = [
     sortable: false
   },
   {
-    title: '负责学历层次',
-    align: 'start',
-    key: 'chargeDegree',
-    sortable: false
-  },
-  {
-    title: '负责年级',
-    align: 'start',
+    title: '负责',
+    align: 'center',
     key: 'chargeGrade',
     sortable: false
   },
@@ -47,11 +50,12 @@ const headers = [
     sortable: false
   }
 ]
-
+const baseStore = useBaseStore()
 const editDialog = ref(false)
 const deleteDialog = ref(false)
-const type = ref<'degree' | 'grade' | null>()
 const addDialog = ref(false)
+const type = ref<'degree' | 'grade' | null>()
+const addOtherDialog = ref(false)
 const selected = ref<CounselorItem[]>([])
 const data = ref<CounselorItem[]>([])
 const loading = ref(false)
@@ -60,10 +64,9 @@ const modifiedInfo = ref<CounselorItem>({
   counselorUsername: '',
   counselorName: '',
   counselorPhone: '',
-  chargeDegree: [],
   chargeGrade: []
 })
-const query = ref<CounselorQuery>({
+const query = reactive<CounselorQuery>({
   search: '',
   gradeId: null,
   degreeId: null,
@@ -76,11 +79,17 @@ const store = useUserStore()
 const has = (permission: string) => {
   return store.hasAuthorized(permission)
 }
+
+// 使用防抖包装 fetchDataLogic
+const debouncedFetchData = debounce(() => {
+  fetchDataLogic()
+}, 300)
+
 const fetchDataLogic = async () => {
   try {
-    if (query.value.pageSize === -1) query.value.pageSize = 9999
+    if (query.pageSize === -1) query.pageSize = 9999
     loading.value = true
-    const { data: result } = await apiGetCounselors(query.value)
+    const { data: result } = await apiGetCounselors(query)
 
     if (result.code !== 200) {
       console.error(result.message)
@@ -108,12 +117,12 @@ onMounted(async () => {
 
 const addDegree = () => {
   type.value = 'degree'
-  addDialog.value = true
+  addOtherDialog.value = true
 }
 
 const addGrade = () => {
   type.value = 'grade'
-  addDialog.value = true
+  addOtherDialog.value = true
 }
 
 const afterEdit = () => {
@@ -121,11 +130,33 @@ const afterEdit = () => {
   fetchDataLogic()
 }
 
-const afterAdd = () => {
+const updateOther = async () => {
+  const { data: gradeResult } = await apiGetAllGrades()
+  if (gradeResult.code !== 200) {
+    console.log(gradeResult.message)
+    notify({ type: 'error', title: '错误', text: '更新年级失败' })
+    return
+  }
+  baseStore.updateGradeList(gradeResult.data)
+  const { data: degreeResult } = await apiGetAllDegrees()
+  if (degreeResult.code !== 200) {
+    console.log(degreeResult.message)
+    notify({ type: 'error', title: '错误', text: '更新学历层次失败' })
+    return
+  }
+  baseStore.updateDegreeList(degreeResult.data)
+}
+
+const afterAddCounselor = () => {
   addDialog.value = false
+  fetchDataLogic()
+}
+
+const afterAddOther = async () => {
+  addOtherDialog.value = false
   type.value = null
   fetchDataLogic()
-  // todo: 更新grade和degree
+  await updateOther()
 }
 
 const onEdit = (item: CounselorItem) => {
@@ -133,13 +164,35 @@ const onEdit = (item: CounselorItem) => {
   editDialog.value = true
 }
 
-const deleteLogic = async () => {}
+const deleteLogic = async () => {
+  try {
+    loading.value = true
+    let reqs = selected.value.map((it) =>
+      (async (it) => {
+        const uid = it.uid
+        const { data: result } = await apiDeleteCounselor(uid)
+        if (result.code !== 200) {
+          console.log(result.message)
+          notify({ type: 'error', title: '错误', text: result.message })
+          return
+        }
+      })(it)
+    )
+    await Promise.all(reqs)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loading.value = false
+    fetchDataLogic()
+  }
+}
 
 // 高度计算相关
 const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
+const tabHeiht = ref(0)
 const tableHeight = computed(() => {
-  return containerHeight.value - selectMenuHeight.value - 100
+  return containerHeight.value - selectMenuHeight.value - tabHeiht.value - 148
 })
 
 onMounted(() => {
@@ -149,6 +202,8 @@ onMounted(() => {
         containerHeight.value = entry.contentRect.height
       } else if (entry.target.classList.contains('menu')) {
         selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tab')) {
+        tabHeiht.value = entry.contentRect.height
       }
     }
   })
@@ -156,10 +211,11 @@ onMounted(() => {
   // 观察元素
   const container = document.querySelector('.card-container')
   const selectMenu = document.querySelector('.menu')
+  const tabs = document.querySelector('.tab')
 
   if (container) resizeObserver.observe(container)
   if (selectMenu) resizeObserver.observe(selectMenu)
-
+  if (tabs) resizeObserver.observe(tabs)
   onUnmounted(() => {
     resizeObserver.disconnect()
   })
@@ -167,18 +223,42 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column card-container">
+  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column">
     <EditCounselorForm v-model="editDialog" :info="modifiedInfo" @on-closed="afterEdit" />
-    <CounselorFrom v-model="addDialog" :type="type" @on-closed="afterAdd" />
+    <AddCounselorForm v-model="addDialog" @on-closed="afterAddCounselor" />
+    <AddOtherForm v-model="addOtherDialog" :type="type" @on-closed="afterAddOther" />
     <DeleteDialog v-model="deleteDialog" :length="selected.length" @delete="deleteLogic" />
 
     <section class="menu">
+      <span class="w-20 text-indigo">
+        <v-text-field
+          v-model="query.search"
+          @update:modelValue="debouncedFetchData"
+          color="indigo"
+          :loading="loading"
+          clearable
+          label="搜索"
+          prepend-inner-icon="mdi-magnify"
+          variant="underlined"
+          hide-details
+          density="compact"
+        >
+          <v-tooltip activator="parent" location="top" text="以 工号 / 姓名 搜索" />
+        </v-text-field>
+      </span>
       <span>
         <v-btn
           v-if="has('counselor:select')"
           prepend-icon="mdi-refresh"
           text="刷新"
           @click="fetchDataLogic"
+        />
+        <v-btn
+          v-if="has('counselor:insert')"
+          prepend-icon="mdi-plus-circle"
+          color="primary"
+          text="新增工作辅导员"
+          @click="addDialog = true"
         />
         <v-btn
           v-if="has('grade:insert')"
@@ -220,6 +300,21 @@ onMounted(() => {
           show-select
         >
           <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template v-slot:item.chargeGrade="{ item }">
+            <v-chip-group>
+              <v-chip
+                v-for="grade in item.chargeGrade"
+                :key="grade"
+                class="text-white bg-indigo"
+                :clickable="false"
+                :ripple="false"
+                :active="false"
+              >
+                {{ grade }}
+              </v-chip>
+            </v-chip-group>
+          </template>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.operations="{ item }">
             <div>
               <v-btn
@@ -255,5 +350,9 @@ onMounted(() => {
 
 .w-20 {
   width: 20% !important;
+}
+
+:deep(.v-chip) {
+  cursor: default !important;
 }
 </style>

@@ -8,6 +8,8 @@ import { onMounted } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import ForgetPasswordForm from '@/components/login/ForgetPasswordForm.vue'
 import { useBaseStore } from '@/stores/baseStore'
+import { debounce } from '@/utils/debounce'
+
 interface UserLoginData {
   username: string
   password: string
@@ -91,6 +93,12 @@ const checkLoginCacheHandler = () => {
   }
   loadingForm.value = false
 }
+
+// 使用防抖包装密码输入处理
+const debouncedPasswordHandler = debounce(() => {
+  // 这里可以添加密码输入后的处理逻辑
+}, 300)
+
 onMounted(checkLoginCacheHandler)
 </script>
 
@@ -156,6 +164,7 @@ onMounted(checkLoginCacheHandler)
           variant="outlined"
           @click:append-inner="visible = !visible"
           v-model="userForm.password"
+          @update:model-value="debouncedPasswordHandler"
           required
           :rules="[() => !!userForm.password || '该选项必填！']"
         >

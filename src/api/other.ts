@@ -1,7 +1,7 @@
 import http from '.'
 import type { RecordsPage, Result } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Grade, Degree, Politics, Major, CounselorQuery, CounselorItem } from '@/model/otherModel'
+import type { Grade, Degree, Politics, Major, CounselorQuery, CounselorItem, CounselorRequest, UserWithCounselorRole } from '@/model/otherModel'
 
 
 export function apiGetAllGrades(): Promise<AxiosResponse<Result<Grade[]>>> {
@@ -44,6 +44,18 @@ export function apiGetCounselors(query: CounselorQuery): Promise<AxiosResponse<R
     return http.post("/other/counselor/gets", query)
 }
 
-export async function apiDeleteCounselor(uid: string): Promise<AxiosResponse<Result<null>>> {
-    return http.delete(`/other/counselor/elete/${uid}`)
+export async function apiDeleteCounselor(uid: string): Promise<AxiosResponse<Result<void>>> {
+    return http.delete(`/other/counselor/delete/${uid}`)
+}
+
+export function apiUpdateCounselor(counselor: CounselorRequest): Promise<AxiosResponse<Result<void>>> {
+    return http.put("/other/counselor/update", counselor)
+}
+
+export function apiAddCounselor(counselor: CounselorRequest): Promise<AxiosResponse<Result<void>>> {
+    return http.post("/other/counselor/add", counselor)
+}
+
+export function apiGetOptional(): Promise<AxiosResponse<Result<UserWithCounselorRole[]>>> {
+    return http.get("/other/counselor/optional")
 }

@@ -127,6 +127,7 @@ onMounted(() => {
       :item="modifyInfo"
       @on-close="getDetailDialog = false"
     />
+
     <section class="menu">
       <span class="w-10">
         <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
@@ -151,7 +152,6 @@ onMounted(() => {
           color="indigo"
           @update:modelValue="fetchStudentStatusLogic"
           :loading="loading"
-          :counter="15"
           clearable
           label="搜索"
           prepend-inner-icon="mdi-magnify"

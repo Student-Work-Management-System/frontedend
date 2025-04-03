@@ -92,8 +92,9 @@ const deleteLogic = async () => {
 // 高度计算相关
 const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
+const tabHeiht = ref(0)
 const tableHeight = computed(() => {
-  return containerHeight.value - selectMenuHeight.value - 100
+  return containerHeight.value - selectMenuHeight.value - tabHeiht.value - 185
 })
 
 onMounted(() => {
@@ -103,6 +104,8 @@ onMounted(() => {
         containerHeight.value = entry.contentRect.height
       } else if (entry.target.classList.contains('menu')) {
         selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tab')) {
+        tabHeiht.value = entry.contentRect.height
       }
     }
   })
@@ -110,9 +113,11 @@ onMounted(() => {
   // 观察元素
   const container = document.querySelector('.card-container')
   const selectMenu = document.querySelector('.menu')
+  const tabs = document.querySelector('.tab')
 
   if (container) resizeObserver.observe(container)
   if (selectMenu) resizeObserver.observe(selectMenu)
+  if (tabs) resizeObserver.observe(tabs)
 
   onUnmounted(() => {
     resizeObserver.disconnect()
@@ -120,7 +125,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column card-container">
+  <v-card elevation="10" height="100%" width="100%" class="d-flex flex-column">
     <MajorForm
       v-model="majorFormDialog"
       v-model:info="editInfo"

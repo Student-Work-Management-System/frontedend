@@ -1,22 +1,20 @@
 <script lang="ts" setup>
 import { apiGetRoleList } from '@/api/role'
 import { apiUpdateUserRole } from '@/api/user'
+import type { RoleItem } from '@/model/systemModel'
 import { notify } from '@kyvg/vue3-notification'
-import { onMounted } from 'vue'
-import { watch } from 'vue'
-import { computed } from 'vue'
-import { ref } from 'vue'
+import { onMounted, watch, computed, ref } from 'vue'
 
 const model = defineModel<boolean>()
 const props = defineProps<{ selectedUsers: string[] }>()
 const emit = defineEmits(['onClosed'])
 const loading = ref(false)
-const items = ref<{ text: string }[]>([])
+const items = ref<RoleItem[]>([])
 const search = ref('')
 const allSelected = ref(false)
-const selected = ref<{ rid: string; text: string }[]>([])
+const selected = ref<RoleItem[]>([])
 const selections = computed(() => {
-  const selections: any[] = []
+  const selections: RoleItem[] = []
   for (const selection of selected.value) {
     selections.push(selection)
   }
@@ -26,7 +24,7 @@ const selections = computed(() => {
 const categories = computed(() => {
   const searchWord = search.value
   if (!searchWord) return items.value
-  return items.value.filter((item) => item.text.indexOf(searchWord) > -1)
+  return items.value.filter((item) => item.roleName.indexOf(searchWord) > -1)
 })
 
 watch(selected, () => {
@@ -39,25 +37,40 @@ const EditUserLogic = async () => {
     return
   }
   loading.value = true
-  console.log(props.selectedUsers)
-  let reqs = props.selectedUsers.map((uid) => {
-    apiUpdateUserRole({
-      uid,
-      roles: selected.value.map((r) => r.rid)
-    }).then(({ data: result }) => {
-      if (result.code !== 200) {
-        console.error(result)
-        notify({ type: 'error', title: '错误', text: `用户: ${uid} ` + result.message })
-        loading.value = false
-        return
-      }
-      notify({ type: 'success', title: '成功', text: `用户:${uid} 角色设置成功！` })
-    })
-  })
+  try {
+    const reqs = props.selectedUsers.map((uid) =>
+      apiUpdateUserRole({
+        uid,
+        roles: selected.value.map((r) => r.rid) as string[]
+      }).then(({ data: result }) => {
+        if (result.code !== 200) {
+          console.error(result)
+          notify({ type: 'error', title: '错误', text: `用户: ${uid} ` + result.message })
+          return false
+        }
+        notify({ type: 'success', title: '成功', text: `用户: ${uid}, 角色设置成功！` })
+        return true
+      })
+    )
 
-  await Promise.all(reqs)
-  loading.value = false
-  emit('onClosed')
+    const results = await Promise.all(reqs)
+    // 只有当所有请求都成功时才关闭对话框并清理状态
+    if (results.every((result) => result === true)) {
+      clear()
+      emit('onClosed')
+    }
+  } catch (error) {
+    console.error('更新用户角色时发生错误:', error)
+    notify({ type: 'error', title: '错误', text: '更新用户角色时发生错误' })
+  } finally {
+    loading.value = false
+  }
+}
+
+const clear = () => {
+  search.value = ''
+  selected.value = []
+  allSelected.value = false
 }
 
 const fetchRoleList = async () => {
@@ -67,7 +80,7 @@ const fetchRoleList = async () => {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
-  items.value = result.data.map((r) => ({ rid: r.rid, text: r.roleName }))
+  items.value = result.data
   selected.value = []
 }
 
@@ -83,7 +96,7 @@ onMounted(async () => {
         <v-row align="center" justify="start">
           <v-col
             v-for="(selection, i) in selections"
-            :key="selection.text"
+            :key="selection.roleName"
             class="py-1 pe-0"
             cols="auto"
           >
@@ -93,7 +106,7 @@ onMounted(async () => {
               closable
               @click:close="selected.splice(i, 1)"
             >
-              {{ selection.text }}
+              {{ selection.roleName }}
             </v-chip>
           </v-col>
 
@@ -104,7 +117,7 @@ onMounted(async () => {
               label="搜索"
               hide-details
               single-line
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
 
@@ -114,11 +127,11 @@ onMounted(async () => {
           <template v-for="item in categories">
             <v-list-item
               v-if="!selected.includes(item)"
-              :key="item.text"
+              :key="item.roleName"
               :disabled="loading"
               @click="selected.push(item)"
             >
-              <v-list-item-title>{{ item.text }}</v-list-item-title>
+              <v-list-item-title>{{ item.roleName }}</v-list-item-title>
             </v-list-item>
           </template>
         </v-list>
@@ -133,10 +146,9 @@ onMounted(async () => {
             color="indigo"
             variant="text"
             @click="EditUserLogic"
-          >
-            提交
-          </v-btn>
-          <v-btn variant="text" @click="model = false"> 取消 </v-btn>
+            text="提交"
+          />
+          <v-btn variant="text" @click="model = false" text="取消" />
         </v-card-actions>
       </v-container>
     </v-card>

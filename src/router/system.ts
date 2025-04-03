@@ -10,25 +10,14 @@ export default {
   },
   children: [
     {
-      path: "/system/counselor/manage",
-      name: "counselor-manage",
-      component: () => import("@/views/home/system/CounselorManage.vue"),
+      path: "/system/school/manage",
+      name: "school-manage",
+      component: () => import("@/views/home/system/SchoolManageTab.vue"),
       meta: {
         icon: 'mdi-book-cog',
-        title: '学院辅导员管理',
+        title: '学院信息管理',
         hasPage: true,
         auth: 'counselor:update'
-      }
-    },
-    {
-      path: '/system/major/manage',
-      name: 'major-manage',
-      component: () => import('@/views/home/system/MajorManage.vue'),
-      meta: {
-        icon: 'mdi-book-cog',
-        title: '学院专业管理',
-        hasPage: true,
-        auth: 'major:update'
       }
     },
     {

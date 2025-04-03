@@ -1,13 +1,13 @@
 import http from '.'
 import { type Result } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Role, Permission } from '@/model/systemModel'
+import type { Permission, RoleItem } from '@/model/systemModel'
 
 export interface PermissionTree extends Permission {
   children: PermissionTree[]
 }
 
-export async function apiGetRoleList(): Promise<AxiosResponse<Result<Role[]>>> {
+export async function apiGetRoleList(): Promise<AxiosResponse<Result<RoleItem[]>>> {
   return http.get('/auth/gets')
 }
 
@@ -15,11 +15,7 @@ export async function apiGetPermissionTree(): Promise<AxiosResponse<Result<Permi
   return http.get('/auth/permission/gets')
 }
 
-export async function apiAddRole(role: {
-  roleName: string
-  roleDesc: string
-  permissions: Permission[]
-}): Promise<AxiosResponse<Result<null>>> {
+export async function apiAddRole(role: RoleItem): Promise<AxiosResponse<Result<null>>> {
   return http.post('/auth/add/role', role)
 }
 

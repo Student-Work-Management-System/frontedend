@@ -33,16 +33,26 @@ export interface UserRecord {
     email: string
     phone: string
     createdAt: string
-    roles: Role[]
+    roles: RoleItem[]
     enabled: boolean
 }
 
+export interface UserRoleRequest {
+    uid: string
+    roles: string[]
+}
 
-export interface Role {
-    rid: string
+export interface RoleItem {
+    rid?: string
     roleName: string
     roleDesc: string
     permissionList: Permission[]
+}
+
+export interface Role {
+    rid?: string
+    roleName: string
+    roleDesc: string
 }
 
 export interface Permission {

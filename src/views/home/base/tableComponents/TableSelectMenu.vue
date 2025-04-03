@@ -12,7 +12,7 @@ import { type Degree } from '@/model/otherModel'
 import { useBaseStore } from '@/stores/baseStore'
 import type { StudentQuery } from '@/model/studentModel'
 import { watch } from 'vue'
-import { debounce } from '@visactor/vchart/esm/util'
+import { debounce } from '@/utils/debounce'
 
 const baseStore = useBaseStore()
 const studentQuery = baseStore.getStudentQuery
@@ -43,6 +43,13 @@ const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery
   baseStore.updateStudentQuery(field, value)
 }
 
+// 使用防抖包装 updateQuery
+const debouncedUpdateQuery = debounce((key: keyof StudentQuery, value: any) => {
+  // 如果值为空字符串，则转换为null，否则保持原值
+  const processedValue = value === '' ? null : value
+  updateQuery(key, processedValue)
+}, 300)
+
 watch(
   () => ({
     gradeId: studentQuery.gradeId,
@@ -63,7 +70,7 @@ watch(
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <MajorSelect
               :model-value="studentQuery.majorId"
-              @update:model-value="(v) => updateQuery('majorId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('majorId', v as string | null)"
               label="专业"
               variant="underlined"
               density="compact"
@@ -71,14 +78,14 @@ watch(
             <GradeSelect
               :model-value="studentQuery.gradeId"
               :charge-grades="chargeGrades"
-              @update:model-value="(v) => updateQuery('gradeId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('gradeId', v as string | null)"
               label="年级"
               variant="underlined"
               density="compact"
             />
             <ItemSelect
               :model-value="studentQuery.gender"
-              @update:model-value="(v) => updateQuery('gender', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('gender', v as string | null)"
               label="性别"
               variant="underlined"
               density="compact"
@@ -86,7 +93,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.classNo"
-              @update:model-value="(v: string) => updateQuery('classNo', v as string | null)"
+              @update:model-value="
+                (v: string) => debouncedUpdateQuery('classNo', v as string | null)
+              "
               label="班号"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -97,7 +106,7 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.dormitory"
-              @update:model-value="(v) => updateQuery('dormitory', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('dormitory', v as string | null)"
               label="宿舍"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -109,7 +118,7 @@ watch(
 
             <v-text-field
               :model-value="studentQuery.nation"
-              @update:model-value="(v) => updateQuery('nation', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('nation', v as string | null)"
               label="民族"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -121,7 +130,7 @@ watch(
 
             <PoliticSelect
               :model-value="studentQuery.politicId"
-              @update:model-value="(v) => updateQuery('politicId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('politicId', v as string | null)"
               label="政治面貌"
               variant="underlined"
               density="compact"
@@ -129,7 +138,7 @@ watch(
 
             <v-text-field
               :model-value="studentQuery.nativePlace"
-              @update:model-value="(v) => updateQuery('nativePlace', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('nativePlace', v as string | null)"
               label="籍贯"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -140,7 +149,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.religiousBeliefs"
-              @update:model-value="(v) => updateQuery('religiousBeliefs', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('religiousBeliefs', v as string | null)
+              "
               label="宗教信仰"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -151,7 +162,7 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.location"
-              @update:model-value="(v) => updateQuery('location', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('location', v as string | null)"
               label="家庭所在地"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -167,7 +178,7 @@ watch(
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.address"
-              @update:model-value="(v) => updateQuery('address', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('address', v as string | null)"
               label="家庭住址"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -178,7 +189,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.householdRegistration"
-              @update:model-value="(v) => updateQuery('householdRegistration', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('householdRegistration', v as string | null)
+              "
               label="户籍所在地"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -189,7 +202,7 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.householdType"
-              @update:model-value="(v) => updateQuery('householdType', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('householdType', v as string | null)"
               label="户口类型"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -200,7 +213,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.familyPopulation"
-              @update:model-value="(v) => updateQuery('familyPopulation', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('familyPopulation', v as string | null)
+              "
               label="家庭人口"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -211,7 +226,7 @@ watch(
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.isOnlyChild!!"
-              @update:model-value="(v) => updateQuery('isOnlyChild', v as boolean | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('isOnlyChild', v as boolean | null)"
               label="是否独生子女"
               variant="underlined"
               :items="[
@@ -221,7 +236,9 @@ watch(
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.isStudentLoans!!"
-              @update:model-value="(v) => updateQuery('isStudentLoans', v as boolean | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('isStudentLoans', v as boolean | null)
+              "
               label="助学贷款"
               variant="underlined"
               :items="[
@@ -232,7 +249,7 @@ watch(
 
             <v-text-field
               :model-value="studentQuery.highSchool"
-              @update:model-value="(v) => updateQuery('highSchool', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('highSchool', v as string | null)"
               label="高中名称"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -244,7 +261,7 @@ watch(
 
             <v-text-field
               :model-value="studentQuery.examId"
-              @update:model-value="(v) => updateQuery('examId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('examId', v as string | null)"
               label="考生号"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -255,7 +272,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.admissionBatch"
-              @update:model-value="(v) => updateQuery('admissionBatch', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('admissionBatch', v as string | null)
+              "
               label="录取批次"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -269,7 +288,9 @@ watch(
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.totalExamScore"
-              @update:model-value="(v) => updateQuery('totalExamScore', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('totalExamScore', v as string | null)
+              "
               label="高考总分"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -280,7 +301,9 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.foreignLanguage"
-              @update:model-value="(v) => updateQuery('foreignLanguage', v as string | null)"
+              @update:model-value="
+                (v) => debouncedUpdateQuery('foreignLanguage', v as string | null)
+              "
               label="外语语种"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -291,7 +314,7 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.foreignScore"
-              @update:model-value="(v) => updateQuery('foreignScore', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('foreignScore', v as string | null)"
               label="外语分数"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -302,7 +325,7 @@ watch(
             />
             <v-text-field
               :model-value="studentQuery.hobbies"
-              @update:model-value="(v) => updateQuery('hobbies', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('hobbies', v as string | null)"
               label="兴趣爱好"
               class="text-indigo text-input-select"
               variant="underlined"
@@ -314,21 +337,21 @@ watch(
             <DegreeSelect
               :model-value="studentQuery.degreeId"
               :charge-degrees="chargeDegrees as Degree[]"
-              @update:model-value="(v) => updateQuery('degreeId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('degreeId', v as string | null)"
               label="学历"
               variant="underlined"
               density="compact"
             />
             <StatusSelect
               :model-value="studentQuery.statusId"
-              @update:model-value="(v) => updateQuery('statusId', v as string | null)"
+              @update:model-value="(v) => debouncedUpdateQuery('statusId', v as string | null)"
               label="学籍状态"
               variant="underlined"
               density="compact"
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.disability"
-              @update:model-value="(v) => updateQuery('disability', v as boolean)"
+              @update:model-value="(v) => debouncedUpdateQuery('disability', v as boolean)"
               label="是否残疾"
               variant="underlined"
               density="compact"
@@ -339,7 +362,7 @@ watch(
             />
             <TrueOrFalseSelect
               :model-value="studentQuery.enabled"
-              @update:model-value="(v) => updateQuery('enabled', v as boolean)"
+              @update:model-value="(v) => debouncedUpdateQuery('enabled', v as boolean)"
               label="学生状态"
               variant="underlined"
               density="compact"
@@ -351,7 +374,7 @@ watch(
             <div class="flex-shrink-0 operation-area-right" style="width: 30%">
               <v-text-field
                 :model-value="studentQuery.search"
-                @update:model-value="(v) => updateQuery('search', v as string)"
+                @update:model-value="(v) => debouncedUpdateQuery('search', v)"
                 color="indigo"
                 :loading="loading"
                 :counter="15"

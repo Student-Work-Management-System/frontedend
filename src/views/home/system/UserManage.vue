@@ -13,12 +13,7 @@ import { computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { type UserRecord } from '@/model/systemModel'
 
-const headers: readonly {
-  readonly title: string
-  readonly align: string
-  readonly sortable: boolean
-  readonly key: string
-}[] = [
+const headers = [
   {
     title: '用户ID',
     align: 'start',
@@ -143,13 +138,13 @@ const deleteUserLogic = async () => {
   loading.value = false
 }
 
-const afterUser = () => {
+const afterUser = async () => {
   addUserFormDialog.value = false
   editUserRoleFormDialog.value = false
   editUserInfoFormDialog.value = false
   deleteDialog.value = false
   selected.value = []
-  fetchUserLogic()
+  await fetchUserLogic()
 }
 
 const recoverUser = async (id: string) => {
@@ -210,7 +205,9 @@ onMounted(() => {
       v-model="deleteDialog"
       v-model:length="selected.length"
       @delete="deleteUserLogic"
+      @on-closed="afterUser"
     />
+
     <section class="menu">
       <span class="w-20">
         <TrueOrFalseSelect
@@ -272,6 +269,7 @@ onMounted(() => {
         />
       </span>
     </section>
+
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
         <v-data-table

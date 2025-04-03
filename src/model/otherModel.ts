@@ -45,8 +45,17 @@ export interface CounselorItem {
     counselorName: string
     counselorPhone: string
     chargeGrade: string[]
-    chargeDegree: string[]
 }
 
+export interface UserWithCounselorRole {
+    uid: string
+    username: string
+    realName: string
+}
+
+export interface CounselorRequest {
+    uid: string
+    chargeGrade: string[]
+}
 
 
