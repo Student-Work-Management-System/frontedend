@@ -9,13 +9,14 @@ export * from './competition-import-header'
 export * from './cadre-import-headers'
 export * from './foreign-import.header'
 export * from "./status-import-header"
+export * from "./scholarship-import-header"
 
 export interface TableHeader {
   type: string
   field: string
   label: string
   require: boolean
-  options: any[] | null
+  options?: any[] | null
   validate?: (content: any, oldContent: any, record: any, field: any) => string
   toText?: (content: any) => string
   toValue?: (content: any) => any

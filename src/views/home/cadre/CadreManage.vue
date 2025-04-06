@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted } from 'vue'
-import { ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { apiGetCadreList, apiDeleteCadre } from '@/api/cadre'
 import type { Cadre } from '@/model/cadreModel'
 import { notify } from '@kyvg/vue3-notification'
@@ -81,7 +80,6 @@ const selectMenuHeight = ref(0)
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - 100
 })
-
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -92,7 +90,6 @@ onMounted(() => {
       }
     }
   })
-
   // 观察元素
   const container = document.querySelector('.card-container')
   const selectMenu = document.querySelector('.menu')

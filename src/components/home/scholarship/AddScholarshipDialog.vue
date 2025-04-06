@@ -1,39 +1,41 @@
 <script lang="ts" setup>
-import { apiAddCadre, getCadreLevers } from '@/api/cadre'
-import type { Cadre } from '@/model/cadreModel'
+import { apiAddScholarships, scholarshipLevels } from '@/api/scholarship'
+import type { Scholarship } from '@/model/scholarshipModel'
 import { notify } from '@kyvg/vue3-notification'
 import { ref, reactive } from 'vue'
 const emits = defineEmits(['onClosed'])
 
-const CadreLevels = ref<String[]>(getCadreLevers())
 const form = ref(false)
 const loading = ref(false)
 const model = defineModel<boolean>()
 
-const newCadre = reactive<Cadre>({
-  cadrePosition: '',
-  cadreLevel: '',
-  cadreBelong: ''
+const newScholarship = reactive<Scholarship>({
+  scholarshipName: '',
+  scholarshipLevel: ''
 })
 
-const AddCadreLogic = async () => {
+const addScholarship = async () => {
   loading.value = true
-  const { data: result } = await apiAddCadre(newCadre as Cadre)
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
+  try {
+    const { data: result } = await apiAddScholarships(newScholarship)
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
     loading.value = false
-    return
+    emits('onClosed')
+    clear()
   }
-  notify({ type: 'success', title: '成功', text: '添加成功！' })
-  emits('onClosed')
-  clearCadreInfo()
-  loading.value = false
 }
 
-const clearCadreInfo = () => {
-  newCadre.cadrePosition = ''
-  newCadre.cadreLevel = ''
+const clear = () => {
+  newScholarship.scholarshipName = ''
+  newScholarship.scholarshipLevel = ''
 }
 </script>
 
@@ -45,21 +47,21 @@ const clearCadreInfo = () => {
           <v-container>
             <v-form v-model="form" class="px-8 form">
               <v-text-field
-                label="职位名称"
-                v-model="newCadre.cadrePosition"
+                label="奖学金名称"
+                v-model="newScholarship.scholarshipName"
                 :counter="20"
                 required
-                :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
+                :rules="[() => !!newScholarship.scholarshipName || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"/>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
               <v-select
-                label="职位等级"
-                v-model="newCadre.cadreLevel"
-                :items="CadreLevels"
-                :rules="[() => !!newCadre.cadrePosition || '该选项必填！']"
+                label="奖学金等级"
+                v-model="newScholarship.scholarshipLevel"
+                :items="scholarshipLevels"
+                :rules="[() => !!newScholarship.scholarshipLevel || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
@@ -73,7 +75,7 @@ const clearCadreInfo = () => {
               :disabled="!form"
               text="确定"
               color="indigo"
-              @click="AddCadreLogic"
+              @click="addScholarship"
               variant="plain"
             />
             <v-btn text="取消" @click="model = false" variant="plain" />
@@ -83,15 +85,3 @@ const clearCadreInfo = () => {
     </v-window>
   </v-dialog>
 </template>
-
-<style>
-.svg-icon {
-  margin-right: 0.5rem;
-}
-</style>
-
-<style scoped>
-.form > * {
-  margin-bottom: 0.5rem;
-}
-</style>

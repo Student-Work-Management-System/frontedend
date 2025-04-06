@@ -37,7 +37,8 @@ export const foreignLanguageHeaders: TableHeader[] = [
         field: 'date',
         label: '考试日期',
         require: true,
-        options: null, validate: (content, oldContent, record, field) => {
+        options: null,
+        validate: (content, oldContent, record, field) => {
             if (content === '') return '格式应该为2xxx-2xxx_x'
             if (!/^2\d{3}-2\d{3}_(1|2)$/.test(content)) return '格式应该为2xxx-2xxx_x'
             return ''

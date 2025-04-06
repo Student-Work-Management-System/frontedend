@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import {
   HeaderValidChecker,
@@ -18,7 +17,7 @@ import type { StudentCadre } from '@/model/cadreModel'
 
 const excel = ref<File>()
 const jsonData = ref<StudentCadreHeader[]>([])
-const uploadDialog = ref()
+const uploadDialog = ref(false)
 const loading = ref(false)
 const nilData: StudentCadreHeader = {
   studentCadreId: '',
@@ -58,7 +57,7 @@ const analyzeHandler = async () => {
   loading.value = true
   const ret = (await AnalyzeFileToTable(
     excel.value as File,
-    studentCadreHeaders,
+    refStudentCadreHeaders.value,
     notify
   )) as StudentCadreHeader[]
   if (ret !== undefined) {
