@@ -12,7 +12,7 @@ export default {
     {
       path: '/punishment/import',
       name: 'punishment-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/punishment/StudentPunishmentImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '处分信息录入',
@@ -23,23 +23,12 @@ export default {
     {
       path: '/punishment/list',
       name: 'punishment-list',
-      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
+      component: () => import('@/views/home/punishment/StudentPunishmentTab.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '处分信息统计',
         hasPage: true,
         auth: 'student_punishment:select'
-      }
-    },
-    {
-      path: '/punishment/manage',
-      name: 'punishment-manage',
-      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
-      meta: {
-        icon: 'mdi-cog',
-        title: '处分信息管理',
-        hasPage: true,
-        auth: 'student_punishment:update'
       }
     }
   ]

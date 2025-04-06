@@ -10,6 +10,7 @@ export * from './cadre-import-headers'
 export * from './foreign-import.header'
 export * from "./status-import-header"
 export * from "./scholarship-import-header"
+export * from "./punishment-import-headers"
 
 export interface TableHeader {
   type: string
