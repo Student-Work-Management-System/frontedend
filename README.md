@@ -1,44 +1,39 @@
-# swms-web
+# swms-frondEnd
 
-This template should help get you started developing with Vue 3 in Vite.
+## 技术栈及部分框架
 
-## Recommended IDE Setup
+* Front-end：Vue3 + Pinia + vue-router
+* ExcelPlugins：vue3-excel-editor
+* UI Components：Vuetify + Element Plus
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+具体版本：
 
-## Type Support for `.vue` Imports in TS
+![image-20250406181507073](README.assets/image-20250406181507073.png)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## 启动
 
-## Customize configuration
+本项目采用`yarn`而非`npm`管理，因此需要启动代码稍有不同
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+启动：
 
-## Project Setup
-
-```sh
-pnpm install
+```bash
+yarn run dev 
+# 完全开放
+yarn run dev --host
 ```
 
-### Compile and Hot-Reload for Development
+构建：
 
-```sh
-pnpm dev
+```bash
+yarn build
 ```
 
-### Type-Check, Compile and Minify for Production
+![image-20250406181809832](README.assets/image-20250406181809832.png)
 
-```sh
-pnpm build
-```
+## 项目地址
 
-### Lint with [ESLint](https://eslint.org/)
+项目地址：[CodeBerg-SWMS](https://codeberg.org/SWMS/swms-web)
 
-```sh
-pnpm lint
-```
+联系方式：
 
-
-## Reference
-- [UI](https://vuetifyjs.com/zh-Hans)
-- [vchart](https://visactor.io/vchart)
+* QQ：`1241142935`
