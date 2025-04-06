@@ -27,6 +27,7 @@ export interface StudentScholarshipItem {
     name: string
     gradeName: string
     majorName: string
+    scholarshipId: string
     scholarshipName: string
     scholarshipLevel: string
     awardYear: string

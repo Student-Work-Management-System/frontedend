@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <script lang="ts" setup>
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted, ref, onMounted, reactive } from 'vue'
+import { notify } from '@kyvg/vue3-notification'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import EditStudentCadre from '@/components/home/cadre/EditStudentCadre.vue'
@@ -13,9 +14,6 @@ import {
 } from '@/api/cadre'
 import type { StudentCadreItem, CadreQuery } from '@/model/cadreModel'
 import { useUserStore } from '@/stores/userStore'
-import { notify } from '@kyvg/vue3-notification'
-import { onMounted } from 'vue'
-import { reactive } from 'vue'
 import { studentCadreTableHeaders } from '@/misc/table'
 import { useCadreStore } from '@/stores/cadreStore'
 
@@ -78,6 +76,7 @@ const fetchStudentCadreLogic = async () => {
   deleteDialog.value = false
   loading.value = false
 }
+
 onMounted(fetchStudentCadreLogic)
 
 const loadItems = () => {
@@ -87,7 +86,6 @@ const loadItems = () => {
 const deleteStudentCadreLogic = async () => {
   loading.value = true
   const studentIds = selected.value.map((v) => v.studentCadreId)
-
   let reqs = studentIds.map((id) =>
     (async () => {
       const { data: result } = await apiDeleteStudentCadre(id)
@@ -185,7 +183,7 @@ onMounted(async () => {
       <span class="w-10">
         <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
       </span>
-      
+
       <span class="w-10">
         <GradeSelect
           v-model="query.gradeId"
@@ -243,7 +241,7 @@ onMounted(async () => {
           hide-details
           density="compact"
         >
-          <v-tooltip activator="parent" location="top">以学号/姓名/职位名称搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top" text="以学号 / 姓名 / 职位名称搜索" />
         </v-text-field>
       </span>
       <v-btn

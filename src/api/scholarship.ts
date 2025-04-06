@@ -35,5 +35,5 @@ export async function apiUpdateStudentScholarships(studentScholarship: StudentSc
 }
 
 export async function apiDeleteStudentScholarships(studentScholarshipId: string): Promise<AxiosResponse<Result<void>>> {
-    return http.put("/scholarship/student/delete", studentScholarshipId)
+    return http.delete(`/scholarship/student/delete/${studentScholarshipId}`)
 }

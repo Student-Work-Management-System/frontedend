@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-import { apiUpdateStudentCadre } from '@/api/cadre'
-import type { StudentCadre, StudentCadreItem } from '@/model/cadreModel'
+import { apiUpdateStudentScholarships } from '@/api/scholarship'
+import type { StudentScholarship, StudentScholarshipItem } from '@/model/scholarshipModel'
 import { notify } from '@kyvg/vue3-notification'
 import { ref, watchEffect } from 'vue'
-import SemesterSelect from '@/components/home/SemesterSelect.vue'
-import CadreSelect from '@/components/home/cadre/CadreSelect.vue'
+import ScholarshipSelect from './ScholarshipSelect.vue'
 
 const model = defineModel<boolean>()
-const info = defineModel<StudentCadreItem>('info')
-const localInfo = ref<StudentCadreItem>()
-// 当弹窗打开时，创建副本
+const info = defineModel<StudentScholarshipItem>('info')
+const localInfo = ref<StudentScholarshipItem>()
 watchEffect(() => {
   if (model.value && info.value) {
     localInfo.value = { ...info.value }
@@ -25,7 +23,7 @@ const onCancel = () => {
 
 const updateInfoLogic = async () => {
   loading.value = true
-  const { data: result } = await apiUpdateStudentCadre(localInfo.value as StudentCadre)
+  const { data: result } = await apiUpdateStudentScholarships(localInfo.value as StudentScholarship)
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     return
@@ -38,52 +36,28 @@ const updateInfoLogic = async () => {
 
 <template>
   <v-dialog width="auto" min-width="500" height="auto" v-model="model">
-    <v-card width="auto" prepend-icon="mdi-account-edit" :title="localInfo!.name + '的任职信息'">
+    <v-card width="auto" prepend-icon="mdi-account-edit" :title="localInfo!.name + '奖学金信息'">
       <v-container>
         <v-form v-model="form" class="px-8">
-          <CadreSelect
-            class="mb-1"
-            v-model="localInfo!.cadreId"
-            variant="filled"
-            density="comfortable"
-          >
+          <ScholarshipSelect v-model="localInfo!.scholarshipId">
             <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-          </CadreSelect>
-
-          <SemesterSelect
-            class="mb-1"
-            v-model="localInfo!.appointmentStartTerm"
-            label="任职开始学期"
-            variant="filled"
-            density="comfortable"
-          >
-            <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-          </SemesterSelect>
-
-          <SemesterSelect
-            class="mb-1"
-            v-model="localInfo!.appointmentEndTerm"
-            label="任职结束学期"
-            variant="filled"
-            density="comfortable"
-          >
-            <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-          </SemesterSelect>
-
+          </ScholarshipSelect>
           <v-text-field
-            class="text-indigo"
+            class="text-indigo mt-4"
             color="indigo"
-            label="备注"
-            v-model="localInfo!.comment"
+            label="获奖学年"
+            v-model="localInfo!.awardYear"
             required
           >
             <template v-slot:prepend>
-              <v-icon size="smaller" icon="mdi-format-color-highlight" />
+              <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </template>
           </v-text-field>
         </v-form>
       </v-container>
+
       <v-divider></v-divider>
+
       <v-container class="w-100 d-flex justify-space-evenly">
         <v-btn
           :disabled="!form"
