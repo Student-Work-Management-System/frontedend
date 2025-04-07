@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { type Employ, apiGetEmployList, apiDeleteEmploy } from '@/api/employ'
 import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/userStore'
@@ -28,13 +28,13 @@ const headers = [
     title: '年级',
     align: 'start',
     sortable: false,
-    key: 'grade'
+    key: 'gradeName'
   },
   {
     title: '毕业状态',
     align: 'start',
     sortable: true,
-    key: 'graduationState'
+    key: 'state'
   },
   {
     title: '毕业年份',
@@ -113,7 +113,7 @@ const pageOptions = reactive({
   pageSize: 10,
   pageNo: 1
 })
-const loadItems = (args: { page: any; itemsPerPage: any; sortBy: any }) => {
+const loadItems = () => {
   fetchEmployLogic()
 }
 
@@ -173,19 +173,39 @@ const fetchEmployLogic = async () => {
 }
 onMounted(fetchEmployLogic)
 
-// js 写响应式
-const tableHeight = ref(0)
-const tableDom = ref<HTMLElement | null>(null)
-const fixHeight = () => {
-  const offsetTop = tableDom.value?.offsetTop as number
-  const windowHeight = window.screen.height as number
-  const totalHeight = document.body.clientHeight
-  const padding = ((totalHeight * 0.5) / windowHeight) * 32
-  tableHeight.value = (totalHeight - offsetTop) * 0.69 - padding
-}
+// 高度计算相关
+const containerHeight = ref(0)
+const selectMenuHeight = ref(0)
+const tabsHeight = ref(0)
+const tableHeight = computed(() => {
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 132
+})
+
 onMounted(() => {
-  fixHeight()
-  window.onresize = fixHeight
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.target.classList.contains('card-container')) {
+        containerHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('menu')) {
+        selectMenuHeight.value = entry.contentRect.height
+      } else if (entry.target.classList.contains('tabs')) {
+        tabsHeight.value = entry.contentRect.height
+      }
+    }
+  })
+
+  // 观察元素
+  const container = document.querySelector('.card-container')
+  const selectMenu = document.querySelector('.menu')
+  const tabs = document.querySelector('.tabs')
+
+  if (container) resizeObserver.observe(container)
+  if (selectMenu) resizeObserver.observe(selectMenu)
+  if (tabs) resizeObserver.observe(tabs)
+
+  onUnmounted(() => {
+    resizeObserver.disconnect()
+  })
 })
 </script>
 <template>
@@ -218,23 +238,23 @@ onMounted(() => {
         variant="underlined"
         hide-details
       >
-        <v-tooltip activator="parent" location="top">以学号或姓名搜索</v-tooltip>
+        <v-tooltip activator="parent" location="top"></v-tooltip>
       </v-text-field>
     </span>
     <v-btn
       v-if="has('student_employment:select')"
       prepend-icon="mdi-refresh"
       @click="fetchEmployLogic"
-      >刷新</v-btn
-    >
+      text="刷新"
+    />
 
     <v-btn
       v-if="has('student_employment:delete')"
       prepend-icon="mdi-delete"
       color="error"
       @click="deleteDialog = true"
-      >删除</v-btn
-    >
+      text="删除"
+    />
   </section>
 
   <section class="pa-4 w-100" ref="tableDom">
@@ -242,7 +262,7 @@ onMounted(() => {
       <v-data-table-server
         v-model="selected"
         :height="tableHeight"
-        :headers="headers"
+        :headers="headers as []"
         :items="data"
         :items-length="dataLength"
         :loading="loading"
@@ -252,6 +272,7 @@ onMounted(() => {
         show-select
         return-object
       >
+        <!-- eslint-disable-next-line vue/valid-v-slot-->
         <template v-slot:item.operations="{ item }">
           <div>
             <v-btn
@@ -264,8 +285,8 @@ onMounted(() => {
                   editDialog = true
                 }
               "
-              >编辑</v-btn
-            >
+              text="编辑"
+            />
           </div>
         </template>
       </v-data-table-server>
