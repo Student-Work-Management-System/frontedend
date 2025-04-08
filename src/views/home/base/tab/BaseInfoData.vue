@@ -149,7 +149,6 @@ const tabsHeight = ref(0)
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 60
 })
-
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {

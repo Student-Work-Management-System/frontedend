@@ -10,6 +10,7 @@ const showModelText = computed(
     )
 )
 const props = defineProps<{
+  label?: string
   variant?:
     | 'filled'
     | 'underlined'
@@ -29,10 +30,14 @@ const submitSelectHandler = () => {
   model.value = moment(selectedDate.value).format('YYYY-MM-DD')
   dialog.value = false
 }
+const computedLabel = computed(() => {
+  if (props.label === null || props.label === undefined || props.label === '') return '日期选择'
+  return props.label
+})
 </script>
 <template>
   <v-text-field
-    label="日期选择"
+    :label="computedLabel"
     color="indigo"
     class="text-indigo"
     v-model="showModelText"
@@ -43,12 +48,8 @@ const submitSelectHandler = () => {
     clearable
     @click="dialog = true"
     @click:clear="model = null"
-  >
-    <template v-slot:prepend>
-      <slot></slot>
-    </template>
-  </v-text-field>
-  <v-dialog width="500" v-model="dialog" class="pa-10">
+  />
+  <v-dialog width="500" v-model="dialog">
     <v-card prepend-icon="mdi-calendar-range" title="日期选择">
       <VDatePicker
         width="500"

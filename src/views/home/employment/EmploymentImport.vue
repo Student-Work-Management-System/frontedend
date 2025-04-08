@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {
-  employheaders,
-  type EmployHeader,
+  employmentHeaders,
+  type EmploymentHeader,
   AnalyzeFileToTable,
   HeaderValidChecker
 } from '@/misc/table'
@@ -9,14 +9,14 @@ import { ref, computed } from 'vue'
 import UploadDialog from '@/components/home/UploadDialog.vue'
 import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/userStore'
-import { apiAddEmployInfo } from '@/api/employ'
+import { apiAddEmployInfo } from '@/api/employment'
 
 const excel = ref<File[]>()
-const jsonData = ref<EmployHeader[]>([])
+const jsonData = ref<EmploymentHeader[]>([])
 const file = computed(() => (excel.value === undefined ? null : excel.value[0]))
 const loading = ref(false)
 const uploadDialog = ref(false)
-const nilData: EmployHeader = {
+const nilData: EmploymentHeader = {
   studentId: '',
   graduationState: '',
   graduationYear: '',
@@ -27,16 +27,23 @@ const nilData: EmployHeader = {
   category: '',
   salary: '',
   studentEmploymentId: '',
-  grade: ''
+  grade: '',
+  code: '',
+  organizationName: '',
+  state: '',
+  contactPerson: '',
+  contactPhone: '',
+  certificateTime: '',
+  comment: ''
 }
 
 const analyzeHandler = async () => {
   loading.value = true
   const ret = (await AnalyzeFileToTable(
     file.value as File,
-    employheaders,
+    employmentHeaders,
     notify
-  )) as EmployHeader[]
+  )) as EmploymentHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -53,7 +60,7 @@ const uploadLogic = async () => {
   // valid data format before upload
   if (
     !jsonData.value.reduce(
-      (valid, employ) => (!valid ? false : HeaderValidChecker(employ, employheaders)),
+      (valid, employment) => (!valid ? false : HeaderValidChecker(employment, employmentHeaders)),
       true
     )
   ) {
@@ -88,22 +95,29 @@ const uploadLogic = async () => {
           free-select
           accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           label="Excel 文件选择"
-        ></v-file-input>
+        />
       </span>
-      <v-btn prepend-icon="mdi-calculator-variant" color="indigo" @click="analyzeHandler"
-        >解析文件</v-btn
-      >
+      <v-btn
+        prepend-icon="mdi-calculator-variant"
+        color="indigo"
+        @click="analyzeHandler"
+        text="解析文件"
+      />
       <v-btn
         v-if="has('student_employment:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
-        >上传数据</v-btn
-      >
-      <v-btn prepend-icon="mdi-download" href="/template/学生就业信息上传模板.xlsx">下载模板</v-btn>
+        text="上传数据"
+      />
+      <v-btn
+        prepend-icon="mdi-download"
+        href="/template/学生就业信息上传模板.xlsx"
+        text="下载模板"
+      />
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="employheaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="employmentHeaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

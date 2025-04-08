@@ -15,6 +15,7 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
 const items = ref<Politics[]>([])
 const getPoliticsListLogic = async () => {

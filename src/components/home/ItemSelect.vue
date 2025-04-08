@@ -11,6 +11,7 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
+  density?: 'compact' | 'default' | 'comfortable' | undefined
   items: string[]
 }>()
 </script>
@@ -24,7 +25,7 @@ const props = defineProps<{
     :variant="props.variant"
     hide-details
     clearable
-    density="compact"
+    :density="density"
   >
     <template v-slot:prepend>
       <slot></slot>

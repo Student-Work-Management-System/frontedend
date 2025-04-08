@@ -12,7 +12,7 @@ export default {
     {
       path: '/employment/import',
       name: 'employment-import',
-      component: () => import('@/views/home/employment/EmployImport.vue'),
+      component: () => import('@/views/home/employment/EmploymentImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '就业信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/employment/list',
       name: 'employment-list',
-      component: () => import('@/views/home/employment/EmployDataTabs.vue'),
+      component: () => import('@/views/home/employment/EmploymentTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '就业信息统计',

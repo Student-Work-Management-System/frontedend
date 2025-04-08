@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { VChart, type ISpec } from '@visactor/vchart'
 import { notify } from '@kyvg/vue3-notification'
-import { apiStatsEmploy, apiDownloadStatsEmploy, type EmployStats } from '@/api/employ'
+import { apiStatsEmploy, apiDownloadStatsEmploy, type EmployStats } from '@/api/employment'
 import { useUserStore } from '@/stores/userStore'
 
 const loading = ref(false)
