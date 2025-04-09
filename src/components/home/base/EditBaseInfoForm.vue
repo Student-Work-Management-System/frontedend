@@ -8,7 +8,6 @@ import { notify } from '@kyvg/vue3-notification'
 import moment from 'moment'
 import { useUserStore } from '@/stores/userStore'
 import DegreeSelect from '../DegreeSelect.vue'
-import type { Degree } from '@/model/otherModel'
 import PoliticSelect from '../PoliticSelect.vue'
 
 const dialog = defineModel<boolean>()
@@ -18,7 +17,6 @@ const loading = ref(false)
 
 const store = useUserStore()
 const chargeGrades = store.getUserData.chargeGrades
-const chargeDegrees = store.getUserData.chargeDegrees
 
 const updateInfoLogic = async () => {
   loading.value = true
@@ -103,11 +101,7 @@ const updateInfoLogic = async () => {
             >
               <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </GradeSelect>
-            <DegreeSelect
-              v-model="info!.degreeId"
-              :charge-degrees="chargeDegrees as Degree[]"
-              class="text-indigo mb-6"
-            >
+            <DegreeSelect v-model="info!.degreeId" class="text-indigo mb-6">
               <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </DegreeSelect>
             <v-text-field

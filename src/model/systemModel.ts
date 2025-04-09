@@ -1,4 +1,4 @@
-import type { Grade, Degree } from './otherModel'
+import type { Grade } from './otherModel'
 export interface User {
     username: string
     realName: string
@@ -21,7 +21,6 @@ export interface UserData {
     email: string
     authorities: Authority[] | null
     chargeGrades: Grade[] | null
-    chargeDegrees: Degree[] | null
     token: string
 }
 

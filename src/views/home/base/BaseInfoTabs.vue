@@ -12,10 +12,6 @@ onMounted(() => {
     'gradeId',
     store.getUserData.chargeGrades!![0].gradeId as string | null
   )
-  baseStore.updateStudentQuery(
-    'degreeId',
-    store.getUserData.chargeDegrees!![0].degreeId as string | null
-  )
 })
 </script>
 

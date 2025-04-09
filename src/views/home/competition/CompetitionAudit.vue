@@ -25,7 +25,6 @@ import DegreeSelect from '@/components/home/DegreeSelect.vue'
 
 const store = useUserStore()
 const chargeGrades = store.getUserData.chargeGrades
-const chargeDegrees = store.getUserData.chargeDegrees
 const has = (permission: string) => {
   return store.hasAuthorized(permission)
 }
@@ -215,11 +214,7 @@ onMounted(() => {
         <MajorSelect v-model="query.majorId" variant="underlined" />
       </span>
       <span class="w-8">
-        <DegreeSelect
-          v-model="query.degreeId"
-          variant="underlined"
-          :charge-degrees="chargeDegrees"
-        />
+        <DegreeSelect v-model="query.degreeId" variant="underlined" />
       </span>
       <span class="w-8">
         <CompetitionTypeSelect v-model="query.competitionType" variant="underlined" />

@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import type { Degree } from '@/model/otherModel'
+import { apiGetAllDegrees } from '@/api/other'
+import { computed, onMounted } from 'vue'
+import { useBaseStore } from '@/stores/baseStore'
+import { notify } from '@kyvg/vue3-notification'
 
 const model = defineModel<string | null>()
+const baseStore = useBaseStore()
 const props = defineProps<{
   variant?:
     | 'filled'
@@ -12,9 +16,22 @@ const props = defineProps<{
     | 'solo-inverted'
     | 'solo-filled'
     | undefined
-  chargeDegrees: Degree[] | null
   density?: 'compact' | 'default' | 'comfortable' | undefined
 }>()
+const items = computed(() => {
+  return baseStore.getDegreeList()
+})
+
+onMounted(async () => {
+  if (baseStore.getDegreeList().length <= 0) {
+    const { data: result } = await apiGetAllDegrees()
+    if (result.code !== 200) {
+      notify({ type: 'error', title: '错误', text: result.message })
+      result
+    }
+    baseStore.updateDegreeList(result.data)
+  }
+})
 </script>
 <template>
   <v-select
@@ -22,7 +39,7 @@ const props = defineProps<{
     class="text-indigo"
     color="indigo"
     label="学历层次"
-    :items="props.chargeDegrees as Degree[]"
+    :items="items"
     item-title="degreeName"
     item-value="degreeId"
     :variant="props.variant"

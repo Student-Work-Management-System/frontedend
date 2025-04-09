@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import EnrollList from './select-tabs/EnrollList.vue'
-import EnrollStats from './select-tabs/EnrollStats.vue'
+import EnrollmentData from './tab/EnrollmentData.vue'
+import EnrollmentStat from './tab/EnrollmentStat.vue'
 
 const tab = ref(null)
 </script>
@@ -14,10 +14,10 @@ const tab = ref(null)
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="1">
-        <EnrollList />
+        <EnrollmentData />
       </v-window-item>
       <v-window-item :value="2">
-        <EnrollStats />
+        <EnrollmentStat />
       </v-window-item>
     </v-window>
   </v-card>

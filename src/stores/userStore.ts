@@ -10,7 +10,6 @@ export const useUserStore = defineStore('user', () => {
     email: '',
     authorities: null,
     token: '',
-    chargeDegrees: null,
     chargeGrades: null
   })
 
@@ -22,7 +21,6 @@ export const useUserStore = defineStore('user', () => {
     user.email = newUser.email
     user.token = newUser.token
     user.authorities = newUser.authorities
-    user.chargeDegrees = newUser.chargeDegrees
     user.chargeGrades = newUser.chargeGrades
   }
 
@@ -39,7 +37,6 @@ export const useUserStore = defineStore('user', () => {
       authorities: null,
       token: '',
       chargeGrades: null,
-      chargeDegrees: null
     })
   }
   return { user, getUserData, updateUser, hasAuthorized, cleanStore }

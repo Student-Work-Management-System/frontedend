@@ -25,7 +25,6 @@ const has = (authority: string) => {
 }
 
 const chargeGrades = store.getUserData.chargeGrades
-const chargeDegrees = store.getUserData.chargeDegrees
 
 const deleteStudent = () => {
   emit('deleteButtonClick')
@@ -68,13 +67,6 @@ watch(
       <div class="d-flex align-center gap-4">
         <div class="flex-grow-1">
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
-            <MajorSelect
-              :model-value="studentQuery.majorId"
-              @update:model-value="(v) => debouncedUpdateQuery('majorId', v as string | null)"
-              label="专业"
-              variant="underlined"
-              density="compact"
-            />
             <GradeSelect
               :model-value="studentQuery.gradeId"
               :charge-grades="chargeGrades"
@@ -83,6 +75,15 @@ watch(
               variant="underlined"
               density="compact"
             />
+
+            <MajorSelect
+              :model-value="studentQuery.majorId"
+              @update:model-value="(v) => debouncedUpdateQuery('majorId', v as string | null)"
+              label="专业"
+              variant="underlined"
+              density="compact"
+            />
+
             <ItemSelect
               :model-value="studentQuery.gender"
               @update:model-value="(v) => debouncedUpdateQuery('gender', v as string | null)"
@@ -91,23 +92,37 @@ watch(
               density="compact"
               :items="['男', '女']"
             />
+
+            <DegreeSelect
+              :model-value="studentQuery.degreeId"
+              @update:model-value="(v) => debouncedUpdateQuery('degreeId', v as string | null)"
+              label="学历"
+              variant="underlined"
+              density="compact"
+            />
+
+            <StatusSelect
+              :model-value="studentQuery.statusId"
+              @update:model-value="(v) => debouncedUpdateQuery('statusId', v as string | null)"
+              label="学籍状态"
+              variant="underlined"
+              density="compact"
+            />
+
+            <PoliticSelect
+              :model-value="studentQuery.politicId"
+              @update:model-value="(v) => debouncedUpdateQuery('politicId', v as string | null)"
+              label="政治面貌"
+              variant="underlined"
+              density="compact"
+            />
+
             <v-text-field
               :model-value="studentQuery.classNo"
               @update:model-value="
                 (v: string) => debouncedUpdateQuery('classNo', v as string | null)
               "
               label="班号"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.dormitory"
-              @update:model-value="(v) => debouncedUpdateQuery('dormitory', v as string | null)"
-              label="宿舍"
               class="text-indigo text-input-select"
               variant="underlined"
               color="indigo"
@@ -128,12 +143,16 @@ watch(
               clearable
             />
 
-            <PoliticSelect
-              :model-value="studentQuery.politicId"
-              @update:model-value="(v) => debouncedUpdateQuery('politicId', v as string | null)"
-              label="政治面貌"
+            <v-text-field
+              :model-value="studentQuery.dormitory"
+              @update:model-value="(v) => debouncedUpdateQuery('dormitory', v as string | null)"
+              label="宿舍"
+              class="text-indigo text-input-select"
               variant="underlined"
+              color="indigo"
               density="compact"
+              hide-details
+              clearable
             />
 
             <v-text-field
@@ -147,6 +166,7 @@ watch(
               hide-details
               clearable
             />
+
             <v-text-field
               :model-value="studentQuery.religiousBeliefs"
               @update:model-value="
@@ -160,6 +180,9 @@ watch(
               hide-details
               clearable
             />
+          </v-col>
+
+          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.location"
               @update:model-value="(v) => debouncedUpdateQuery('location', v as string | null)"
@@ -173,9 +196,7 @@ watch(
             >
               <v-tooltip activator="parent" location="top"> 省/市/县 </v-tooltip>
             </v-text-field>
-          </v-col>
 
-          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <v-text-field
               :model-value="studentQuery.address"
               @update:model-value="(v) => debouncedUpdateQuery('address', v as string | null)"
@@ -334,21 +355,7 @@ watch(
               hide-details
               clearable
             />
-            <DegreeSelect
-              :model-value="studentQuery.degreeId"
-              :charge-degrees="chargeDegrees as Degree[]"
-              @update:model-value="(v) => debouncedUpdateQuery('degreeId', v as string | null)"
-              label="学历"
-              variant="underlined"
-              density="compact"
-            />
-            <StatusSelect
-              :model-value="studentQuery.statusId"
-              @update:model-value="(v) => debouncedUpdateQuery('statusId', v as string | null)"
-              label="学籍状态"
-              variant="underlined"
-              density="compact"
-            />
+
             <TrueOrFalseSelect
               :model-value="studentQuery.disability"
               @update:model-value="(v) => debouncedUpdateQuery('disability', v as boolean)"

@@ -1,7 +1,7 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import type { StudentStatusItem } from '@/model/studentModel'
+import type { StudentStatItem } from '@/model/studentModel'
 import { apiGetStudentStat } from '@/api/student'
 import { useBaseStore } from '@/stores/baseStore'
 import { debounce } from '@visactor/vchart/esm/util'
@@ -15,7 +15,7 @@ const userStore = useUserStore()
 
 // 计算当前学历层次名称
 const currentDegreeName = computed(() => {
-  const degrees = userStore.getUserData.chargeDegrees
+  const degrees = baseStore.getDegreeList()
   const currentDegree = degrees?.find((degree) => degree.degreeId === studentQuery.degreeId)
   return currentDegree?.degreeName || ''
 })
@@ -32,7 +32,7 @@ const tableTitle = computed(() => {
   return `${currentGradeName.value}${currentDegreeName.value}学生信息统计`
 })
 
-const tableData = ref<StudentStatusItem[]>([])
+const tableData = ref<StudentStatItem[]>([])
 
 // 表格合计行
 const getSummaries = (param: any) => {

@@ -44,7 +44,6 @@ const loginHandler = async () => {
   }
   store.updateUser(result.data)
   baseStore.updateStudentQuery('gradeId', result.data.chargeGrades?.[0].gradeId as string | null)
-  baseStore.updateStudentQuery('degreeId', result.data.chargeDegrees?.[0].degreeId as string | null)
   setAuthorizationToken(result.data.token)
   if (remember.value) {
     localStorage.setItem('user-cache', JSON.stringify(result.data))

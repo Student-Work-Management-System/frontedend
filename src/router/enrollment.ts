@@ -12,7 +12,7 @@ export default {
     {
       path: '/enrollment/import',
       name: 'enrollment-import',
-      component: () => import('@/views/home/enrollment/EnrollImport.vue'),
+      component: () => import('@/views/home/enrollment/EnrollmentImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '招生信息录入',
@@ -23,7 +23,7 @@ export default {
     {
       path: '/enrollment/list',
       name: 'enrollment-list',
-      component: () => import('@/views/home/enrollment/EnrollDataTabs.vue'),
+      component: () => import('@/views/home/enrollment/EnrollmentDataTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '招生信息统计',

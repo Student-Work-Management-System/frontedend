@@ -68,7 +68,6 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 const chargeGrade = store.getUserData.chargeGrades
-const chargeDegree = store.getUserData.chargeDegrees
 
 const onEdit = (row: StudentEmploymentItem) => {
   editModel.value = row
@@ -209,12 +208,7 @@ onMounted(() => {
     </span>
 
     <span class="w-12">
-      <DegreeSelect
-        :charge-degrees="chargeDegree"
-        v-model="query.degreeId"
-        variant="underlined"
-        density="compact"
-      />
+      <DegreeSelect v-model="query.degreeId" variant="underlined" density="compact" />
     </span>
 
     <span class="w-12">

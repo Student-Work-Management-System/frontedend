@@ -23,7 +23,6 @@ const deleteDialog = ref(false)
 const editDialog = ref(false)
 const store = useUserStore()
 const chargeGrades = store.user.chargeGrades
-const chargeDegrees = store.user.chargeDegrees
 const query = reactive<ForeignLanguageQuery>({
   search: '',
   majorId: null,
@@ -178,12 +177,7 @@ onMounted(() => {
         />
       </span>
       <span class="w-10">
-        <DegreeSelect
-          v-model="query.degreeId"
-          :chargeDegrees="chargeDegrees"
-          variant="underlined"
-          density="compact"
-        />
+        <DegreeSelect v-model="query.degreeId" variant="underlined" density="compact" />
       </span>
       <span class="w-10">
         <LanguageSelect v-model="query.languageId" variant="underlined" density="compact" />
