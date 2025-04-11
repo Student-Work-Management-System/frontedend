@@ -23,7 +23,7 @@ export default {
     {
       path: '/academic/review',
       name: 'academic-review',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/academicWork/AcademicWorkAudit.vue'),
       meta: {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
@@ -34,23 +34,12 @@ export default {
     {
       path: '/academic/list',
       name: 'academic-list',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/academicWork/AcademicWorkStat.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '学术成果统计',
         hasPage: true,
         auth: 'student_academic_work_audit:select'
-      }
-    },
-    {
-      path: '/academic/manage',
-      name: 'academic-manage',
-      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
-      meta: {
-        icon: 'mdi-cog',
-        title: '学术成果管理',
-        hasPage: true,
-        auth: 'student_academic_work_audit:update'
       }
     }
   ]
