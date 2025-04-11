@@ -19,6 +19,7 @@ export interface UserData {
     username: string
     realName: string
     email: string
+    isStudent: boolean
     authorities: Authority[] | null
     chargeGrades: Grade[] | null
     token: string

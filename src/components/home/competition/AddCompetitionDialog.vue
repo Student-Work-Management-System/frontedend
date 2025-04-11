@@ -46,7 +46,7 @@ const clearCompetitionInfo = () => {
   <v-dialog width="auto" min-width="500" height="auto" v-model="model">
     <v-window>
       <v-window-item :value="1">
-        <v-card width="auto" prepend-icon="mdi-vector-arrange-below" title="职位信息">
+        <v-card width="auto" prepend-icon="mdi-vector-arrange-below" title="竞赛信息">
           <v-container>
             <v-form v-model="form" class="px-8 form">
               <v-text-field

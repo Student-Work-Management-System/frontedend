@@ -11,6 +11,7 @@ export * from './foreign-import.header'
 export * from "./status-import-header"
 export * from "./scholarship-import-header"
 export * from "./punishment-import-headers"
+export * from "./academicWork-import-header"
 
 export interface TableHeader {
   type: string

@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AcademicWorkDialog: typeof import('./src/components/home/academicWork/AcademicWorkDialog.vue')['default']
+    AcademicWorkMemberDailog: typeof import('./src/components/home/academicWork/AcademicWorkMemberDailog.vue')['default']
     AcademicYearSelect: typeof import('./src/components/home/poverty/AcademicYearSelect.vue')['default']
     AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
     AddCompetitionDialog: typeof import('./src/components/home/competition/AddCompetitionDialog.vue')['default']
@@ -19,6 +21,7 @@ declare module 'vue' {
     AddRoleForm: typeof import('./src/components/home/system/AddRoleForm.vue')['default']
     AddScholarshipDialog: typeof import('./src/components/home/scholarship/AddScholarshipDialog.vue')['default']
     AddStatusForm: typeof import('./src/components/home/status/AddStatusForm.vue')['default']
+    AddStudentAcademicWorkDialog: typeof import('./src/components/home/academicWork/AddStudentAcademicWorkDialog.vue')['default']
     AddUserForm: typeof import('./src/components/home/system/AddUserForm.vue')['default']
     CadreSelect: typeof import('./src/components/home/cadre/CadreSelect.vue')['default']
     CompetitionAuditDialog: typeof import('./src/components/home/competition/CompetitionAuditDialog.vue')['default']
@@ -56,6 +59,7 @@ declare module 'vue' {
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
     ItemSelect: typeof import('./src/components/home/ItemSelect.vue')['default']
+    KeyValueSelect: typeof import('./src/components/home/KeyValueSelect.vue')['default']
     LanguageSelect: typeof import('./src/components/home/foreign/LanguageSelect.vue')['default']
     LevelSelect: typeof import('./src/components/home/competition/LevelSelect.vue')['default']
     MajorForm: typeof import('./src/components/home/system/MajorForm.vue')['default']
@@ -76,6 +80,7 @@ declare module 'vue' {
     StudentStatusDetailDialog: typeof import('./src/components/home/status/StudentStatusDetailDialog.vue')['default']
     TrueOrFalseSelect: typeof import('./src/components/home/TrueOrFalseSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
+    UserSelect: typeof import('./src/components/home/academicWork/UserSelect.vue')['default']
     WhereaboutSelect: typeof import('./src/components/home/employment/WhereaboutSelect.vue')['default']
   }
 }

@@ -8,6 +8,7 @@ export const useUserStore = defineStore('user', () => {
     username: '',
     realName: '',
     email: '',
+    isStudent: true,
     authorities: null,
     token: '',
     chargeGrades: null
@@ -22,6 +23,7 @@ export const useUserStore = defineStore('user', () => {
     user.token = newUser.token
     user.authorities = newUser.authorities
     user.chargeGrades = newUser.chargeGrades
+    user.isStudent = newUser.isStudent
   }
 
   function hasAuthorized(authority: string): boolean {
@@ -37,6 +39,7 @@ export const useUserStore = defineStore('user', () => {
       authorities: null,
       token: '',
       chargeGrades: null,
+      isStudent: false
     })
   }
   return { user, getUserData, updateUser, hasAuthorized, cleanStore }

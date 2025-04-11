@@ -1,24 +1,27 @@
-<!-- eslint-disable vue/valid-v-slot -->
-<script lang="ts" setup>
-import { apiGetCompetitions, apiGetOwnCompetition } from '@/api/competition'
+<script setup lang="ts">
+import { academicWorkTypes, apiGetStudentOwn } from '@/api/academicWork'
 import { apiDownloadFile } from '@/api/file'
 import { useUserStore } from '@/stores/userStore'
-import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import { studentCompetitionTableHeaders } from '@/misc/table/competition-import-header'
-import CompetitionStudentAddForm from '@/components/home/competition/CompetitionStudentAddForm.vue'
-import { useCompetitionStore } from '@/stores/competitionStore'
-import CompetitionMemberDialog from '@/components/home/competition/CompetitionMemberDialog.vue'
-import type { TeamItem } from '@/model/competitionModel'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import type {
+  StudentAcademicWorkItem,
+  StudentAcademicWorkMemberItem
+} from '@/model/academicWorkModel'
+import { studentAcademicWorkTableHeader } from '@/misc/table'
+import AcademicWorkDialog from '@/components/home/academicWork/AcademicWorkDialog.vue'
+import AcademicWorkMemberDailog from '@/components/home/academicWork/AcademicWorkMemberDailog.vue'
+import AddStudentAcademicWorkDialog from '@/components/home/academicWork/AddStudentAcademicWorkDialog.vue'
 
 const loading = ref(false)
-const selected = ref<any[]>([])
-const data = ref<any[]>([])
+const selected = ref<StudentAcademicWorkItem[]>([])
+const data = ref<StudentAcademicWorkItem[]>([])
 const addDialog = ref(false)
 const store = useUserStore()
-const competitionStore = useCompetitionStore()
 const membersDialog = ref(false)
-const membersDialogStudentIds = ref<string[]>([])
+const membersDialogInfo = ref<StudentAcademicWorkMemberItem[]>([])
+const workDialog = ref(false)
+const workDialogInfo = ref<StudentAcademicWorkItem>()
 
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
@@ -28,10 +31,10 @@ const pageOptions = reactive({
   pageNo: 1
 })
 
-const fetchStudentCompetitionLogic = async () => {
+const fetchStudentOwnAcademic = async () => {
   try {
     if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
-    const { data: result } = await apiGetOwnCompetition()
+    const { data: result } = await apiGetStudentOwn(store.getUserData.username)
     if (result.code !== 200) {
       console.error(result)
       notify({ type: 'error', title: '错误', text: result.message })
@@ -45,30 +48,31 @@ const fetchStudentCompetitionLogic = async () => {
     loading.value = false
   }
 }
-onMounted(fetchStudentCompetitionLogic)
+onMounted(fetchStudentOwnAcademic)
 
-const downloadEvidence = async (filename: string) => {
-  loading.value = true
-  try {
-    const { data: result } = await apiDownloadFile(filename)
-    notify({ title: '成功', text: '下载已开始！', type: 'success' })
-    const url = URL.createObjectURL(result)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename.split('-').slice(1).join('')
-    a.click()
-    URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error(error)
-    notify({ title: '错误', text: '下载失败！', type: 'error' })
-  } finally {
-    loading.value = false
-  }
+const viewMembers = (item: StudentAcademicWorkMemberItem[]) => {
+  membersDialogInfo.value = item
+  membersDialog.value = true
 }
 
-const afterLogic = () => {
-  addDialog.value = false
-  fetchStudentCompetitionLogic()
+const viewWork = (item: StudentAcademicWorkItem) => {
+  workDialog.value = true
+  workDialogInfo.value = item
+}
+
+const getTypeLabel = (value: string) => {
+  return academicWorkTypes.find((it) => it.val == value)?.key
+}
+
+const checkAcademicWorkIcon = (value: string) => {
+  switch (value) {
+    case 'paper':
+      return 'mdi-file-document-outline' // 代表文档/论文
+    case 'soft':
+      return 'mdi-application-cog-outline' // 代表应用/软件
+    default:
+      return 'mdi-lightbulb-outline' // 代表创意/专利
+  }
 }
 
 const checkStateColor = (state: string): 'indigo' | 'green' | 'error' => {
@@ -93,36 +97,24 @@ const checkStateIcon = (state: string): string => {
   }
 }
 
-const checkCompetitionIsSolo = (competitionId: string) => {
-  return competitionStore.checkCompetitionIsSolo(competitionId)
-}
-
-const viewMembers = (team: TeamItem[]) => {
-  const studentIds = team.map((item: TeamItem) => item.studentId)
-  membersDialogStudentIds.value = studentIds
-  membersDialog.value = true
-}
-
-onMounted(async () => {
-  if (competitionStore.getCompetitionList().length === 0) {
-    loading.value = true
-    const { data: result } = await apiGetCompetitions({
-      search: '',
-      competitionNature: null,
-      competitionType: null,
-      pageNo: 1,
-      pageSize: 999
-    })
-    if (result.code !== 200) {
-      console.error(result)
-      notify({ type: 'error', title: '错误', text: result.message })
-      loading.value = false
-      return
-    }
-    competitionStore.setCompetitionList(result.data.records)
+const downloadEvidence = async (filename: string) => {
+  loading.value = true
+  try {
+    const { data: result } = await apiDownloadFile(filename)
+    notify({ title: '成功', text: '下载已开始！', type: 'success' })
+    const url = URL.createObjectURL(result)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename.split('-').slice(1).join('')
+    a.click()
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error(error)
+    notify({ title: '错误', text: '下载失败！', type: 'error' })
+  } finally {
     loading.value = false
   }
-})
+}
 
 // 高度计算相关
 const containerHeight = ref(0)
@@ -131,7 +123,6 @@ const titleContainerHeight = ref(0)
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - titleContainerHeight.value - 125
 })
-
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -144,7 +135,6 @@ onMounted(() => {
       }
     }
   })
-
   // 观察元素
   const container = document.querySelector('.card-container')
   const selectMenu = document.querySelector('.menu')
@@ -161,18 +151,20 @@ onMounted(() => {
 </script>
 
 <template>
+  <AcademicWorkMemberDailog
+    v-model="membersDialog"
+    :members="membersDialogInfo"
+    @on-close="membersDialog = false"
+  />
+
+  <AcademicWorkDialog v-model="workDialog" :item="workDialogInfo!" />
+
+  <AddStudentAcademicWorkDialog v-model="addDialog" @on-closed="addDialog = false" />
+
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <CompetitionStudentAddForm v-model="addDialog" @on-closed="afterLogic" />
-
-    <CompetitionMemberDialog
-      v-model="membersDialog"
-      :student-ids="membersDialogStudentIds"
-      @on-close="membersDialog = false"
-    />
-
     <div class="pt-6 px-4 title-container">
       <v-alert
-        text="团队类型竞赛比赛只需要队长填写即可。"
+        text="学术作品一般由作者 / 第一作者填写"
         title="提示："
         type="info"
         color="indigo"
@@ -182,13 +174,13 @@ onMounted(() => {
 
     <section class="menu">
       <v-btn
-        v-if="has('student_competition:select')"
+        v-if="has('student_academic_work:select')"
         prepend-icon="mdi-refresh"
-        @click="fetchStudentCompetitionLogic"
+        @click="fetchStudentOwnAcademic"
         text="刷新"
       />
       <v-btn
-        v-if="has('student_competition:insert')"
+        v-if="has('student_academic_work:insert')"
         prepend-icon="mdi-plus-circle"
         color="primary"
         @click="addDialog = true"
@@ -200,7 +192,7 @@ onMounted(() => {
       <v-card>
         <v-data-table
           v-model="selected"
-          :headers="studentCompetitionTableHeaders as any"
+          :headers="studentAcademicWorkTableHeader as any"
           :height="tableHeight"
           :items="data"
           :loading="loading"
@@ -210,9 +202,15 @@ onMounted(() => {
           return-object
         >
           <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template v-slot:item.type="{ item }">
+            <v-chip class="mr-1" :prepend-icon="checkAcademicWorkIcon(item.type)" color="primary">
+              {{ getTypeLabel(item.type) }}
+            </v-chip>
+          </template>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.headerInfo="{ item }">
             <v-chip class="mr-1" prepend-icon="mdi-account" color="primary">
-              {{ item.headerId }} - {{ item.headerName }}
+              {{ item.username }} - {{ item.realName }}
             </v-chip>
           </template>
           <!-- eslint-disable-next-line vue/valid-v-slot -->
@@ -229,7 +227,6 @@ onMounted(() => {
           <template v-slot:item.operations="{ item }">
             <div class="d-flex justify-center">
               <v-btn
-                v-if="!checkCompetitionIsSolo(item.competitionId)"
                 text="查看成员"
                 variant="text"
                 color="indigo"
@@ -237,7 +234,14 @@ onMounted(() => {
                 @click="viewMembers(item.team)"
               />
               <v-btn
-                v-if="has('student_competition:select') && has('file:download')"
+                text="查看作品详情"
+                variant="text"
+                color="indigo"
+                prepend-icon="mdi-eye"
+                @click="viewWork(item)"
+              />
+              <v-btn
+                v-if="has('student_academic_work:select') && has('file:download')"
                 color="indigo"
                 prepend-icon="mdi-download"
                 variant="text"

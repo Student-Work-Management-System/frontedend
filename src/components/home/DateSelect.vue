@@ -48,7 +48,11 @@ const computedLabel = computed(() => {
     clearable
     @click="dialog = true"
     @click:clear="model = null"
-  />
+  >
+    <template v-slot:prepend>
+      <slot></slot>
+    </template>
+  </v-text-field>
   <v-dialog width="500" v-model="dialog">
     <v-card prepend-icon="mdi-calendar-range" title="日期选择">
       <VDatePicker

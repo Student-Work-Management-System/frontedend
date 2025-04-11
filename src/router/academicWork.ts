@@ -12,7 +12,7 @@ export default {
     {
       path: '/academic/import',
       name: 'academic-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/academicWork/AcademicWorkUpload.vue'),
       meta: {
         icon: 'mdi-cloud-upload',
         title: '学生成果上报',
@@ -28,7 +28,7 @@ export default {
         icon: 'mdi-eye-settings-outline',
         title: '上报情况审核',
         hasPage: true,
-        auth: 'student_academic_work_claim:update'
+        auth: 'student_academic_work_audit:update'
       }
     },
     {
@@ -39,7 +39,7 @@ export default {
         icon: 'mdi-chart-bar',
         title: '学术成果统计',
         hasPage: true,
-        auth: 'student_academic_work_claim:select'
+        auth: 'student_academic_work_audit:select'
       }
     },
     {
@@ -50,7 +50,7 @@ export default {
         icon: 'mdi-cog',
         title: '学术成果管理',
         hasPage: true,
-        auth: 'student_academic_work_claim:update'
+        auth: 'student_academic_work_audit:update'
       }
     }
   ]

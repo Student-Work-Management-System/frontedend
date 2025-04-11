@@ -11,6 +11,7 @@ export function getCadreLevers(): string[] {
 export async function apiGetCadreList(): Promise<AxiosResponse<Result<Cadre[]>>> {
   return http.get('/cadre/gets')
 }
+
 export async function apiGetStudentCadreList(query: CadreQuery): Promise<AxiosResponse<Result<RecordsPage<StudentCadreItem>>>> {
   return http.post('/student_cadre/gets', query)
 }
@@ -30,9 +31,11 @@ export async function apiAddStudentCadres(studentCadres: StudentCadre[]): Promis
 export async function apiUpdateCadre(cadre: Cadre) {
   return http.put('/cadre/update', cadre)
 }
+
 export async function apiUpdateStudentCadre(studentCadre: StudentCadre) {
   return http.put('/student_cadre/update', studentCadre)
 }
+
 export async function apiDeleteCadre(cadreId: string): Promise<AxiosResponse<Result<null>>> {
   return http.delete(`/cadre/delete/${cadreId}`)
 }
