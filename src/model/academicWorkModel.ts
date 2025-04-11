@@ -18,7 +18,7 @@ export interface AcademicWork {
 }
 
 export interface StudentPaper extends AcademicWork {
-    studentPaperId: string
+    studentPaperId?: string
     periodicalName: string
     jrcPartition: string
     casPartition: string
@@ -28,20 +28,23 @@ export interface StudentPaper extends AcademicWork {
     isChineseCore: boolean
     isEI: boolean
     isEIRecorded: boolean
+    type: AcademicWorkType
 }
 
 export interface StudentSoft extends AcademicWork {
-    studentSoftId: string
+    studentSoftId?: string
     publishInstitution: string
     publishDate: string
+    type: AcademicWorkType
 }
 
 export interface StudentPatent extends AcademicWork {
-    studentPatentId: string
+    studentPatentId?: string
     publishState: string
     publishDate: string
     acceptDate: string
     authorizationDate: string
+    type: AcademicWorkType
 }
 
 export interface StudentAcademicWork {
@@ -80,7 +83,7 @@ export interface AcademicWorkRequest {
     type: AcademicWorkType
     team: AcademicWorkMember[]
     evidence: string
-    academic: AcademicWork | null
+    academicWork: AcademicWork | null;
 }
 
 export interface AcademicWorkQuery {
@@ -118,7 +121,7 @@ export interface StudentAcademicWorkItem {
     rejectReason: string
 }
 
-export interface AcademicWorkUser { 
+export interface AcademicWorkUser {
     uid: string
     username: string
     realName: string

@@ -37,6 +37,7 @@ const computedLabel = computed(() => {
 </script>
 <template>
   <v-text-field
+    v-bind="$attrs"
     :label="computedLabel"
     color="indigo"
     class="text-indigo"

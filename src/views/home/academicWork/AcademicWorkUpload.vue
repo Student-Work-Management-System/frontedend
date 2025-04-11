@@ -116,6 +116,11 @@ const downloadEvidence = async (filename: string) => {
   }
 }
 
+const afterAdd = async () => {
+  addDialog.value = false
+  fetchStudentOwnAcademic()
+}
+
 // 高度计算相关
 const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
@@ -159,7 +164,7 @@ onMounted(() => {
 
   <AcademicWorkDialog v-model="workDialog" :item="workDialogInfo!" />
 
-  <AddStudentAcademicWorkDialog v-model="addDialog" @on-closed="addDialog = false" />
+  <AddStudentAcademicWorkDialog v-model="addDialog" @on-closed="afterAdd" />
 
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <div class="pt-6 px-4 title-container">

@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import type { AcademicWorkRequest, AcademicWorkUser } from '@/model/academicWorkModel'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { academicWorkTypes, apiGetOptionalUser } from '@/api/academicWork'
+import type {
+  AcademicWorkRequest,
+  AcademicWorkUser,
+  StudentPaper,
+  StudentPatent,
+  StudentSoft
+} from '@/model/academicWorkModel'
+import { computed, onMounted, reactive, ref, toRaw, watch } from 'vue'
+import { apiUploadFile } from '@/api/file'
+import {
+  academicWorkTypes,
+  apiAddStudentAcademicWork,
+  apiGetOptionalUser
+} from '@/api/academicWork'
+import DateSelect from '../DateSelect.vue'
 import KeyValueSelect from '../KeyValueSelect.vue'
 import { notify } from '@kyvg/vue3-notification'
 import { useUserStore } from '@/stores/userStore'
@@ -19,6 +31,63 @@ const searchLoading = ref(false)
 const userOptions = ref<AcademicWorkUser[]>([])
 const selectedUser = ref<AcademicWorkUser[]>([])
 
+const targetAcademicWork = computed(() => {
+  if (work.type === 'paper') {
+    return paper
+  } else if (work.type === 'soft') {
+    return soft
+  } else {
+    return patent
+  }
+})
+
+const work = reactive<AcademicWorkRequest>({
+  uid: userStore.getUserData.uid,
+  workName: '',
+  type: 'paper',
+  team: [],
+  evidence: '',
+  academicWork: targetAcademicWork
+})
+
+const paper = ref<StudentPaper>({
+  periodicalName: '',
+  jrcPartition: '',
+  casPartition: '',
+  recordedTime: '',
+  searchedTime: '',
+  isMeeting: false,
+  isChineseCore: false,
+  isEI: false,
+  isEIRecorded: false,
+  type: 'paper'
+})
+
+const soft = ref<StudentSoft>({
+  publishInstitution: '',
+  publishDate: '',
+  type: 'soft'
+})
+
+const patent = ref<StudentPatent>({
+  publishState: '',
+  publishDate: '',
+  acceptDate: '',
+  authorizationDate: '',
+  type: 'patent'
+})
+
+const isPaper = (type: string) => {
+  return type === 'paper'
+}
+
+const isSoft = (type: string) => {
+  return type === 'soft'
+}
+
+const isPatent = (type: string) => {
+  return type === 'patent'
+}
 const fetchUsers = async (val: string) => {
   if (!val || val.length <= 0) return
   searchLoading.value = true
@@ -58,24 +127,66 @@ const applySelectedUsers = () => {
   selectedUser.value = []
 }
 
-const work = reactive<AcademicWorkRequest>({
-  uid: userStore.getUserData.uid,
-  workName: '',
-  type: 'paper',
-  team: [],
-  evidence: '',
-  academic: null
-})
+const addStudentAcademicWork = async () => {
+  try {
+    loading.value = true
+    // const { data: uploadFileResult } = await apiUploadFile('academic', files.value[0])
+    // if (uploadFileResult.code !== 200) {
+    //   notify({ type: 'error', title: '错误', text: uploadFileResult.message })
+    //   loading.value = false
+    //   return
+    // }
+    // work.evidence = uploadFileResult.data
+    work.evidence = 'www.baidu.com'
+    work.academicWork = targetAcademicWork.value
+    const { data: result } = await apiAddStudentAcademicWork(work)
+    if (result.code !== 200) {
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
+    notify({ type: 'success', title: '成功', text: '学术作品添加成功！' })
+  } catch (error) {
+    console.log(error)
+    notify({ type: 'error', title: '错误', text: `${error}` })
+  } finally {
+    loading.value = false
+    step.value = 1
+    emits('onClosed')
+    initWork()
+  }
+}
 
-const addStudentAcademicWork = async () => {}
-
-onMounted(() => {
+const initWork = () => {
+  work.type = 'paper'
+  work.evidence = ''
+  work.academicWork = targetAcademicWork
+  work.team = []
   selectedUser.value.push({
     uid: userStore.getUserData.uid,
     username: userStore.getUserData.username,
     realName: userStore.getUserData.realName
   })
-})
+  work.uid = userStore.getUserData.uid
+  work.workName = ''
+  paper.value.casPartition = ''
+  paper.value.isChineseCore = false
+  paper.value.isEI = false
+  paper.value.isEIRecorded = false
+  paper.value.isMeeting = false
+  paper.value.jrcPartition = ''
+  paper.value.periodicalName = ''
+  paper.value.recordedTime = ''
+  paper.value.searchedTime = ''
+  soft.value.publishInstitution = ''
+  soft.value.publishDate = ''
+  patent.value.publishDate = ''
+  patent.value.authorizationDate = ''
+  patent.value.acceptDate = ''
+  patent.value.publishState = ''
+}
+
+onMounted(initWork)
 </script>
 
 <template>
@@ -91,7 +202,7 @@ onMounted(() => {
                 class="text-indigo"
                 color="indigo"
                 required
-                :rules="[() => !!work.workName || '该选项必填！']"
+                :rules="[() => work.workName.length >= 0 || '该选项必填！']"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
@@ -107,6 +218,7 @@ onMounted(() => {
 
           <v-container class="w-100 d-flex justify-space-evenly">
             <v-btn
+              :disabled="work.workName.length <= 0 || work.type === null"
               text="下一步"
               :loading="loading"
               color="indigo"
@@ -172,6 +284,152 @@ onMounted(() => {
               variant="plain"
               @click="applySelectedUsers(), step++"
             />
+          </v-container>
+        </v-window-item>
+
+        <v-window-item :value="3">
+          <v-container class="px-8">
+            <v-form v-model="form" class="px-8 form">
+              <!-- 论文类型 -->
+              <template v-if="isPaper(work.type)">
+                <v-text-field
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.periodicalName"
+                  label="期刊名称"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                  </template>
+                </v-text-field>
+
+                <v-text-field
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.jrcPartition"
+                  label="JCR分区"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                  </template>
+                </v-text-field>
+
+                <v-text-field
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.casPartition"
+                  label="CAS分区"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                  </template>
+                </v-text-field>
+
+                <DateSelect class="mb-5" v-model="paper!.recordedTime" label="收录时间">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+
+                <DateSelect class="mt-5" v-model="paper!.searchedTime" label="检索时间">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+
+                <v-checkbox
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.isMeeting"
+                  label="会议论文"
+                />
+                <v-checkbox
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.isChineseCore"
+                  label="中文核心"
+                />
+                <v-checkbox
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.isEI"
+                  label="EI收录"
+                />
+                <v-checkbox
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="paper!.isEIRecorded"
+                  label="EI检索"
+                />
+              </template>
+
+              <!-- 软件著作类型 -->
+              <template v-else-if="isSoft(work.type)">
+                <v-text-field
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="soft!.publishInstitution"
+                  label="登记机构"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                  </template>
+                </v-text-field>
+                <DateSelect v-model="soft!.publishDate" label="登记日期">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+              </template>
+
+              <!-- 专利类型 -->
+              <template v-else-if="isPatent(work.type)">
+                <v-text-field
+                  color="indigo"
+                  class="text-indigo"
+                  v-model="patent!.publishState"
+                  label="授权状态"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                  </template>
+                </v-text-field>
+                <DateSelect v-model="patent!.publishDate" label="发表日期">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+                <DateSelect class="mt-5" v-model="patent!.acceptDate" label="受理日期">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+                <DateSelect class="mt-5" v-model="patent!.authorizationDate" label="授权日期">
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </DateSelect>
+              </template>
+            </v-form>
+          </v-container>
+
+          <v-divider></v-divider>
+
+          <v-container class="w-100 d-flex justify-space-evenly">
+            <v-btn text="上一步" @click="step--" />
+            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
+            <v-btn text="下一步" color="indigo" variant="plain" @click="step++" />
+          </v-container>
+        </v-window-item>
+
+        <v-window-item :value="4">
+          <v-container class="px-8">
+            <v-file-input
+              v-model="files"
+              class="text-indigo"
+              color="indigo"
+              variant="outlined"
+              counter
+              show-size
+              free-select
+              label="证明材料 文件选择"
+            />
+
+            <v-divider></v-divider>
+
+            <v-container class="w-100 d-flex justify-space-evenly">
+              <v-btn text="上一步" @click="step--" />
+              <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
+              <v-btn text="提交" color="indigo" variant="plain" @click="addStudentAcademicWork" />
+            </v-container>
           </v-container>
         </v-window-item>
       </v-window>
