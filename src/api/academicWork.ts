@@ -24,15 +24,15 @@ export async function apiGetStudentOwn(studentId: string): Promise<AxiosResponse
 }
 
 export async function apiGetAllStudentAcademicWork(query: AcademicWorkQuery): Promise<AxiosResponse<Result<RecordsPage<StudentAcademicWorkItem>>>> {
-    return http.post('/academic_work/get', query)
+    return http.post('/academic_work/gets', query)
 }
 
 export async function apiAddStudentAcademicWork(request: AcademicWorkRequest): Promise<AxiosResponse<Result<void>>> {
     return http.post('/academic_work/add', request)
 }
 
-export async function apiUpdateStudentAcademicWorkAudit(audit: StudentAcademicWorkAudit): Promise<AxiosResponse<Result<void>>> {
-    return http.put('/academic_work/update', audit)
+export async function apiUpdateStudentAcademicWorkAudit(audits: StudentAcademicWorkAudit[]): Promise<AxiosResponse<Result<void>>> {
+    return http.put('/academic_work/update', audits)
 }
 
 export async function apiDeleteStudentAcademicWork(studentAcademicWorkId: string): Promise<AxiosResponse<Result<void>>> {

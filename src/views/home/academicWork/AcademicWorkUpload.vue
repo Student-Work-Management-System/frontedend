@@ -27,8 +27,8 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 const pageOptions = reactive({
-  pageSize: 10,
-  pageNo: 1
+  pageNo: 1,
+  pageSize: 10
 })
 
 const fetchStudentOwnAcademic = async () => {

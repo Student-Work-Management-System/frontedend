@@ -6,7 +6,7 @@ import type {
   StudentPatent,
   StudentSoft
 } from '@/model/academicWorkModel'
-import { computed, onMounted, reactive, ref, toRaw, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { apiUploadFile } from '@/api/file'
 import {
   academicWorkTypes,
@@ -42,7 +42,7 @@ const targetAcademicWork = computed(() => {
 })
 
 const work = reactive<AcademicWorkRequest>({
-  uid: userStore.getUserData.uid,
+  username: userStore.getUserData.username,
   workName: '',
   type: 'paper',
   team: [],
@@ -109,7 +109,7 @@ watch(search, (val) => {
 })
 
 const addToSelectedUser = (user: AcademicWorkUser) => {
-  const exists = selectedUser.value.find((u) => u.uid === user.uid)
+  const exists = selectedUser.value.find((u) => u.username === user.username)
   if (!exists) {
     selectedUser.value.push(user)
   } else {
@@ -120,12 +120,63 @@ const addToSelectedUser = (user: AcademicWorkUser) => {
 const applySelectedUsers = () => {
   selectedUser.value.forEach((user, index) => {
     work.team.push({
-      uid: user.uid,
+      username: user.username,
       memberOrder: String(work.team.length + 1 + index)
     })
   })
-  selectedUser.value = []
 }
+
+const stepOneNext = () => {
+  step.value++
+  selectedUser.value = []
+  selectedUser.value.push({
+    username: userStore.getUserData.username,
+    realName: userStore.getUserData.realName
+  })
+}
+
+const stepTwoBack = () => {
+  step.value--
+}
+
+const stepTwoNext = () => {
+  step.value++
+  applySelectedUsers()
+}
+
+const stepThreeBack = () => {
+  step.value--
+  work.team = []
+}
+
+const paperEnabled = computed(() => {
+  return (
+    paper.value.casPartition === '' ||
+    paper.value.jrcPartition === '' ||
+    paper.value.periodicalName === '' ||
+    paper.value.recordedTime === '' ||
+    paper.value.searchedTime === ''
+  )
+})
+
+const softEnabled = computed(() => {
+  return soft.value.publishDate === '' || soft.value.publishInstitution === ''
+})
+
+const patentEnabled = computed(() => {
+  return (
+    patent.value.acceptDate === '' ||
+    patent.value.authorizationDate === '' ||
+    patent.value.publishDate === '' ||
+    patent.value.publishState === ''
+  )
+})
+
+const disabled = computed(() => {
+  if (work.type === 'paper') return paperEnabled.value
+  else if (work.type === 'soft') return softEnabled.value
+  else return patentEnabled.value
+})
 
 const addStudentAcademicWork = async () => {
   try {
@@ -159,15 +210,11 @@ const addStudentAcademicWork = async () => {
 
 const initWork = () => {
   work.type = 'paper'
+  work.username = userStore.getUserData.username
   work.evidence = ''
   work.academicWork = targetAcademicWork
   work.team = []
-  selectedUser.value.push({
-    uid: userStore.getUserData.uid,
-    username: userStore.getUserData.username,
-    realName: userStore.getUserData.realName
-  })
-  work.uid = userStore.getUserData.uid
+  selectedUser.value = []
   work.workName = ''
   paper.value.casPartition = ''
   paper.value.isChineseCore = false
@@ -217,15 +264,15 @@ onMounted(initWork)
           <v-divider></v-divider>
 
           <v-container class="w-100 d-flex justify-space-evenly">
+            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
             <v-btn
               :disabled="work.workName.length <= 0 || work.type === null"
               text="下一步"
               :loading="loading"
               color="indigo"
               variant="plain"
-              @click="step++"
+              @click="stepOneNext()"
             />
-            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
           </v-container>
         </v-window-item>
 
@@ -255,7 +302,7 @@ onMounted(initWork)
             <v-list v-if="selectedUser.length">
               <v-list-item
                 v-for="(member, index) in selectedUser"
-                :key="member.uid"
+                :key="member.username"
                 :title="`成员 ${index + 1}`"
                 :subtitle="`${member.realName} (${member.username})`"
               >
@@ -276,14 +323,10 @@ onMounted(initWork)
           <v-divider></v-divider>
 
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn text="上一步" @click="step--" />
-            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
-            <v-btn
-              text="下一步"
-              color="indigo"
-              variant="plain"
-              @click="applySelectedUsers(), step++"
-            />
+            <v-btn text="上一步" @click="stepTwoBack" />
+
+            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
+            <v-btn text="下一步" color="indigo" variant="plain" @click="stepTwoNext()" />
           </v-container>
         </v-window-item>
 
@@ -404,9 +447,15 @@ onMounted(initWork)
           <v-divider></v-divider>
 
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn text="上一步" @click="step--" />
-            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
-            <v-btn text="下一步" color="indigo" variant="plain" @click="step++" />
+            <v-btn text="上一步" @click="stepThreeBack()" />
+            <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
+            <v-btn
+              :disabled="disabled"
+              text="下一步"
+              color="indigo"
+              variant="plain"
+              @click="step++"
+            />
           </v-container>
         </v-window-item>
 
@@ -426,8 +475,8 @@ onMounted(initWork)
             <v-divider></v-divider>
 
             <v-container class="w-100 d-flex justify-space-evenly">
-              <v-btn text="上一步" @click="step--" />
-              <v-btn text="取消" variant="plain" @click="(step = 1), (model = false)" />
+              <v-btn text="上一步" @click="step--, (work.evidence = '')" />
+              <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
               <v-btn text="提交" color="indigo" variant="plain" @click="addStudentAcademicWork" />
             </v-container>
           </v-container>

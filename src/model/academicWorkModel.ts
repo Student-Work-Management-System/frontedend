@@ -49,7 +49,7 @@ export interface StudentPatent extends AcademicWork {
 
 export interface StudentAcademicWork {
     studentAcademicWorkId?: string
-    uid: string
+    username: string
     workName: string
     type: string
     referenceId: string
@@ -67,17 +67,17 @@ export interface StudentAcademicWorkMember {
     memberId?: string
     studentAcademicWorkId: string
     memberOrder: string
-    uid: string
+    username: string
 }
 
 export interface AcademicWorkMember {
     memberOrder: string
-    uid: string
+    username: string
 }
 
 export interface AcademicWorkRequest {
     studentAcademicWorkId?: string
-    uid: string
+    username: string
     workName: string
     state?: AcademicWorkState
     type: AcademicWorkType
@@ -88,15 +88,14 @@ export interface AcademicWorkRequest {
 
 export interface AcademicWorkQuery {
     search: string
-    state: AcademicWorkState
-    type: AcademicWorkState
+    state: AcademicWorkState | null
+    type: AcademicWorkType | null
     pageNo: number
     pageSize: number
 }
 
 export interface StudentAcademicWorkMemberItem {
     memberOrder: string
-    uid: string
     isStudent: boolean
     username: string
     realName: string
@@ -122,7 +121,6 @@ export interface StudentAcademicWorkItem {
 }
 
 export interface AcademicWorkUser {
-    uid: string
     username: string
     realName: string
 }

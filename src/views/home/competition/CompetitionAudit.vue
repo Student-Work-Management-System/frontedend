@@ -16,9 +16,9 @@ import DateSelect from '@/components/home/DateSelect.vue'
 import CompetitionAuditDialog from '@/components/home/competition/CompetitionAuditDialog.vue'
 import CompetitionMemberDialog from '@/components/home/competition/CompetitionMemberDialog.vue'
 import { useCompetitionStore } from '@/stores/competitionStore'
-import { studentCompetitionAuditHeaders } from '@/misc/table/competition-import-header'
+import { studentCompetitionTableHeaders } from '@/misc/table/competition-import-header'
 import moment from 'moment'
-import CompetitionAuditSelect from '@/components/home/competition/CompetitionAuditSelect.vue'
+import StateSelect from '@/components/home/competition/StateSelect.vue'
 import CompetitionTypeSelect from '@/components/home/competition/CompetitionTypeSelect.vue'
 import CompetitionNatureSelect from '@/components/home/competition/CompetitionNatureSelect.vue'
 import DegreeSelect from '@/components/home/DegreeSelect.vue'
@@ -29,7 +29,6 @@ const has = (permission: string) => {
   return store.hasAuthorized(permission)
 }
 const competitionStore = useCompetitionStore()
-const deleteDialog = ref(false)
 const membersDialog = ref(false)
 const membersDialogStudentIds = ref<string[]>([])
 const auditDialog = ref(false)
@@ -49,21 +48,20 @@ const query = reactive<StudentCompetitionQuery>({
   pageNo: 1,
   pageSize: 10
 })
+
 const data = ref<StudentCompetitionItem[]>([])
-const dataLength = ref(0)
 const loadItems = () => {
   fetchStudentCompetitionLogic()
 }
 
 const updateStudentCompetitionAudits = async (state: string, reason: string) => {
+  loading.value = true
   try {
-    loading.value = true
     if (state === '通过') reason = ''
     const studentCompetitionAudits = createStudentCompetitionAudits(state, reason, selected.value)
     const { data: result } = await apiUpdateStudentCompetition(studentCompetitionAudits)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
-      loading.value = false
       return
     }
     notify({
@@ -78,6 +76,7 @@ const updateStudentCompetitionAudits = async (state: string, reason: string) => 
     loading.value = false
   }
 }
+
 const createStudentCompetitionAudits = (
   state: string,
   reason: string,
@@ -99,18 +98,17 @@ const afterHandler = () => {
   auditDialog.value = false
   fetchStudentCompetitionLogic()
 }
+
 const fetchStudentCompetitionLogic = async () => {
+  loading.value = true
   try {
     if (query.pageSize === -1) query.pageSize = 9999
-    loading.value = true
     const { data: result } = await apiGetStudentCompetitions(query)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
-      loading.value = false
       return
     }
     data.value = result.data.records
-    dataLength.value = result.data.totalRow
     selected.value = []
   } catch (error) {
     console.log(error)
@@ -118,7 +116,9 @@ const fetchStudentCompetitionLogic = async () => {
     loading.value = false
   }
 }
+
 onMounted(fetchStudentCompetitionLogic)
+
 const downloadEvidence = async (filename: string) => {
   loading.value = true
   const { data: result } = await apiDownloadFile(filename)
@@ -132,6 +132,7 @@ const downloadEvidence = async (filename: string) => {
   loading.value = false
   loading.value = false
 }
+
 const checkStateColor = (state: string): 'indigo' | 'green' | 'error' => {
   switch (state) {
     case '审核中':
@@ -142,6 +143,7 @@ const checkStateColor = (state: string): 'indigo' | 'green' | 'error' => {
       return 'error'
   }
 }
+
 const checkStateIcon = (state: string): string => {
   switch (state) {
     case '审核中':
@@ -156,6 +158,7 @@ const checkStateIcon = (state: string): string => {
 const checkCompetitionIsSolo = (competitionId: string) => {
   return competitionStore.checkCompetitionIsSolo(competitionId)
 }
+
 const viewMembers = (team: TeamItem[]) => {
   const studentIds = team.map((item: TeamItem) => item.studentId)
   membersDialogStudentIds.value = studentIds
@@ -167,6 +170,7 @@ const selectMenuHeight = ref(0)
 const tableHeight = computed(() => {
   return containerHeight.value - selectMenuHeight.value - 100
 })
+
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
@@ -192,6 +196,7 @@ onMounted(() => {
   })
 })
 </script>
+
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <CompetitionAuditDialog
@@ -232,13 +237,12 @@ onMounted(() => {
         <LevelSelect v-model="query.level" variant="underlined" />
       </span>
       <span class="w-8">
-        <CompetitionAuditSelect variant="underlined" v-model="query.state" :show-waiting="true" />
+        <StateSelect variant="underlined" v-model="query.state" :show-waiting="true" />
       </span>
       <span class="w-10 text-indigo">
         <v-text-field
           v-model="query.search"
           color="indigo"
-          @update:modelValue="fetchStudentCompetitionLogic"
           :loading="loading"
           :counter="15"
           clearable
@@ -247,7 +251,7 @@ onMounted(() => {
           variant="underlined"
           hide-details
         >
-          <v-tooltip activator="parent" location="top" text="以填报 姓名 / 学号 / 竞赛名称 搜索" />
+          <v-tooltip activator="parent" location="top" text="以填报人姓名 / 学号 / 竞赛名称 搜索" />
         </v-text-field>
       </span>
       <v-btn
@@ -263,23 +267,15 @@ onMounted(() => {
         @click="auditDialog = true"
         text="审核"
       />
-      <v-btn
-        v-if="has('student_competition:delete')"
-        prepend-icon="mdi-delete"
-        color="error"
-        @click="deleteDialog = true"
-        text="删除"
-      />
     </section>
 
     <section class="pa-4 w-100" ref="tableDom">
       <v-card>
-        <v-data-table-server
+        <v-data-table
           v-model="selected"
           :height="tableHeight"
-          :headers="studentCompetitionAuditHeaders as any"
+          :headers="studentCompetitionTableHeaders as any"
           :items="data"
-          :items-length="dataLength"
           :loading="loading"
           v-model:page="query.pageNo"
           v-model:items-per-page="query.pageSize"
@@ -324,7 +320,7 @@ onMounted(() => {
               />
             </div>
           </template>
-        </v-data-table-server>
+        </v-data-table>
       </v-card>
     </section>
   </v-card>

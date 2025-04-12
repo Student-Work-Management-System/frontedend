@@ -4,7 +4,7 @@ import CompetitionAuditSelect from '@/components/home/competition/StateSelect.vu
 
 const model = defineModel<boolean>()
 const selectedLength = defineModel<number>('length')
-const emits = defineEmits(['updateStudentCompetitionAudits'])
+const emits = defineEmits(['update'])
 
 const step = ref(1)
 const loading = ref(false)
@@ -13,7 +13,7 @@ const state = ref('')
 
 const auditHandler = () => {
   loading.value = true
-  emits('updateStudentCompetitionAudits', state.value, reason.value)
+  emits('update', state.value, reason.value)
   loading.value = false
 }
 </script>
@@ -51,7 +51,7 @@ const auditHandler = () => {
                 color="indigo"
                 class="text-indigo mt-4"
                 v-show="state === '拒绝'"
-                label="拒绝理由"
+                label="驳回理由"
               />
             </section>
           </v-container>
