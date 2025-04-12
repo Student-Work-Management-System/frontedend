@@ -8,7 +8,6 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import type {
   AcademicWorkQuery,
   AcademicWorkState,
-  StudentAcademicWorkAudit,
   StudentAcademicWorkItem,
   StudentAcademicWorkMemberItem
 } from '@/model/academicWorkModel'
