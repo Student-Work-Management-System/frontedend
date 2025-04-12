@@ -34,7 +34,7 @@ export default {
     {
       path: '/competition/list',
       name: 'competition-list',
-      component: () => import('@/views/home/competition/StudentCompetitionData.vue'),
+      component: () => import('@/views/home/competition/StudentCompetitionStat.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '获奖情况统计',
