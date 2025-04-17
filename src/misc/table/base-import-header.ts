@@ -1,5 +1,6 @@
 import { type TableHeader } from '.'
 import { type Student } from '@/model/studentModel'
+import type { Enrollment } from "@/model/enrollmentModel"
 
 export interface BaseHeader extends Student {
   [key: string]: any
@@ -7,6 +8,7 @@ export interface BaseHeader extends Student {
   isStudentLoansText: string
   disabilityText: string
 }
+
 
 export const tableHeaders = [
   // 基本信息
@@ -674,4 +676,17 @@ export const baseheaders: TableHeader[] = [
     require: false,
     options: null
   }
+]
+
+// todo: 更新两个表头
+export interface EnrollmentHeader extends Enrollment {
+  [key: string]: any
+}
+
+export const enrollmentHeaders: TableHeader[] = [
+
+]
+
+export const enrollmentTableHeaders = [
+
 ]
