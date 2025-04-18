@@ -10,6 +10,7 @@ export interface EnrollmentQuery {
     candidateCategory: string | null; // 考生类别
     studentType: string | null; // 学生类型
     admissionBatch: string | null; // 录取批次
+    gender: string | null; // 性别
     politicId: string | null; // 政治面貌
     majorId: string | null; // 专业
     gradeId: string | null; // 年级
@@ -34,6 +35,7 @@ export interface Enrollment {
     gender: string; // 性别
     birthdate: string | null; // 出生日期
     hobbies: string | null; // 个人兴趣爱好特长
+    nativePlace: string | null; // 籍贯
     nation: string | null; // 民族
     height: string | null; // 身高
     weight: string | null; // 体重
@@ -70,9 +72,6 @@ export interface Enrollment {
     volunteer6: string | null; // 志愿6
     studentFrom: string | null; // 生源地
     isAdjusted: string | null; // 是否调剂
-
-    // 收件人信息
-    nativePlace: string | null; // 籍贯
     receiver: string | null; // 收件人
     receiverPhone: string | null; // 联系电话
     postalCode: string | null; // 邮政编码
@@ -101,7 +100,7 @@ export interface Enrollment {
     graduationCategoryClassification: string | null; // 毕业类别分类
     graduationCategory: string | null; // 毕业类别
     candidateCategory: string | null; // 考生类别
-    foreignLanguageId: string | null; // 外语语种
+    foreignLanguage: string | null; // 外语语种
     scoreChinese: string | null; // 语文成绩
     scoreMath: string | null; // 数学成绩
     scoreForeignLanguage: string | null; // 外语成绩
@@ -138,6 +137,7 @@ export interface EnrollmentItem {
     gender: string;        // 性别
     birthdate: string;     // 生日 (yyyy-MM-dd)
     hobbies: string;       // 个人兴趣爱好特长
+    nativePlace: string;     // 籍贯
     nation: string;        // 民族
     height: string;        // 身高
     weight: string;        // 体重
@@ -180,9 +180,6 @@ export interface EnrollmentItem {
     volunteer6: string;      // 志愿6
     studentFrom: string;     // 生源地
     isAdjusted: boolean;     // 是否调剂
-
-    /** 收件人信息 */
-    nativePlace: string;     // 籍贯
     receiver: string;        // 收件人
     receiverPhone: string;   // 联系电话
     postalCode: string;      // 邮政编码

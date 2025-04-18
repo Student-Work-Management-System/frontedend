@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { apiGetStudentList, apiDeleteStudent, apiRecoverDeleteStudent } from '@/api/student'
-import { type Student } from '@/model/studentModel'
+import type { EnrollmentItem } from '@/model/enrollmentModel'
 import { notify } from '@kyvg/vue3-notification'
 import TableSelectMenu from '../tableComponents/TableSelectMenu.vue'
 import BaseInfoTable from '../tableComponents/BaseInfoTable.vue'
@@ -10,39 +10,67 @@ import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { useBaseStore } from '@/stores/baseStore'
 
 const baseStore = useBaseStore()
-const studentQuery = baseStore.getStudentQuery
+const query = baseStore.getQuery()
 const loading = ref(false)
-const selected = ref<Student[]>([])
-const data = ref<Student[]>([])
+const selected = ref<EnrollmentItem[]>([])
+const data = ref<EnrollmentItem[]>([])
 const totalPage = ref<number>()
 const totalRow = ref<number>()
 const editDialog = ref(false)
 const deleteDialog = ref(false)
-const modifyInfo = ref<Student>({
-  majorId: '',
-  majorName: '',
-  gradeName: '',
+const modifyInfo = ref<EnrollmentItem>({
+  enrollmentId: '',
   studentId: '',
   idNumber: '',
   name: '',
   gender: '',
-  statusId: '',
-  statusName: '',
+  birthdate: '',
+  hobbies: '',
   nativePlace: '',
-  postalCode: '',
-  phone: '',
   nation: '',
+  height: '',
+  weight: '',
+  politicId: '',
+  politicStatus: '',
+  phone: '',
   email: '',
   headerTeacherUsername: '',
-  headerTeacherName: '',
+  headerTeacherRealName: '',
   headerTeacherPhone: '',
-  birthdate: '',
+  dormitory: '',
+  classNo: '',
+  majorId: '',
+  majorName: '',
+  degreeId: '',
+  degreeName: '',
+  gradeId: '',
+  gradeName: '',
+  studentType: '',
+  admissionBatch: '',
+  subjectCategory: '',
+  provinceName: '',
+  examId: '',
+  admittedMajor: '',
+  volunteerMajor: '',
+  volunteerCollege: '',
+  totalExamScore: '',
+  convertedScore: '',
+  specialScore: '',
+  feature: '',
+  volunteer1: '',
+  volunteer2: '',
+  volunteer3: '',
+  volunteer4: '',
+  volunteer5: '',
+  volunteer6: '',
+  studentFrom: '',
+  isAdjusted: false,
+  receiver: '',
+  receiverPhone: '',
+  postalCode: '',
   householdRegistration: '',
   householdType: '',
   address: '',
-  gradeId: '',
-  classNo: '',
-  politicId: '',
   fatherName: '',
   fatherPhone: '',
   fatherOccupation: '',
@@ -51,33 +79,39 @@ const modifyInfo = ref<Student>({
   motherOccupation: '',
   guardian: '',
   guardianPhone: '',
-  highSchool: '',
-  examId: '',
-  admissionBatch: '',
-  totalExamScore: '',
-  foreignLanguage: '',
-  foreignScore: '',
-  hobbies: '',
-  dormitory: '',
-  otherNotes: '',
-  enabled: true,
-  joiningTime: '',
-  isStudentLoans: true,
-  height: '',
-  weight: '',
-  religiousBeliefs: '',
-  location: '',
   familyPopulation: '',
-  isOnlyChild: true,
   familyMembers: '',
-  degreeId: '',
+  familyLocation: '',
+  isOnlyChild: false,
+  highSchoolCode: '',
+  highSchoolName: '',
+  candidateCategoryClassification: '',
+  graduationCategoryClassification: '',
+  graduationCategory: '',
+  candidateCategory: '',
+  foreignLanguage: '',
+  scoreChinese: '',
+  scoreMath: '',
+  scoreForeignLanguage: '',
+  scoreComprehensive: '',
+  scorePhysics: '',
+  scoreChemistry: '',
+  scoreBiology: '',
+  scorePolitics: '',
+  scoreHistory: '',
+  scoreGeography: '',
+  scoreTechnology: '',
+  selectedSubjects: '',
+  studentLoans: false,
   disability: false,
-  politicStatus: ''
+  religiousBeliefs: '',
+  otherNotes: '',
+  enabled: false
 })
 
 const fetchStudentLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetStudentList(studentQuery)
+  const { data: result } = await apiGetStudentList(query)
   if (result.code !== 200) {
     console.error(result)
     notify({ type: 'error', title: '错误', text: result.message })
@@ -127,7 +161,7 @@ const getStudentArchive = (studentId: string) => {
   console.log(studentId)
 }
 
-const editStudent = (val: Student) => {
+const editStudent = (val: EnrollmentItem) => {
   modifyInfo.value = { ...val }
   editDialog.value = true
 }

@@ -8,10 +8,7 @@ const tab = ref<number>(1)
 const store = useUserStore()
 const baseStore = useBaseStore()
 onMounted(() => {
-  baseStore.updateStudentQuery(
-    'gradeId',
-    store.getUserData.chargeGrades!![0].gradeId as string | null
-  )
+  baseStore.updateQuery('gradeId', store.getUserData.chargeGrades!![0].gradeId as string | null)
 })
 </script>
 

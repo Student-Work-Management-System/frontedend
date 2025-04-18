@@ -8,14 +8,13 @@ import PoliticSelect from '@/components/home/PoliticSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
 import { useUserStore } from '@/stores/userStore'
 import ItemSelect from '@/components/home/ItemSelect.vue'
-import { type Degree } from '@/model/otherModel'
 import { useBaseStore } from '@/stores/baseStore'
-import type { StudentQuery } from '@/model/studentModel'
 import { watch } from 'vue'
 import { debounce } from '@/utils/debounce'
+import type { EnrollmentQuery } from '@/model/enrollmentModel'
 
 const baseStore = useBaseStore()
-const studentQuery = baseStore.getStudentQuery
+const query = baseStore.getQuery()
 const loading = defineModel<boolean>('loading')
 const emit = defineEmits(['refresh', 'deleteButtonClick', 'exportData'])
 
@@ -38,21 +37,14 @@ const exportData = () => {
   emit('exportData')
 }
 
-const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery[K]) => {
-  baseStore.updateStudentQuery(field, value)
+const updateQuery = <K extends keyof EnrollmentQuery>(field: K, value: EnrollmentQuery[K]) => {
+  baseStore.updateQuery(field, value)
 }
-
-// 使用防抖包装 updateQuery
-const debouncedUpdateQuery = debounce((key: keyof StudentQuery, value: any) => {
-  // 如果值为空字符串，则转换为null，否则保持原值
-  const processedValue = value === '' ? null : value
-  updateQuery(key, processedValue)
-}, 300)
 
 watch(
   () => ({
-    gradeId: studentQuery.gradeId,
-    degreeId: studentQuery.degreeId
+    gradeId: query.gradeId,
+    degreeId: query.degreeId
   }),
   debounce((newVal) => {
     refreshData()
@@ -68,297 +60,80 @@ watch(
         <div class="flex-grow-1">
           <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
             <GradeSelect
-              :model-value="studentQuery.gradeId"
+              :model-value="query.gradeId"
               :charge-grades="chargeGrades"
-              @update:model-value="(v) => debouncedUpdateQuery('gradeId', v as string | null)"
+              @update:model-value="(v) => updateQuery('gradeId', v as string | null)"
               label="年级"
               variant="underlined"
               density="compact"
             />
 
             <MajorSelect
-              :model-value="studentQuery.majorId"
-              @update:model-value="(v) => debouncedUpdateQuery('majorId', v as string | null)"
+              :model-value="query.majorId"
+              @update:model-value="(v) => updateQuery('majorId', v as string | null)"
               label="专业"
               variant="underlined"
               density="compact"
             />
-
-            <ItemSelect
-              :model-value="studentQuery.gender"
-              @update:model-value="(v) => debouncedUpdateQuery('gender', v as string | null)"
-              label="性别"
-              variant="underlined"
-              density="compact"
-              :items="['男', '女']"
-            />
-
             <DegreeSelect
-              :model-value="studentQuery.degreeId"
-              @update:model-value="(v) => debouncedUpdateQuery('degreeId', v as string | null)"
-              label="学历"
+              :model-value="query.degreeId"
+              @update:model-value="(v) => updateQuery('degreeId', v as string | null)"
+              label="培养层次"
               variant="underlined"
               density="compact"
             />
 
             <StatusSelect
-              :model-value="studentQuery.statusId"
-              @update:model-value="(v) => debouncedUpdateQuery('statusId', v as string | null)"
+              :model-value="query.statusId"
+              @update:model-value="(v) => updateQuery('statusId', v as string | null)"
               label="学籍状态"
               variant="underlined"
               density="compact"
             />
 
             <PoliticSelect
-              :model-value="studentQuery.politicId"
-              @update:model-value="(v) => debouncedUpdateQuery('politicId', v as string | null)"
+              :model-value="query.politicId"
+              @update:model-value="(v) => updateQuery('politicId', v as string | null)"
               label="政治面貌"
               variant="underlined"
               density="compact"
             />
 
-            <v-text-field
-              :model-value="studentQuery.classNo"
-              @update:model-value="
-                (v: string) => debouncedUpdateQuery('classNo', v as string | null)
-              "
-              label="班号"
-              class="text-indigo text-input-select"
+            <ItemSelect
+              :model-value="query.gender"
+              @update:model-value="(v) => updateQuery('gender', v as string | null)"
+              label="性别"
               variant="underlined"
-              color="indigo"
               density="compact"
-              hide-details
-              clearable
-            />
-
-            <v-text-field
-              :model-value="studentQuery.nation"
-              @update:model-value="(v) => debouncedUpdateQuery('nation', v as string | null)"
-              label="民族"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-
-            <v-text-field
-              :model-value="studentQuery.dormitory"
-              @update:model-value="(v) => debouncedUpdateQuery('dormitory', v as string | null)"
-              label="宿舍"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-
-            <v-text-field
-              :model-value="studentQuery.nativePlace"
-              @update:model-value="(v) => debouncedUpdateQuery('nativePlace', v as string | null)"
-              label="籍贯"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-
-            <v-text-field
-              :model-value="studentQuery.religiousBeliefs"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('religiousBeliefs', v as string | null)
-              "
-              label="宗教信仰"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-          </v-col>
-
-          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
-            <v-text-field
-              :model-value="studentQuery.location"
-              @update:model-value="(v) => debouncedUpdateQuery('location', v as string | null)"
-              label="家庭所在地"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            >
-              <v-tooltip activator="parent" location="top"> 省/市/县 </v-tooltip>
-            </v-text-field>
-
-            <v-text-field
-              :model-value="studentQuery.address"
-              @update:model-value="(v) => debouncedUpdateQuery('address', v as string | null)"
-              label="家庭住址"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.householdRegistration"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('householdRegistration', v as string | null)
-              "
-              label="户籍所在地"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.householdType"
-              @update:model-value="(v) => debouncedUpdateQuery('householdType', v as string | null)"
-              label="户口类型"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.familyPopulation"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('familyPopulation', v as string | null)
-              "
-              label="家庭人口"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
+              :items="['男', '女']"
             />
             <TrueOrFalseSelect
-              :model-value="studentQuery.isOnlyChild!!"
-              @update:model-value="(v) => debouncedUpdateQuery('isOnlyChild', v as boolean | null)"
-              label="是否独生子女"
+              :model-value="query.isOnlyChild!!"
+              @update:model-value="(v) => updateQuery('isOnlyChild', v as boolean | null)"
+              label="独生子女"
               variant="underlined"
+              density="compact"
               :items="[
                 { key: '是', value: true },
                 { key: '否', value: false }
               ]"
             />
+
             <TrueOrFalseSelect
-              :model-value="studentQuery.isStudentLoans!!"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('isStudentLoans', v as boolean | null)
-              "
+              :model-value="query.studentLoans!!"
+              @update:model-value="(v) => updateQuery('studentLoans', v as boolean | null)"
               label="助学贷款"
               variant="underlined"
+              density="compact"
               :items="[
                 { key: '是', value: true },
                 { key: '否', value: false }
               ]"
             />
 
-            <v-text-field
-              :model-value="studentQuery.highSchool"
-              @update:model-value="(v) => debouncedUpdateQuery('highSchool', v as string | null)"
-              label="高中名称"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-
-            <v-text-field
-              :model-value="studentQuery.examId"
-              @update:model-value="(v) => debouncedUpdateQuery('examId', v as string | null)"
-              label="考生号"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.admissionBatch"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('admissionBatch', v as string | null)
-              "
-              label="录取批次"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-          </v-col>
-
-          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
-            <v-text-field
-              :model-value="studentQuery.totalExamScore"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('totalExamScore', v as string | null)
-              "
-              label="高考总分"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.foreignLanguage"
-              @update:model-value="
-                (v) => debouncedUpdateQuery('foreignLanguage', v as string | null)
-              "
-              label="外语语种"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.foreignScore"
-              @update:model-value="(v) => debouncedUpdateQuery('foreignScore', v as string | null)"
-              label="外语分数"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-            <v-text-field
-              :model-value="studentQuery.hobbies"
-              @update:model-value="(v) => debouncedUpdateQuery('hobbies', v as string | null)"
-              label="兴趣爱好"
-              class="text-indigo text-input-select"
-              variant="underlined"
-              color="indigo"
-              density="compact"
-              hide-details
-              clearable
-            />
-
             <TrueOrFalseSelect
-              :model-value="studentQuery.disability"
-              @update:model-value="(v) => debouncedUpdateQuery('disability', v as boolean)"
+              :model-value="query.disability!"
+              @update:model-value="(v) => updateQuery('disability', v as boolean)"
               label="是否残疾"
               variant="underlined"
               density="compact"
@@ -368,8 +143,8 @@ watch(
               ]"
             />
             <TrueOrFalseSelect
-              :model-value="studentQuery.enabled"
-              @update:model-value="(v) => debouncedUpdateQuery('enabled', v as boolean)"
+              :model-value="query.enabled!"
+              @update:model-value="(v) => updateQuery('enabled', v as boolean)"
               label="学生状态"
               variant="underlined"
               density="compact"
@@ -378,50 +153,196 @@ watch(
                 { key: '已删除', value: false }
               ]"
             />
-            <div class="flex-shrink-0 operation-area-right" style="width: 30%">
-              <v-text-field
-                :model-value="studentQuery.search"
-                @update:model-value="(v) => debouncedUpdateQuery('search', v)"
-                color="indigo"
-                :loading="loading"
-                :counter="15"
-                clearable
-                label="搜索"
-                prepend-inner-icon="mdi-magnify"
-                variant="underlined"
-                hide-details
-                density="compact"
-                class="search-input"
-                margin-right="8px"
-              >
-                <v-tooltip
-                  activator="parent"
-                  location="top"
-                  text="按 学号/姓名/身份证/邮箱/手机号/父母姓名/父母手机号/监护人姓名/监护人电话 搜索"
-                />
-              </v-text-field>
+          </v-col>
+
+          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
+            <v-text-field
+              :model-value="query.familySearch"
+              @update:model-value="(v) => updateQuery('familySearch', v)"
+              color="indigo"
+              :loading="loading"
+              clearable
+              prepend-inner-icon="mdi-magnify"
+              style="margin-left: 16px"
+              label="家庭成员信息"
+              variant="underlined"
+              hide-details
+              density="compact"
+              class="search-input text-indigo"
+            >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                text="以 父母姓名 / 父母手机号 / 监护人姓名 / 监护人电话 搜索"
+              />
+            </v-text-field>
+
+            <v-text-field
+              :model-value="query.schoolSearch"
+              @update:model-value="(v) => updateQuery('schoolSearch', v)"
+              color="indigo"
+              :loading="loading"
+              clearable
+              prepend-inner-icon="mdi-magnify"
+              label="学生在校信息"
+              variant="underlined"
+              hide-details
+              density="compact"
+              class="search-input text-indigo"
+            >
+              <v-tooltip activator="parent" location="top" text="以 宿舍号 / 班号 搜索" />
+            </v-text-field>
+
+            <v-text-field
+              :model-value="query.headerTeacherSearch"
+              @update:model-value="(v) => updateQuery('headerTeacherSearch', v)"
+              color="indigo"
+              :loading="loading"
+              prepend-inner-icon="mdi-magnify"
+              clearable
+              label="班主任信息"
+              variant="underlined"
+              hide-details
+              density="compact"
+              class="search-input text-indigo"
+            >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                text="以 班主任工号 / 班主任姓名 / 班主任联系方式 搜索"
+              />
+            </v-text-field>
+
+            <v-text-field
+              :model-value="query.highSchoolSearch"
+              @update:model-value="(v) => updateQuery('highSchoolSearch', v)"
+              label="高中信息"
+              class="text-indigo search-input"
+              variant="underlined"
+              prepend-inner-icon="mdi-magnify"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            >
+              <v-tooltip activator="parent" location="top" text="以 中学名称 / 中学代码 搜索" />
+            </v-text-field>
+
+            <v-text-field
+              :model-value="query.search"
+              @update:model-value="(v) => updateQuery('search', v)"
+              color="indigo"
+              style="margin-left: 16px"
+              :loading="loading"
+              clearable
+              prepend-inner-icon="mdi-magnify"
+              label="学生个人信息"
+              variant="underlined"
+              hide-details
+              density="compact"
+              class="search-input text-indigo"
+            >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                text="以 学号 / 姓名 / 身份证 / 邮箱 / 手机号 搜索"
+              />
+            </v-text-field>
+          </v-col>
+
+          <v-col cols="12" class="d-flex flex-wrap align-center gap-4 pa-0 mb-4">
+            <v-text-field
+              :model-value="query.householdRegistration"
+              @update:model-value="(v) => updateQuery('householdRegistration', v as string | null)"
+              label="户籍所在地"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <v-text-field
+              :model-value="query.householdType"
+              @update:model-value="(v) => updateQuery('householdType', v as string | null)"
+              label="户口类型"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <v-text-field
+              :model-value="query.candidateCategory"
+              @update:model-value="(v) => updateQuery('candidateCategory', v as string | null)"
+              label="考生类别"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <v-text-field
+              :model-value="query.studentType"
+              @update:model-value="(v) => updateQuery('studentType', v as string | null)"
+              label="学生类型"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <v-text-field
+              :model-value="query.admissionBatch"
+              @update:model-value="(v) => updateQuery('admissionBatch', v as string | null)"
+              label="录取批次"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <v-text-field
+              :model-value="query.religiousBeliefs"
+              @update:model-value="(v) => updateQuery('religiousBeliefs', v as string | null)"
+              label="宗教信仰"
+              class="text-indigo text-input-select"
+              variant="underlined"
+              color="indigo"
+              density="compact"
+              hide-details
+              clearable
+            />
+
+            <div class="flex-shrink-0 operation-area-right">
               <v-btn
                 v-if="has('student:select')"
-                icon="mdi-refresh"
-                variant="text"
+                prepend-icon="mdi-refresh"
+                text="刷新"
                 color="indigo"
-                density="compact"
                 @click="refreshData"
               />
               <v-btn
                 v-if="has('student:delete')"
-                icon="mdi-delete"
-                variant="text"
+                prepend-icon="mdi-delete"
+                text="删除"
                 color="error"
-                density="compact"
                 @click="deleteStudent"
               />
               <v-btn
                 v-if="has('student:select')"
-                icon="mdi-file-export-outline"
-                variant="text"
-                color="indigo"
-                density="compact"
+                prepend-icon="mdi-file-export-outline"
+                text="导出"
+                color="orange-darken-1"
                 @click="exportData"
               />
             </div>
@@ -449,10 +370,11 @@ watch(
 }
 
 .operation-area-right {
+  width: 18%;
   height: 100%;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   margin-left: 8px;
   padding-top: 8px;
 }

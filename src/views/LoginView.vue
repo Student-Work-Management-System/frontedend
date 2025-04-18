@@ -29,29 +29,35 @@ const forgetDialog = ref(false)
 
 const loginHandler = async () => {
   loadingForm.value = true
-  const username = userForm.username.trim()
-  const password = userForm.password.trim()
-  if (username.length === 0 || password.length === 0) {
-    notify({ title: '错误', text: '账户或密码不能为空！', type: 'error' })
+  try {
+    const username = userForm.username.trim()
+    const password = userForm.password.trim()
+    if (username.length === 0 || password.length === 0) {
+      notify({ title: '错误', text: '账户或密码不能为空！', type: 'error' })
+      loadingForm.value = false
+      return
+    }
+    const { data: result } = await apiLogin(username, password)
+    if (result.code != 200) {
+      notify({ title: '错误', text: result.message, type: 'error' })
+      loadingForm.value = false
+      return
+    }
+    store.updateUser(result.data)
+    baseStore.updateQuery('gradeId', result.data.chargeGrades?.[0].gradeId as string | null)
+    setAuthorizationToken(result.data.token)
+    if (remember.value) {
+      localStorage.setItem('user-cache', JSON.stringify(result.data))
+      localStorage.setItem('user-cache-expired-at', (Date.now() + 7 * 24 * 60 * 60).toString())
+    }
     loadingForm.value = false
-    return
+    notify({ title: '提示', text: '登录成功！', type: 'success' })
+    router.push({ name: 'home' })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loadingForm.value = true
   }
-  const { data: result } = await apiLogin(username, password)
-  if (result.code != 200) {
-    notify({ title: '错误', text: result.message, type: 'error' })
-    loadingForm.value = false
-    return
-  }
-  store.updateUser(result.data)
-  baseStore.updateStudentQuery('gradeId', result.data.chargeGrades?.[0].gradeId as string | null)
-  setAuthorizationToken(result.data.token)
-  if (remember.value) {
-    localStorage.setItem('user-cache', JSON.stringify(result.data))
-    localStorage.setItem('user-cache-expired-at', (Date.now() + 7 * 24 * 60 * 60).toString())
-  }
-  loadingForm.value = false
-  notify({ title: '提示', text: '登录成功！', type: 'success' })
-  router.push({ name: 'home' })
 }
 
 const checkLoginCacheHandler = () => {

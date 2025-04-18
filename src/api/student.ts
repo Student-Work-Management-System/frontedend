@@ -1,7 +1,8 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Student, StudentQuery, StudentStatItem, StudentStatQuery, HeaderTeacher, StudentBasicItem } from '@/model/studentModel'
+import type { Student, StudentStatItem, StudentStatQuery, HeaderTeacher, StudentBasicItem } from '@/model/studentModel'
+import type { Enrollment, EnrollmentItem, EnrollmentQuery } from '@/model/enrollmentModel'
 
 export async function apiAddStudentBaseInfo(
   students: Student[]
@@ -9,7 +10,7 @@ export async function apiAddStudentBaseInfo(
   return http.post('/student/adds', students)
 }
 
-export function apiGetStudentList(query: StudentQuery): Promise<AxiosResponse<Result<RecordsPage<Student>>>> {
+export function apiGetStudentList(query: EnrollmentQuery): Promise<AxiosResponse<Result<RecordsPage<EnrollmentItem>>>> {
   return http.post('/student/gets', query)
 }
 
@@ -17,7 +18,7 @@ export function apiDeleteStudent(studentId: string): Promise<AxiosResponse<Resul
   return http.delete(`/student/delete/${studentId}`)
 }
 
-export function apiUpdateStudent(info: Student): Promise<AxiosResponse<Result<null>>> {
+export function apiUpdateStudent(info: Enrollment): Promise<AxiosResponse<Result<null>>> {
   return http.put('/student/update', info)
 }
 

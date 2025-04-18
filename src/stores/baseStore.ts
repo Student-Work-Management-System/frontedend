@@ -1,47 +1,41 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { type HeaderTeacher, type StudentQuery } from '@/model/studentModel'
+import { type HeaderTeacher } from '@/model/studentModel'
 import type { Grade, Major, Degree, Politics } from '@/model/otherModel'
 import type { Status } from '@/model/statusModel'
+import type { EnrollmentQuery } from '@/model/enrollmentModel'
 
 export const useBaseStore = defineStore('base', () => {
-    const studentQuery = reactive<StudentQuery>({
-        search: '' as string,
-        gradeId: null as string | null,
-        majorId: null as string | null,
-        degreeId: null as string | null,
-        statusId: '1' as string | null,
-        gender: null as string | null,
-        nation: null as string | null,
-        politicId: null as string | null,
-        classNo: null as string | null,
-        dormitory: null as string | null,
-        householdRegistration: null as string | null,
-        householdType: null as string | null,
-        address: null as string | null,
-        examId: null as string | null,
-        admissionBatch: null as string | null,
-        nativePlace: null as string | null,
-        highSchool: null as string | null,
-        totalExamScore: null as string | null,
-        foreignLanguage: null as string | null,
-        foreignScore: null as string | null,
-        hobbies: null as string | null,
-        joiningTime: null as string | null,
-        isStudentLoans: null as boolean | null,
-        religiousBeliefs: null as string | null,
-        location: null as string | null,
-        familyPopulation: null as string | null,
-        isOnlyChild: null as boolean | null,
-        disability: false as boolean,
-        otherNotes: null as string | null,
-        enabled: true as boolean,
-        pageNo: 1 as number,
-        pageSize: 25 as number
+    const enrollmentQuery = reactive<EnrollmentQuery>({
+        search: '',
+        familySearch: '',
+        householdRegistration: null,
+        householdType: null,
+        isOnlyChild: null,
+        schoolSearch: '',
+        headerTeacherSearch: '',
+        highSchoolSearch: '',
+        candidateCategory: null,
+        studentType: null,
+        admissionBatch: null,
+        gender: null,
+        politicId: null,
+        majorId: null,
+        gradeId: null,
+        degreeId: null,
+        statusId: null,
+        studentLoans: null,
+        disability: false,
+        religiousBeliefs: null,
+        enabled: true,
+        pageNo: 1,
+        pageSize: 25,
     })
-    const getStudentQuery = studentQuery
-    const updateStudentQuery = <K extends keyof StudentQuery>(key: K, value: StudentQuery[K]) => {
-        studentQuery[key] = value
+    const getQuery = () => {
+        return enrollmentQuery
+    }
+    const updateQuery = <K extends keyof EnrollmentQuery>(key: K, value: EnrollmentQuery[K]) => {
+        enrollmentQuery[key] = value
     }
     const headerTeacherList = reactive<HeaderTeacher[]>([])
     const gradeList = reactive<Grade[]>([])
@@ -92,8 +86,8 @@ export const useBaseStore = defineStore('base', () => {
         statusList.push(...statuses)
     }
     return {
-        getStudentQuery,
-        updateStudentQuery,
+        getQuery,
+        updateQuery,
         getGradeList,
         getMajorList,
         getDegreeList,

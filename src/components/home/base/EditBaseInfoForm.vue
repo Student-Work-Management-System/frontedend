@@ -3,15 +3,15 @@ import { ref } from 'vue'
 import GradeSelect from '../GradeSelect.vue'
 import MajorSelect from '../MajorSelect.vue'
 import { apiUpdateStudent } from '@/api/student'
-import { type Student } from '@/model/studentModel'
 import { notify } from '@kyvg/vue3-notification'
 import moment from 'moment'
 import { useUserStore } from '@/stores/userStore'
 import DegreeSelect from '../DegreeSelect.vue'
 import PoliticSelect from '../PoliticSelect.vue'
+import type { Enrollment, EnrollmentItem } from '@/model/enrollmentModel'
 
 const dialog = defineModel<boolean>()
-const info = defineModel<Student>('info')
+const info = defineModel<EnrollmentItem>('info')
 const emits = defineEmits(['onClosed'])
 const loading = ref(false)
 
@@ -23,10 +23,10 @@ const updateInfoLogic = async () => {
   if (info.value?.birthdate) {
     info.value.birthdate = moment(new Date(info.value.birthdate)).format('YYYY-MM-DD')
   }
-  if (info.value?.joiningTime) {
-    info.value.joiningTime = moment(new Date(info.value.joiningTime)).format('YYYY-MM-DD')
-  }
-  const { data: result } = await apiUpdateStudent(info.value as Student)
+  // if (info.value?.joiningTime) {
+  //   info.value.joiningTime = moment(new Date(info.value.joiningTime)).format('YYYY-MM-DD')
+  // }
+  const { data: result } = await apiUpdateStudent(info.value as unknown as Enrollment)
   if (result.code !== 200) {
     notify({ type: 'error', title: '错误', text: result.message })
     loading.value = false
@@ -161,7 +161,7 @@ const updateInfoLogic = async () => {
               clearable
             />
             <v-text-field
-              v-model="info!.location"
+              v-model="info!.familyLocation"
               label="家庭所在省/市/区"
               class="text-indigo"
               color="indigo"
@@ -202,13 +202,13 @@ const updateInfoLogic = async () => {
             <PoliticSelect v-model="info!.politicId" label="政治面貌" class="text-indigo mb-6">
               <v-icon size="smaller" color="error" icon="mdi-asterisk" />
             </PoliticSelect>
-            <v-date-input
+            <!-- <v-date-input
               v-model="info!.joiningTime"
               label="入团时间"
               class="text-indigo"
               color="indigo"
               clearable
-            />
+            /> -->
             <v-text-field
               v-model="info!.height"
               label="身高(cm)"
@@ -327,7 +327,7 @@ const updateInfoLogic = async () => {
           <!-- 第五列：学习信息 -->
           <v-col>
             <v-text-field
-              v-model="info!.highSchool"
+              v-model="info!.highSchoolName"
               label="所读高中"
               class="text-indigo"
               color="indigo"
@@ -362,14 +362,14 @@ const updateInfoLogic = async () => {
               clearable
             />
             <v-text-field
-              v-model="info!.foreignScore"
+              v-model="info!.scoreForeignLanguage"
               label="外语分数"
               class="text-indigo"
               color="indigo"
               clearable
             />
             <v-select
-              v-model="info!.isStudentLoans"
+              v-model="info!.studentLoans"
               label="是否助学贷款"
               class="text-indigo"
               color="indigo"

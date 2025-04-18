@@ -1,18 +1,18 @@
 <script lang="ts" setup>
 import DegreeSelect from '@/components/home/DegreeSelect.vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
+import type { EnrollmentQuery } from '@/model/enrollmentModel'
 import type { Grade } from '@/model/otherModel'
-import { type StudentQuery } from '@/model/studentModel'
 import { useBaseStore } from '@/stores/baseStore'
 import { useUserStore } from '@/stores/userStore'
 
 const store = useUserStore()
 const chargeGrades = store.getUserData.chargeGrades
 const baseStore = useBaseStore()
-const studentQuery = baseStore.getStudentQuery
+const studentQuery = baseStore.getQuery()
 
-const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery[K]) => {
-  baseStore.updateStudentQuery(field, value)
+const updateQuery = <K extends keyof EnrollmentQuery>(field: K, value: EnrollmentQuery[K]) => {
+  baseStore.updateQuery(field, value)
 }
 </script>
 

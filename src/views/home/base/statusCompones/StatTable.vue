@@ -10,7 +10,7 @@ import { useUserStore } from '@/stores/userStore'
 
 const tableHeight = defineModel<number>('tableHeight')
 const baseStore = useBaseStore()
-const studentQuery = baseStore.getStudentQuery
+const studentQuery = baseStore.getQuery()
 const userStore = useUserStore()
 
 // 计算当前学历层次名称

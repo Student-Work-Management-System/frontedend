@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { tableHeaders } from '@/misc/table/base-import-header'
-import { type Student, type StudentQuery } from '@/model/studentModel'
+import { enrollmentTableHeaders } from '@/misc/table/base-import-header'
+import type { EnrollmentQuery, EnrollmentItem } from '@/model/enrollmentModel'
 import { Edit, RefreshRight, Document } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/userStore'
 import { computed } from 'vue'
 import { useBaseStore } from '@/stores/baseStore'
 
 const baseStore = useBaseStore()
-const studentQuery = baseStore.getStudentQuery
-const updateQuery = <K extends keyof StudentQuery>(field: K, value: StudentQuery[K]) => {
-  baseStore.updateStudentQuery(field, value)
+const query = baseStore.getQuery()
+const updateQuery = <K extends keyof EnrollmentQuery>(field: K, value: EnrollmentQuery[K]) => {
+  baseStore.updateQuery(field, value)
 }
 
 const props = defineProps<{
-  data: Student[]
+  data: EnrollmentItem[]
   loading: boolean
   totalRow: number
-  selected: Student[]
+  selected: EnrollmentItem[]
   tableHeight: number
 }>()
 
 const emit = defineEmits<{
-  'update:selected': [value: Student[]]
-  edit: [value: Student]
+  'update:selected': [value: EnrollmentItem[]]
+  edit: [value: EnrollmentItem]
   recover: [value: string]
   getArchive: [value: string]
   sizeChange: []
@@ -34,7 +34,7 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 
-const handleSelectionChange = (val: Student[]) => {
+const handleSelectionChange = (val: EnrollmentItem[]) => {
   emit('update:selected', val)
 }
 
@@ -49,14 +49,14 @@ const handleCurrentChange = (val: number) => {
 }
 
 const currentPage = computed({
-  get: () => studentQuery.pageNo,
+  get: () => query.pageNo,
   set: (val: number) => {
     updateQuery('pageNo', val)
   }
 })
 
 const pageSize = computed({
-  get: () => studentQuery.pageSize,
+  get: () => query.pageSize,
   set: (val: number) => {
     updateQuery('pageSize', val)
   }
@@ -64,7 +64,7 @@ const pageSize = computed({
 
 const selectedRows = computed({
   get: () => props.selected,
-  set: (val: Student[]) => {
+  set: (val: EnrollmentItem[]) => {
     emit('update:selected', val)
   }
 })
@@ -98,13 +98,14 @@ const selectedRows = computed({
         <el-table-column prop="studentId" align="center" label="学号" fixed="left" width="120" />
         <el-table-column prop="name" align="center" label="姓名" fixed="left" width="120" />
         <el-table-column
-          v-for="header in tableHeaders"
+          v-for="header in enrollmentTableHeaders"
           :key="header.key"
           :prop="header.key"
           :label="header.label"
           :align="header.align"
           :width="header.width"
           :show-overflow-tooltip="header.showOverflowTooltip"
+          :formatter="header.formatter"
         />
         <el-table-column
           prop="otherNotes"
