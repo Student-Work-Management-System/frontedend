@@ -3,8 +3,8 @@ import { onMounted, computed } from 'vue'
 import { ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import {
-  baseheaders,
-  type BaseHeader,
+  enrollmentHeaders,
+  type EnrollmentHeader,
   HeaderValidChecker,
   AnalyzeFileToTable,
   checkValid
@@ -16,76 +16,104 @@ import { apiGetAllStatus } from '@/api/status'
 import { apiAddStudentBaseInfo, apiGetHeaderTeahcers } from '@/api/student'
 import { useUserStore } from '@/stores/userStore'
 import { useBaseStore } from '@/stores/baseStore'
-import type { HeaderTeacher, Student } from '@/model/studentModel'
+import type { HeaderTeacher } from '@/model/studentModel'
 import type { Degree, Grade, Major, Politics } from '@/model/otherModel'
 import type { Status } from '@/model/statusModel'
+import type { Enrollment } from '@/model/enrollmentModel'
 
 const excel = ref<File>()
-const jsonData = ref<BaseHeader[]>([])
+const jsonData = ref<EnrollmentHeader[]>([])
 const uploadDialog = ref()
 const loading = ref(false)
-const nilData: BaseHeader = {
-  studentId: null as string | null,
-  name: null as string | null,
-  idNumber: null as string | null,
-  gender: null as string | null,
-  nativePlace: null as string | null,
-  postalCode: null as string | null,
-  politicStatus: null as string | null,
-  phone: null as string | null,
-  nation: null as string | null,
-  majorName: null as string | null,
-  majorId: null as string | null,
-  grade: null as string | null,
-  classNo: null as string | null,
-  email: null as string | null,
-  headerTeacherUsername: null as string | null,
-  headerTeacherName: null as string | null,
-  headerTeacherPhone: null as string | null,
-  birthdate: null as string | null,
-  householdRegistration: null as string | null,
-  householdType: null as string | null,
-  address: null as string | null,
-  fatherName: null as string | null,
-  fatherPhone: null as string | null,
-  fatherOccupation: null as string | null,
-  motherName: null as string | null,
-  motherPhone: null as string | null,
-  motherOccupation: null as string | null,
-  guardian: null as string | null,
-  guardianPhone: null as string | null,
-  highSchool: null as string | null,
-  examId: null as string | null,
-  admissionBatch: null as string | null,
-  totalExamScore: null as string | null,
-  foreignLanguage: null as string | null,
-  foreignScore: null as string | null,
-  hobbies: null as string | null,
-  dormitory: null as string | null,
-  otherNotes: null as string | null,
-  joiningTime: null as string | null,
-  isStudentLoans: true as boolean | null,
-  height: null as string | null,
-  weight: null as string | null,
-  religiousBeliefs: null as string | null,
-  location: null as string | null,
-  familyPopulation: null as string | null,
-  isOnlyChild: true as boolean | null,
-  familyMembers: null as string | null,
-  degreeId: null as string | null,
-  gradeId: null as string | null,
-  politicId: null as string | null,
-  disability: false as boolean | null,
-  enabled: true as boolean,
-  statusId: '1' as string | null,
-  gradeName: null as string | null,
-  isOnlyChildText: '是' as string,
-  isStudentLoansText: '是' as string,
-  disabilityText: '否' as string,
-  statusName: null as string | null
+const nilData: EnrollmentHeader = {
+  studentId: '',
+  idNumber: '',
+  name: '',
+  gender: '',
+  birthdate: '',
+  hobbies: '',
+  nativePlace: '',
+  nation: '',
+  height: '',
+  weight: '',
+  politicId: '',
+  phone: '',
+  email: '',
+  headerTeacherUsername: '',
+  dormitory: '',
+  classNo: '',
+  majorId: '',
+  gradeId: '',
+  degreeId: '',
+  studentType: '',
+  admissionBatch: '',
+  subjectCategory: '',
+  provinceName: '',
+  examId: '',
+  admittedMajor: '',
+  volunteerMajor: '',
+  volunteerCollege: '',
+  totalExamScore: '',
+  convertedScore: '',
+  specialScore: '',
+  feature: '',
+  volunteer1: '',
+  volunteer2: '',
+  volunteer3: '',
+  volunteer4: '',
+  volunteer5: '',
+  volunteer6: '',
+  studentFrom: '',
+  isAdjusted: false,
+  receiver: '',
+  receiverPhone: '',
+  postalCode: '',
+  householdRegistration: '',
+  householdType: '',
+  address: '',
+  fatherName: '',
+  fatherPhone: '',
+  fatherOccupation: '',
+  motherName: '',
+  motherPhone: '',
+  motherOccupation: '',
+  guardian: '',
+  guardianPhone: '',
+  familyPopulation: '',
+  familyMembers: '',
+  familyLocation: '',
+  isOnlyChild: true,
+  highSchoolCode: '',
+  highSchoolName: '',
+  candidateCategoryClassification: '',
+  graduationCategoryClassification: '',
+  graduationCategory: '',
+  candidateCategory: '',
+  foreignLanguage: '',
+  scoreChinese: '',
+  scoreMath: '',
+  scoreForeignLanguage: '',
+  scoreComprehensive: '',
+  scorePhysics: '',
+  scoreChemistry: '',
+  scoreBiology: '',
+  scorePolitics: '',
+  scoreHistory: '',
+  scoreGeography: '',
+  scoreTechnology: '',
+  selectedSubjects: '',
+  studentLoans: false,
+  disability: false,
+  religiousBeliefs: '',
+  otherNotes: '',
+  enabled: true,
+  isAdujustText: '',
+  isOnlyChildText: '',
+  studentLoansText: '',
+  disabilityText: ''
 }
 const baseStore = useBaseStore()
-const statusOptions = computed(() => baseStore.getStatusList().map((status) => status.statusName))
+// const statusOptions = computed(() => baseStore.getStatusList().map((status) => status.statusName))
 const degreeOptions = computed(() => baseStore.getDegreeList().map((degree) => degree.degreeName))
 const gradeOptions = computed(() => baseStore.getGradeList().map((grade) => grade.gradeName))
 const politicOptions = computed(() =>
@@ -95,40 +123,42 @@ const majorOptions = computed(() => baseStore.getMajorList().map((major) => majo
 const headerTeacherOptions = computed(() =>
   baseStore.getHeaderTeacherList().map((headerTeacher) => headerTeacher.headerTeacherUsername)
 )
-const refBaseHeaders = computed(() => {
-  const degreeNameIndex = baseheaders.findIndex((header) => header.field === 'degreeName')
-  const gradeNameIndex = baseheaders.findIndex((header) => header.field === 'gradeName')
-  const politicStatusIndex = baseheaders.findIndex((header) => header.field === 'politicStatus')
-  const majorNameIndex = baseheaders.findIndex((header) => header.field === 'majorName')
-  const headerTeacherUsernameIndex = baseheaders.findIndex(
-    (header) => header.field === 'headerTeacherUsername'
-  )
-  const statusNameIndex = baseheaders.findIndex((header) => header.field === 'statusName')
-  baseheaders.splice(degreeNameIndex, 1, {
-    ...baseheaders[degreeNameIndex],
+const refHeaders = computed(() => {
+  const degreeNameIndex = enrollmentHeaders.findIndex((header) => header.field === 'degreeName')
+  enrollmentHeaders.splice(degreeNameIndex, 1, {
+    ...enrollmentHeaders[degreeNameIndex],
     options: degreeOptions.value
   })
-  baseheaders.splice(gradeNameIndex, 1, {
-    ...baseheaders[gradeNameIndex],
+  const gradeNameIndex = enrollmentHeaders.findIndex((header) => header.field === 'gradeName')
+  enrollmentHeaders.splice(gradeNameIndex, 1, {
+    ...enrollmentHeaders[gradeNameIndex],
     options: gradeOptions.value
   })
-  baseheaders.splice(politicStatusIndex, 1, {
-    ...baseheaders[politicStatusIndex],
+  const politicStatusIndex = enrollmentHeaders.findIndex(
+    (header) => header.field === 'politicStatus'
+  )
+  enrollmentHeaders.splice(politicStatusIndex, 1, {
+    ...enrollmentHeaders[politicStatusIndex],
     options: politicOptions.value
   })
-  baseheaders.splice(majorNameIndex, 1, {
-    ...baseheaders[majorNameIndex],
+  const majorNameIndex = enrollmentHeaders.findIndex((header) => header.field === 'majorName')
+  enrollmentHeaders.splice(majorNameIndex, 1, {
+    ...enrollmentHeaders[majorNameIndex],
     options: majorOptions.value
   })
-  baseheaders.splice(headerTeacherUsernameIndex, 1, {
-    ...baseheaders[headerTeacherUsernameIndex],
+  const headerTeacherUsernameIndex = enrollmentHeaders.findIndex(
+    (header) => header.field === 'headerTeacherUsername'
+  )
+  enrollmentHeaders.splice(headerTeacherUsernameIndex, 1, {
+    ...enrollmentHeaders[headerTeacherUsernameIndex],
     options: headerTeacherOptions.value
   })
-  baseheaders.splice(statusNameIndex, 1, {
-    ...baseheaders[statusNameIndex],
-    options: statusOptions.value
-  })
-  return baseheaders
+  // const statusNameIndex = enrollmentHeaders.findIndex((header) => header.field === 'statusName')
+  // enrollmentHeaders.splice(statusNameIndex, 1, {
+  //   ...enrollmentHeaders[statusNameIndex],
+  //   options: statusOptions.value
+  // })
+  return enrollmentHeaders
 })
 const majorMap = computed(() =>
   baseStore.getMajorList().reduce((majorMap, major) => {
@@ -154,12 +184,6 @@ const politicMap = computed(() =>
     return politicMap
   }, new Map())
 )
-const statusMap = computed(() =>
-  baseStore.getStatusList().reduce((statusMap, status) => {
-    statusMap.set(status.statusName, status.statusId)
-    return statusMap
-  }, new Map())
-)
 const booleanMap = new Map([
   ['是', true],
   ['否', false]
@@ -169,9 +193,9 @@ const analyzeHandler = async () => {
   loading.value = true
   const ret = (await AnalyzeFileToTable(
     excel.value as File,
-    refBaseHeaders.value,
+    refHeaders.value,
     notify
-  )) as BaseHeader[]
+  )) as EnrollmentHeader[]
   if (ret !== undefined) {
     jsonData.value = ret
   }
@@ -188,7 +212,7 @@ const uploadLogic = async () => {
   // 传数据前的检查
   if (
     !jsonData.value.reduce(
-      (valid, student) => (!valid ? false : HeaderValidChecker(student, refBaseHeaders.value)),
+      (valid, raw) => (!valid ? false : HeaderValidChecker(raw, refHeaders.value)),
       true
     )
   ) {
@@ -196,7 +220,7 @@ const uploadLogic = async () => {
     loading.value = false
     return
   }
-  const students = jsonDataToStudentArray(jsonData.value)
+  const students = jsonData2EnrollmentArray(jsonData.value)
   // 判断是否需要批量传输数据
   const batchSize = 50
   for (let i = 0; i < students.length; i += batchSize) {
@@ -224,68 +248,107 @@ const uploadLogic = async () => {
   uploadDialog.value = false
 }
 
-const jsonDataToStudentArray = (jsonData: BaseHeader[]): Student[] => {
-  return jsonData.map((student) => ({
-    studentId: student.studentId,
-    idNumber: student.idNumber,
-    name: student.name,
-    gender: student.gender,
-    nativePlace: checkValid(student.nativePlace) ? student.nativePlace : null,
-    postalCode: checkValid(student.postalCode) ? student.postalCode : null,
-    politicStatus: checkValid(student.politicStatus) ? student.politicStatus : null,
-    phone: checkValid(student.phone) ? student.phone : null,
-    nation: checkValid(student.nation) ? student.nation : null,
-    majorName: checkValid(student.majorName) ? student.majorName : null,
-    grade: checkValid(student.grade) ? student.grade : null,
-    classNo: checkValid(student.classNo) ? student.classNo : null,
-    email: checkValid(student.email) ? student.email : null,
-    headerTeacherUsername: checkValid(student.headerTeacherUsername)
-      ? student.headerTeacherUsername
-      : null,
-    headerTeacherName: checkValid(student.headerTeacherName) ? student.headerTeacherName : null,
-    headerTeacherPhone: checkValid(student.headerTeacherPhone) ? student.headerTeacherPhone : null,
-    birthdate: checkValid(student.birthdate) ? student.birthdate : null,
-    householdRegistration: checkValid(student.householdRegistration)
-      ? student.householdRegistration
-      : null,
-    householdType: checkValid(student.householdType) ? student.householdType : null,
-    address: checkValid(student.address) ? student.address : null,
-    fatherName: checkValid(student.fatherName) ? student.fatherName : null,
-    fatherPhone: checkValid(student.fatherPhone) ? student.fatherPhone : null,
-    fatherOccupation: checkValid(student.fatherOccupation) ? student.fatherOccupation : null,
-    motherName: checkValid(student.motherName) ? student.motherName : null,
-    motherPhone: checkValid(student.motherPhone) ? student.motherPhone : null,
-    motherOccupation: checkValid(student.motherOccupation) ? student.motherOccupation : null,
-    guardian: checkValid(student.guardian) ? student.guardian : null,
-    guardianPhone: checkValid(student.guardianPhone) ? student.guardianPhone : null,
-    highSchool: checkValid(student.highSchool) ? student.highSchool : null,
-    examId: checkValid(student.examId) ? student.examId : null,
-    admissionBatch: checkValid(student.admissionBatch) ? student.admissionBatch : null,
-    totalExamScore: checkValid(student.totalExamScore) ? student.totalExamScore : null,
-    foreignLanguage: checkValid(student.foreignLanguage) ? student.foreignLanguage : null,
-    foreignScore: checkValid(student.foreignScore) ? student.foreignScore : null,
-    hobbies: checkValid(student.hobbies) ? student.hobbies : null,
-    dormitory: checkValid(student.dormitory) ? student.dormitory : null,
-    otherNotes: checkValid(student.otherNotes) ? student.otherNotes : null,
-    joiningTime: checkValid(student.joiningTime) ? student.joiningTime : null,
-    isStudentLoans: booleanMap.get(student.isStudentLoansText) ?? true,
-    height: checkValid(student.height) ? student.height : null,
-    weight: checkValid(student.weight) ? student.weight : null,
-    religiousBeliefs: checkValid(student.religiousBeliefs) ? student.religiousBeliefs : null,
-    location: checkValid(student.location) ? student.location : null,
-    familyPopulation: checkValid(student.familyPopulation) ? student.familyPopulation : null,
-    isOnlyChild: booleanMap.get(student.isOnlyChildText) ?? true,
-    familyMembers: checkValid(student.familyMembers) ? student.familyMembers : null,
-    degreeId: degreeMap.value.get(student.degreeName),
-    politicId: politicMap.value.get(student.politicStatus),
-    disability: booleanMap.get(student.disabilityText) ?? false,
-    statusId: statusMap.value.get(student.statusName),
-    gradeId: gradeMap.value.get(student.gradeName),
-    majorId: majorMap.value.get(student.majorName),
-    statusName: student.statusName,
-    gradeName: student.gradeName,
-    degreeName: student.degreeName,
-    politicsStatus: student.politicStatus,
+const jsonData2EnrollmentArray = (jsonData: EnrollmentHeader[]): Enrollment[] => {
+  return jsonData.map((raw) => ({
+    // 个人基础信息
+    studentId: raw.studentId,
+    idNumber: raw.idNumber,
+    name: raw.name,
+    gender: raw.gender,
+    birthdate: checkValid(raw.birthdate) ? raw.birthdate : '',
+    hobbies: checkValid(raw.hobbies) ? raw.hobbies : '',
+    nativePlace: checkValid(raw.nativePlace) ? raw.nativePlace : '',
+    nation: checkValid(raw.nation) ? raw.nation : '',
+    height: checkValid(raw.height) ? raw.height : '',
+    weight: checkValid(raw.weight) ? raw.weight : '',
+    politicId: politicMap.value.get(raw.politicStatus),
+    phone: checkValid(raw.phone) ? raw.phone : '',
+    email: checkValid(raw.email) ? raw.email : '',
+
+    // 在校信息
+    headerTeacherUsername: checkValid(raw.headerTeacherUsername) ? raw.headerTeacherUsername : '',
+    dormitory: checkValid(raw.dormitory) ? raw.dormitory : '',
+    classNo: checkValid(raw.classNo) ? raw.classNo : '',
+    majorId: majorMap.value.get(raw.majorName),
+    gradeId: gradeMap.value.get(raw.gradeName),
+    degreeId: degreeMap.value.get(raw.degreeName),
+
+    // 高考信息
+    studentType: checkValid(raw.studentType) ? raw.studentType : '',
+    admissionBatch: checkValid(raw.admissionBatch) ? raw.admissionBatch : '',
+    subjectCategory: checkValid(raw.subjectCategory) ? raw.subjectCategory : '',
+    provinceName: checkValid(raw.provinceName) ? raw.provinceName : '',
+    examId: checkValid(raw.examId) ? raw.examId : '',
+    admittedMajor: checkValid(raw.admittedMajor) ? raw.admittedMajor : '',
+    volunteerMajor: checkValid(raw.volunteerMajor) ? raw.volunteerMajor : '',
+    volunteerCollege: checkValid(raw.volunteerCollege) ? raw.volunteerCollege : '',
+    totalExamScore: checkValid(raw.totalExamScore) ? raw.totalExamScore : '',
+    convertedScore: checkValid(raw.convertedScore) ? raw.convertedScore : '',
+    specialScore: checkValid(raw.specialScore) ? raw.specialScore : '',
+    feature: checkValid(raw.feature) ? raw.feature : '',
+    volunteer1: checkValid(raw.volunteer1) ? raw.volunteer1 : '',
+    volunteer2: checkValid(raw.volunteer2) ? raw.volunteer2 : '',
+    volunteer3: checkValid(raw.volunteer3) ? raw.volunteer3 : '',
+    volunteer4: checkValid(raw.volunteer4) ? raw.volunteer4 : '',
+    volunteer5: checkValid(raw.volunteer5) ? raw.volunteer5 : '',
+    volunteer6: checkValid(raw.volunteer6) ? raw.volunteer6 : '',
+    studentFrom: checkValid(raw.studentFrom) ? raw.studentFrom : '',
+    isAdjusted: booleanMap.get(raw.isAdjustedText) ?? false,
+    receiver: checkValid(raw.receiver) ? raw.receiver : '',
+    receiverPhone: checkValid(raw.receiverPhone) ? raw.receiverPhone : '',
+    postalCode: checkValid(raw.postalCode) ? raw.postalCode : '',
+
+    // 户口信息
+    householdRegistration: checkValid(raw.householdRegistration) ? raw.householdRegistration : '',
+    householdType: checkValid(raw.householdType) ? raw.householdType : '',
+    address: checkValid(raw.address) ? raw.address : '',
+    fatherName: checkValid(raw.fatherName) ? raw.fatherName : '',
+    fatherPhone: checkValid(raw.fatherPhone) ? raw.fatherPhone : '',
+    fatherOccupation: checkValid(raw.fatherOccupation) ? raw.fatherOccupation : '',
+    motherName: checkValid(raw.motherName) ? raw.motherName : '',
+    motherPhone: checkValid(raw.motherPhone) ? raw.motherPhone : '',
+    motherOccupation: checkValid(raw.motherOccupation) ? raw.motherOccupation : '',
+    guardian: checkValid(raw.guardian) ? raw.guardian : '',
+    guardianPhone: checkValid(raw.guardianPhone) ? raw.guardianPhone : '',
+    familyPopulation: checkValid(raw.familyPopulation) ? raw.familyPopulation : '',
+    familyMembers: checkValid(raw.familyMembers) ? raw.familyMembers : '',
+    familyLocation: checkValid(raw.familyLocation) ? raw.familyLocation : '',
+    isOnlyChild: booleanMap.get(raw.isOnlyChildText) ?? false,
+
+    // 中学信息
+    highSchoolCode: checkValid(raw.highSchoolCode) ? raw.highSchoolCode : '',
+    highSchoolName: checkValid(raw.highSchoolName) ? raw.highSchoolName : '',
+    candidateCategoryClassification: checkValid(raw.candidateCategoryClassification)
+      ? raw.candidateCategoryClassification
+      : '',
+    graduationCategoryClassification: checkValid(raw.graduationCategoryClassification)
+      ? raw.graduationCategoryClassification
+      : '',
+    graduationCategory: checkValid(raw.graduationCategory) ? raw.graduationCategory : '',
+    candidateCategory: checkValid(raw.candidateCategory) ? raw.candidateCategory : '',
+    foreignLanguage: checkValid(raw.foreignLanguage) ? raw.foreignLanguage : '',
+    scoreChinese: checkValid(raw.scoreChinese) ? raw.scoreChinese : '',
+    scoreMath: checkValid(raw.scoreMath) ? raw.scoreMath : '',
+    scoreForeignLanguage: checkValid(raw.scoreForeignLanguage) ? raw.scoreForeignLanguage : '',
+    scoreComprehensive: checkValid(raw.scoreComprehensive) ? raw.scoreComprehensive : '',
+    scorePhysics: checkValid(raw.scorePhysics) ? raw.scorePhysics : '',
+    scoreChemistry: checkValid(raw.scoreChemistry) ? raw.scoreChemistry : '',
+    scoreBiology: checkValid(raw.scoreBiology) ? raw.scoreBiology : '',
+    scorePolitics: checkValid(raw.scorePolitics) ? raw.scorePolitics : '',
+    scoreHistory: checkValid(raw.scoreHistory) ? raw.scoreHistory : '',
+    scoreGeography: checkValid(raw.scoreGeography) ? raw.scoreGeography : '',
+    scoreTechnology: checkValid(raw.scoreTechnology) ? raw.scoreTechnology : '',
+    selectedSubjects: checkValid(raw.selectedSubjects) ? raw.selectedSubjects : '',
+
+    // 其他
+    studentLoans: booleanMap.get(raw.studentLoansText) ?? false,
+    disability: booleanMap.get(raw.disabilityText) ?? false,
+    religiousBeliefs: checkValid(raw.religiousBeliefs) ? raw.religiousBeliefs : '',
+
+    // 备注
+    otherNotes: checkValid(raw.otherNotes) ? raw.otherNotes : '',
+
+    // 启用状态
     enabled: true
   }))
 }
@@ -369,7 +432,7 @@ onMounted(async () => {
         text="解析文件"
       />
       <v-btn
-        v-if="has('student:insert')"
+        v-if="has('raw:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
@@ -382,7 +445,7 @@ onMounted(async () => {
       />
     </section>
     <section class="pa-4 w-100">
-      <ExcelTable v-model="jsonData" :headers="refBaseHeaders" :nil-data="nilData" />
+      <ExcelTable v-model="jsonData" :headers="refHeaders" :nil-data="nilData" />
     </section>
   </v-card>
 </template>

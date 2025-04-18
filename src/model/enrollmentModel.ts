@@ -71,7 +71,7 @@ export interface Enrollment {
     volunteer5: string | null; // 志愿5
     volunteer6: string | null; // 志愿6
     studentFrom: string | null; // 生源地
-    isAdjusted: string | null; // 是否调剂
+    isAdjusted: boolean; // 是否调剂
     receiver: string | null; // 收件人
     receiverPhone: string | null; // 联系电话
     postalCode: string | null; // 邮政编码
@@ -91,7 +91,7 @@ export interface Enrollment {
     familyPopulation: string | null; // 家庭人口
     familyMembers: string | null; // 家庭成员
     familyLocation: string | null; // 家庭所在地
-    isOnlyChild: string | null; // 是否独生子女
+    isOnlyChild: boolean; // 是否独生子女
 
     // 中学信息
     highSchoolCode: string | null; // 中学代码
@@ -115,8 +115,8 @@ export interface Enrollment {
     selectedSubjects: string | null; // 选考科目
 
     // 其他
-    studentLoans: string | null; // 是否申请助学贷款
-    disability: string | null; // 是否残疾
+    studentLoans: boolean; // 是否申请助学贷款
+    disability: boolean; // 是否残疾
     religiousBeliefs: string | null; // 宗教信仰
 
     // 备注

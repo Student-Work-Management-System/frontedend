@@ -1,11 +1,11 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Student, StudentStatItem, StudentStatQuery, HeaderTeacher, StudentBasicItem } from '@/model/studentModel'
+import type { StudentStatItem, StudentStatQuery, HeaderTeacher, StudentBasicItem } from '@/model/studentModel'
 import type { Enrollment, EnrollmentItem, EnrollmentQuery } from '@/model/enrollmentModel'
 
 export async function apiAddStudentBaseInfo(
-  students: Student[]
+  students: Enrollment[]
 ): Promise<AxiosResponse<Result<null>>> {
   return http.post('/student/adds', students)
 }

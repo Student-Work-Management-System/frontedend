@@ -1,16 +1,16 @@
 import { type TableHeader } from '.'
-import { type Student } from '@/model/studentModel'
 import type { Enrollment } from "@/model/enrollmentModel"
 
-export interface BaseHeader extends Student {
-  [key: string]: any
-  isOnlyChildText: string
-  isStudentLoansText: string
+export interface EnrollmentHeader extends Enrollment {
+  [key: string]: any,
+  isAdujustText: string,
+  isOnlyChildText: string,
+  studentLoansText: string,
   disabilityText: string
 }
 
-export const baseheaders: TableHeader[] = [
-  // 基本信息
+export const enrollmentHeaders: TableHeader[] = [
+  /** 个人基础信息 */
   {
     type: 'string',
     field: 'studentId',
@@ -18,13 +18,6 @@ export const baseheaders: TableHeader[] = [
     require: true,
     options: null,
     validate: (content) => (content === '' ? '学号不能为空！' : '')
-  },
-  {
-    type: 'select',
-    field: 'degreeName',
-    label: '学历层次',
-    require: true,
-    options: []
   },
   {
     type: 'string',
@@ -56,6 +49,27 @@ export const baseheaders: TableHeader[] = [
     validate: (content) => (content === '' ? '性别不能为空！' : '')
   },
   {
+    type: 'date',
+    field: 'birthdate',
+    label: '生日',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'hobbies',
+    label: '个人兴趣爱好特长',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'nativePlace',
+    label: '籍贯',
+    require: false,
+    options: null
+  },
+  {
     type: 'string',
     field: 'nation',
     label: '民族',
@@ -63,11 +77,25 @@ export const baseheaders: TableHeader[] = [
     options: null
   },
   {
-    type: 'date',
-    field: 'birthdate',
-    label: '生日',
+    type: 'string',
+    field: 'height',
+    label: '身高(cm)',
     require: false,
-    options: null
+    options: null,
+  },
+  {
+    type: 'string',
+    field: 'weight',
+    label: '体重(kg)',
+    require: false,
+    options: null,
+  },
+  {
+    type: 'select',
+    field: 'politicStatus',
+    label: '政治面貌',
+    require: true,
+    options: []
   },
   {
     type: 'string',
@@ -95,30 +123,27 @@ export const baseheaders: TableHeader[] = [
           ? '邮箱格式错误！'
           : ''
   },
-
-  // 身体信息
-  {
-    type: 'string',
-    field: 'height',
-    label: '身高(cm)',
-    require: false,
-    options: null,
-  },
-  {
-    type: 'string',
-    field: 'weight',
-    label: '体重(kg)',
-    require: false,
-    options: null,
-  },
-
-  // 学校信息
+  // 在校信息
   {
     type: 'select',
-    field: 'gradeName',
-    label: '年级',
+    field: 'headerTeacherUsername',
+    label: '班主任工号',
     require: true,
     options: []
+  },
+  {
+    type: 'string',
+    field: 'dormitory',
+    label: '宿舍',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'classNo',
+    label: '班级',
+    require: false,
+    options: null
   },
   {
     type: 'select',
@@ -129,70 +154,181 @@ export const baseheaders: TableHeader[] = [
   },
   {
     type: 'select',
-    field: 'statusName',
-    label: '学籍状态',
+    field: 'gradeName',
+    label: '年级',
     require: true,
     options: []
   },
   {
+    type: 'select',
+    field: 'degreeName',
+    label: '培养层次',
+    require: true,
+    options: []
+  },
+  // 高考信息
+  {
     type: 'string',
-    field: 'classNo',
-    label: '班级',
+    field: 'studentType',
+    label: '学生类型',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'dormitory',
-    label: '宿舍',
+    field: 'admissionBatch',
+    label: '录取批次',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'subjectCategory',
+    label: '科类',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'provinceName',
+    label: '省份名称',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'examId',
+    label: '考生号',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'admittedMajor',
+    label: '录取专业',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteerMajor',
+    label: '投档志愿',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteerCollege',
+    label: '投档单位',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'totalExamScore',
+    label: '高考总分',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'convertedScore',
+    label: '总分（折算后）',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'specialScore',
+    label: '特征成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'feature',
+    label: '考生特征',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer1',
+    label: '志愿1',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer2',
+    label: '志愿2',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer3',
+    label: '志愿3',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer4',
+    label: '志愿4',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer5',
+    label: '志愿5',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'volunteer6',
+    label: '志愿6',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'studentFrom',
+    label: '生源地',
     require: false,
     options: null
   },
   {
     type: 'select',
-    field: 'headerTeacherUsername',
-    label: '班主任工号',
-    require: true,
-    options: []
-  },
-  // 政治信息
-  {
-    type: 'select',
-    field: 'politicStatus',
-    label: '政治面貌',
-    require: true,
-    options: []
-  },
-  {
-    type: 'date',
-    field: 'joiningTime',
-    label: '入团时间',
+    field: 'isAdjustedText',
+    label: '是否调剂',
     require: false,
-    options: null
+    options: ['是', '否']
   },
-
-  // 家庭基本信息
   {
     type: 'string',
-    field: 'location',
-    label: '家庭所在省/市/区',
+    field: 'receiver',
+    label: '收件人',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'address',
-    label: '家庭住址',
+    field: 'receiverPhone',
+    label: '联系电话',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'nativePlace',
-    label: '籍贯',
+    field: 'postalCode',
+    label: '邮政编码',
     require: false,
     options: null
   },
+  // 户口信息
   {
     type: 'string',
     field: 'householdRegistration',
@@ -209,33 +345,11 @@ export const baseheaders: TableHeader[] = [
   },
   {
     type: 'string',
-    field: 'postalCode',
-    label: '邮政编码',
+    field: 'address',
+    label: '通讯地址',
     require: false,
     options: null
   },
-  {
-    type: 'string',
-    field: 'familyPopulation',
-    label: '家庭人口',
-    require: false,
-    options: null,
-  },
-  {
-    type: 'string',
-    field: 'familyMembers',
-    label: '家庭成员',
-    require: false,
-    options: null
-  },
-  {
-    type: 'select',
-    field: 'isOnlyChildText',
-    label: '是否独生子女',
-    require: false,
-    options: ['是', '否']
-  },
-  // 父母信息
   {
     type: 'string',
     field: 'fatherName',
@@ -248,7 +362,7 @@ export const baseheaders: TableHeader[] = [
     field: 'fatherPhone',
     label: '父亲联系方式',
     require: false,
-    options: null,
+    options: null
   },
   {
     type: 'string',
@@ -269,7 +383,7 @@ export const baseheaders: TableHeader[] = [
     field: 'motherPhone',
     label: '母亲联系方式',
     require: false,
-    options: null,
+    options: null
   },
   {
     type: 'string',
@@ -278,8 +392,6 @@ export const baseheaders: TableHeader[] = [
     require: false,
     options: null
   },
-
-  // 监护人信息
   {
     type: 'string',
     field: 'guardian',
@@ -292,35 +404,75 @@ export const baseheaders: TableHeader[] = [
     field: 'guardianPhone',
     label: '监护人联系方式',
     require: false,
-    options: null,
+    options: null
   },
-
-  // 入学信息
   {
     type: 'string',
-    field: 'highSchool',
+    field: 'familyPopulation',
+    label: '家庭人口',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'familyMembers',
+    label: '家庭成员',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'familyLocation',
+    label: '家庭所在地',
+    require: false,
+    options: null
+  },
+  {
+    type: 'select',
+    field: 'isOnlyChildText',
+    label: '是否独生子女',
+    require: false,
+    options: ['是', '否']
+  },
+  {
+    type: 'string',
+    field: 'highSchoolCode',
+    label: '中学代码',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'highSchoolName',
     label: '中学名称',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'examId',
-    label: '考生号',
+    field: 'candidateCategoryClassification',
+    label: '考生类别分类',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'admissionBatch',
-    label: '录取批次',
+    field: 'graduationCategoryClassification',
+    label: '毕业类别分类',
     require: false,
     options: null
   },
   {
     type: 'string',
-    field: 'totalExamScore',
-    label: '高考总分',
+    field: 'graduationCategory',
+    label: '毕业类别',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'candidateCategory',
+    label: '考生类别',
     require: false,
     options: null
   },
@@ -333,20 +485,94 @@ export const baseheaders: TableHeader[] = [
   },
   {
     type: 'string',
-    field: 'foreignScore',
-    label: '外语分数',
+    field: 'scoreChinese',
+    label: '语文成绩',
     require: false,
     options: null
   },
-
-  // 其他信息
+  {
+    type: 'string',
+    field: 'scoreMath',
+    label: '数学成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreForeignLanguage',
+    label: '外语成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreComprehensive',
+    label: '综合成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scorePhysics',
+    label: '物理成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreChemistry',
+    label: '化学成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreBiology',
+    label: '生物成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scorePolitics',
+    label: '政治成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreHistory',
+    label: '历史成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreGeography',
+    label: '地理成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'scoreTechnology',
+    label: '技术成绩',
+    require: false,
+    options: null
+  },
+  {
+    type: 'string',
+    field: 'selectedSubjects',
+    label: '选考科目',
+    require: false,
+    options: null
+  },
   {
     type: 'select',
-    field: 'isStudentLoansText',
-    label: '是否助学贷款',
+    field: 'studentLoansText',
+    label: '是否申请助学贷款',
     require: false,
     options: ['是', '否']
-
   },
   {
     type: 'select',
@@ -362,13 +588,7 @@ export const baseheaders: TableHeader[] = [
     require: false,
     options: null
   },
-  {
-    type: 'string',
-    field: 'hobbies',
-    label: '个人兴趣爱好特长',
-    require: false,
-    options: null
-  },
+  // 备注
   {
     type: 'string',
     field: 'otherNotes',
@@ -376,15 +596,6 @@ export const baseheaders: TableHeader[] = [
     require: false,
     options: null
   }
-]
-
-// todo: 更新两个表头
-export interface EnrollmentHeader extends Enrollment {
-  [key: string]: any
-}
-
-export const enrollmentHeaders: TableHeader[] = [
-
 ]
 
 export const enrollmentTableHeaders = [
