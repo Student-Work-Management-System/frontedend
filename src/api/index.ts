@@ -73,4 +73,9 @@ export interface RecordsPage<T> {
   totalRow: number
 }
 
+export interface BaseQuery {
+  pageNo: number
+  pageSize: number
+}
+
 export default http

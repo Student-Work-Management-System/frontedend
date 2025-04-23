@@ -16,6 +16,7 @@ import foreign from './foreign'
 import precaution from './precaution'
 import status from './status'
 import system from './system'
+import leave from "./leave"
 
 export const routes: RouteRecordRaw[] = [
   base,
@@ -25,6 +26,7 @@ export const routes: RouteRecordRaw[] = [
   scholarship,
   competition,
   academic,
+  leave,
   punishment,
   foreign,
   precaution,
