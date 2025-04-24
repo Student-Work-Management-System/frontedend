@@ -18,10 +18,20 @@ const addDialog = ref(false)
 const destoryDialog = ref(false)
 const store = useUserStore()
 
+const totalRow = ref(0)
 const baseQuery = reactive<BaseQuery>({
   pageNo: 1,
-  pageSize: 10
+  pageSize: 25
 })
+const handleCurrentChange = (val: number) => {
+  baseQuery.pageNo = val
+  getOwnStudentLeave()
+}
+const handleSizeChange = (val: number) => {
+  baseQuery.pageSize = val
+  getOwnStudentLeave()
+}
+
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
@@ -36,6 +46,7 @@ const getOwnStudentLeave = async () => {
       return
     }
     data.value = result.data.records
+    totalRow.value = result.data.totalRow
   } catch (error) {
     console.error(error)
   } finally {
@@ -95,7 +106,7 @@ const afterLogic = () => {
   getOwnStudentLeave()
 }
 
-const showDetory = (item: StudentLeaveItem): boolean => {
+const showDetroy = (item: StudentLeaveItem): boolean => {
   return (
     has('student_leave_audit:update:student') && getResultState(item) == '通过' && !item.destroyed
   )
@@ -140,11 +151,15 @@ const checkStateIcon = (state: AuditState): string => {
   }
 }
 
+const booleanFormatter = (destroyed: boolean) => {
+  return destroyed ? '是' : '否'
+}
+
 // 高度计算相关
 const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
 const tableHeight = computed(() => {
-  return containerHeight.value - selectMenuHeight.value - 100
+  return containerHeight.value - selectMenuHeight.value - 90
 })
 
 onMounted(() => {
@@ -175,6 +190,7 @@ onMounted(() => {
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddStudentLeaveDialog v-model="addDialog" @on-closed="afterLogic" />
     <DestoryLeaveDialog v-model="destoryDialog" @destory="destoryLeave(selectedItem)" />
+
     <section class="menu">
       <v-btn
         v-if="has('student_leave:select:student') && has('student_leave_audit:select:student')"
@@ -190,52 +206,105 @@ onMounted(() => {
         text="添加请假记录"
       />
     </section>
+
     <section class="pa-4 w-100" ref="tableDom">
-      <v-card>
-        <v-data-table
-          :headers="leaveTableHeader as any"
-          :height="tableHeight"
-          :items="data"
-          :loading="loading"
-          v-model:page="baseQuery.pageNo"
-          v-model:items-per-page="baseQuery.pageSize"
-          return-object
-        >
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template v-slot:item.internship="{ item }">
-            {{ item.internship ? '是' : '否' }}
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template v-slot:item.state="{ item }">
-            <v-chip
-              class="mr-1"
-              :prepend-icon="checkStateIcon(getResultState(item))"
-              :color="checkStateColor(getResultState(item))"
+      <div class="container">
+        <div class="table-container">
+          <el-table
+            :data="data"
+            row-key="studentId"
+            :height="tableHeight"
+            :header-cell-style="{
+              color: '#333333',
+              fontSize: '14px',
+              fontWeight: 700,
+              background: '#F9FAFC'
+            }"
+            :cell-style="{
+              padding: '5px',
+              fontSize: '14px',
+              color: 'black'
+            }"
+            size="small"
+            border
+            stripe
+          >
+            <el-table-column
+              prop="studentId"
+              align="center"
+              label="学号"
+              fixed="left"
+              width="120"
+            />
+            <el-table-column prop="name" align="center" label="姓名" fixed="left" width="120" />
+            <el-table-column
+              v-for="header in leaveTableHeader"
+              :key="header.key"
+              :prop="header.key"
+              :label="header.title"
+              :align="header.align"
+              :width="header.width"
+              :show-overflow-tooltip="header.showOverflowTooltip"
+              :formatter="header.formatter"
+            />
+            <el-table-column prop="state" label="审核状态" align="center" width="150">
+              <template #default="{ row }">
+                <v-chip
+                  :color="checkStateColor(getResultState(row))"
+                  :prepend-icon="checkStateIcon(getResultState(row))"
+                >
+                  {{ getResultState(row) }}
+                </v-chip>
+              </template>
+            </el-table-column>
+            <el-table-column prop="time" label="最后审核时间" align="center" width="150">
+              <template #default="{ row }">
+                {{ getLastTime(row) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="destroyed"
+              label="是否销假"
+              align="center"
+              fixed="right"
+              width="150"
             >
-              {{ getResultState(item) }}
-            </v-chip>
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template v-slot:item.time="{ item }">
-            {{ getLastTime(item) }}
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template v-slot:item.destory="{ item }">
-            {{ item.destroyed ? '是' : '否' }}
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template v-slot:item.operations="{ item }">
-            <div class="d-flex justify-center">
-              <v-btn
-                v-if="showDetory(item)"
-                @click="setSelectItem(item)"
-                color="indigo"
-                text="销假"
-              />
-            </div>
-          </template>
-        </v-data-table>
-      </v-card>
+              <template #default="{ row }">
+                {{ booleanFormatter(row.destroyed) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" fixed="right" width="150">
+              <template #default="{ row }">
+                <v-btn
+                  v-if="showDetroy(row)"
+                  @click="setSelectItem(row)"
+                  color="indigo"
+                  text="销假"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div class="pagination">
+          <el-pagination
+            style="
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              padding: 8px;
+              font-size: 14px;
+            "
+            :current-page="baseQuery.pageNo"
+            :page-size="baseQuery.pageSize"
+            :page-sizes="[25, 50, 100, 200, 500, 1000]"
+            :background="true"
+            layout="total, sizes, prev, pager, next"
+            :total="totalRow"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
+      </div>
     </section>
   </v-card>
 </template>
@@ -259,5 +328,26 @@ onMounted(() => {
 
 .w-20 {
   width: 15% !important;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.table-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.pagination {
+  height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: white;
+  border-top: 1px solid #ebeef5;
 }
 </style>
