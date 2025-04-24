@@ -44,6 +44,10 @@ export function apiGetCounselors(query: CounselorQuery): Promise<AxiosResponse<R
     return http.post("/other/counselor/gets", query)
 }
 
+export function apiGetOptionalCounselors(gradeId: string): Promise<AxiosResponse<Result<UserWithCounselorRole[]>>> {
+    return http.get(`/other/counselor/gets/${gradeId}`)
+}
+
 export async function apiDeleteCounselor(uid: string): Promise<AxiosResponse<Result<void>>> {
     return http.delete(`/other/counselor/delete/${uid}`)
 }

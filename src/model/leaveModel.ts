@@ -1,10 +1,12 @@
+import type { AuditState } from "./index"
+
 export interface LeaveQuery {
     search: string
     gradeId: string | null
     majorId: string | null
     totalDay: string | null
-    counselorState: string | null
-    leaderState: string | null
+    counselorHandleState: string | null
+    leaderHandleState: string | null
     destroyed: boolean | null
     revoked: boolean | null
     pageNo: number
@@ -14,7 +16,7 @@ export interface LeaveQuery {
 export interface AuditOperator {
     auditId: string
     username: string
-    state: string
+    state: AuditState
     needNoticeStudent: boolean
     needNoticeLeader: boolean
 }
@@ -50,10 +52,10 @@ export interface StudentLeaveAudit {
     leaveId: string
     counselorId: string
     counselorHandleTime: string
-    counselorState: string
+    counselorHandleState: AuditState
     leaderId: string
     leaderHandleTime: string
-    leaderState: string
+    leaderHandleState: AuditState
     revoked: boolean
 }
 
@@ -80,10 +82,10 @@ export interface StudentLeaveItem {
     auditId: string
     counselorId: string
     counselorHandleTime: string
-    counselorState: string
+    counselorHandleState: AuditState
     leaderId: string
     leaderHandleTime: string
-    leaderState: string
+    leaderHandleState: AuditState
     revoked: boolean
     evidences: string[]
 }

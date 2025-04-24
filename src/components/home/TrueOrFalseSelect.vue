@@ -12,6 +12,7 @@ const props = defineProps<{
     | 'solo-filled'
     | undefined
   density?: 'compact' | 'default' | 'comfortable' | undefined
+  prependIcon?: string
   items: { key: string; value: boolean | string }[]
 }>()
 </script>
@@ -25,6 +26,7 @@ const props = defineProps<{
     :items="props.items"
     item-title="key"
     item-value="value"
+    :prepend-inner-icon="prependIcon"
     :variant="props.variant"
     hide-details
     clearable

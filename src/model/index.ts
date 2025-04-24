@@ -1,0 +1,16 @@
+export type AuditState = '审核中' | '通过' | '拒绝'
+
+export * from "./academicWorkModel"
+export * from "./cadreModel"
+export * from "./competitionModel"
+export * from "./employmentModel"
+export * from "./enrollmentModel"
+export * from "./foreignModel"
+export * from "./leaveModel"
+export * from "./otherModel"
+export * from "./povertyModel"
+export * from "./punishmentModel"
+export * from "./scholarshipModel"
+export * from "./statusModel"
+export * from "./studentModel"
+export * from "./systemModel"

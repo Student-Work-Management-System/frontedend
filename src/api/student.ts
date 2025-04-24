@@ -41,3 +41,7 @@ export function apiGetStudentBasic(studentId: string): Promise<AxiosResponse<Res
 export function apiGetStudentBasicList(studentIds: string[]): Promise<AxiosResponse<Result<StudentBasicItem[]>>> {
   return http.post('/student/basic/gets', studentIds)
 }
+
+export function apiGetOwnEnrollment(studentId: string): Promise<AxiosResponse<Result<EnrollmentItem>>> {
+  return http.get(`/student/get/${studentId}`)
+}

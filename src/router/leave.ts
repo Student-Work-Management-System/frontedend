@@ -28,7 +28,7 @@ export default {
                 icon: 'mdi-eye-settings-outline',
                 title: '学生请假审核与记录',
                 hasPage: true,
-                auth: 'student_leave:select'
+                auth: 'student_leave_audit:select'
             }
         },
         {
