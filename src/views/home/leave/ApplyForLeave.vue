@@ -117,8 +117,9 @@ const getResultState = (item: StudentLeaveItem): AuditState => {
   let endDay = moment(item.endDay)
   let totalDay = endDay.diff(startDay, 'days') + 1
   if (totalDay <= 7) return item.counselorHandleState
-  if (item.counselorHandleState !== '通过') return '拒绝'
-  return item.leaderHandleState
+  if (item.counselorHandleState === '审核中') return '审核中'
+  if (item.counselorHandleState === '拒绝') return '拒绝'
+  return item.leaderHandleState === null ? '审核中' : item.leaderHandleState
 }
 
 const getLastTime = (item: StudentLeaveItem): string => {
