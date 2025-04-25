@@ -10,9 +10,34 @@ import moment from 'moment'
 import type { AuditState } from '@/model'
 import ItemSelect from '@/components/home/ItemSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
+import LeaveAuditDialog from '@/components/home/leave/LeaveAuditDialog.vue'
 
 const loading = ref(false)
+const auditDialog = ref(false)
 const data = ref<StudentLeaveItem[]>([])
+const selectRow = ref<StudentLeaveItem>({
+  leaveId: '',
+  studentId: '',
+  name: '',
+  gradeName: '',
+  majorName: '',
+  type: '',
+  reason: '',
+  target: '',
+  targetDetail: '',
+  internship: false,
+  startDay: '',
+  endDay: '',
+  destroyed: false,
+  auditId: '',
+  counselorId: '',
+  counselorHandleTime: '',
+  counselorHandleState: '审核中',
+  leaderId: '',
+  leaderHandleTime: '',
+  leaderHandleState: '审核中',
+  evidences: []
+})
 const store = useUserStore()
 const chargeGrades = store.getUserData.chargeGrades
 const totalRow = ref(0)
@@ -28,13 +53,13 @@ const query = reactive<AuditLeaveQuery>({
   pageNo: 1,
   pageSize: 25
 })
+
 const handleCurrentChange = (val: number) => {
   query.pageNo = val
 }
 const handleSizeChange = (val: number) => {
   query.pageSize = val
 }
-
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
@@ -56,6 +81,13 @@ const getAuditRecords = async () => {
     loading.value = false
   }
 }
+onMounted(getAuditRecords)
+
+const totalDay = computed(() => {
+  let startDay = moment(selectRow.value.startDay)
+  let endDay = moment(selectRow.value.endDay)
+  return endDay.diff(startDay, 'days') + 1
+})
 
 const getResultState = (item: StudentLeaveItem): AuditState => {
   let startDay = moment(item.startDay)
@@ -97,6 +129,20 @@ const checkStateIcon = (state: AuditState): string => {
   }
 }
 
+const showAudit = (item: StudentLeaveItem): boolean => {
+  let startDay = moment(item.startDay)
+  let endDay = moment(item.endDay)
+  let totalDay = endDay.diff(startDay, 'days') + 1
+  if (totalDay <= 7) return item.counselorHandleState === '审核中'
+  if (item.counselorHandleState === '审核中') return true
+  return item.leaderHandleState === '审核中'
+}
+
+const setItem = (row: StudentLeaveItem) => {
+  selectRow.value = row
+  auditDialog.value = true
+}
+
 const booleanFormatter = (destroyed: boolean) => {
   return destroyed ? '是' : '否'
 }
@@ -134,6 +180,14 @@ onMounted(() => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
+    <LeaveAuditDialog
+      v-model="auditDialog"
+      :is-leader="has('student_leave_audit:update:leader')"
+      :total-day="totalDay"
+      :audit-id="selectRow.auditId"
+      @on-closed="getAuditRecords"
+    />
+
     <section class="menu">
       <span class="w-10">
         <ItemSelect
@@ -269,6 +323,11 @@ onMounted(() => {
             >
               <template #default="{ row }">
                 {{ booleanFormatter(row.destroyed) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" fixed="right" width="150">
+              <template #default="{ row }">
+                <v-btn v-if="showAudit(row)" @click="setItem(row)" color="indigo" text="审核" />
               </template>
             </el-table-column>
           </el-table>

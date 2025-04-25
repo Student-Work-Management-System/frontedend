@@ -66,6 +66,7 @@ declare module 'vue' {
     ItemSelect: typeof import('./src/components/home/ItemSelect.vue')['default']
     KeyValueSelect: typeof import('./src/components/home/KeyValueSelect.vue')['default']
     LanguageSelect: typeof import('./src/components/home/foreign/LanguageSelect.vue')['default']
+    LeaveAuditDialog: typeof import('./src/components/home/leave/LeaveAuditDialog.vue')['default']
     LevelSelect: typeof import('./src/components/home/competition/LevelSelect.vue')['default']
     MajorForm: typeof import('./src/components/home/system/MajorForm.vue')['default']
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
