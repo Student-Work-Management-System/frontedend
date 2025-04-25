@@ -16,6 +16,7 @@ export interface AuditLeaveQuery {
     totalDay: string | null
     counselorHandleState: string | null
     leaderHandleState: string | null
+    type: string | null
     destroyed: boolean | null
     pageNo: number
     pageSize: number
