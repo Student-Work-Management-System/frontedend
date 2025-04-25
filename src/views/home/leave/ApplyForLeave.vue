@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { apiGetOwnStudentLeave, apiDestroyStudentLeave } from '@/api/leave'
+import { apiGetOwnStudentLeave, apiDestroyStudentLeave, leaveTypes, auditStates } from '@/api/leave'
 import { apiDownloadFile } from '@/api/file'
 import { leaveTableHeader } from '@/misc/table'
 import { useUserStore } from '@/stores/userStore'
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
-import type { StudentLeaveItem } from '@/model/leaveModel'
-import type { BaseQuery } from '@/api'
+import type { StudentLeaveItem, StudentLeaveQuery } from '@/model/leaveModel'
 import moment from 'moment'
 import AddStudentLeaveDialog from '@/components/home/leave/AddStudentLeaveDialog.vue'
 import type { AuditState } from '@/model'
 import DestoryLeaveDialog from '@/components/home/leave/DestoryLeaveDialog.vue'
+import ItemSelect from '@/components/home/ItemSelect.vue'
+import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
 
 const loading = ref(false)
 const data = ref<StudentLeaveItem[]>([])
@@ -19,16 +20,20 @@ const destoryDialog = ref(false)
 const store = useUserStore()
 
 const totalRow = ref(0)
-const baseQuery = reactive<BaseQuery>({
+const query = reactive<StudentLeaveQuery>({
+  type: null,
+  state: null,
+  needLeader: null,
+  destroyed: false,
   pageNo: 1,
   pageSize: 25
 })
 const handleCurrentChange = (val: number) => {
-  baseQuery.pageNo = val
+  query.pageNo = val
   getOwnStudentLeave()
 }
 const handleSizeChange = (val: number) => {
-  baseQuery.pageSize = val
+  query.pageSize = val
   getOwnStudentLeave()
 }
 
@@ -39,7 +44,7 @@ const has = (authority: string) => {
 const getOwnStudentLeave = async () => {
   try {
     loading.value = true
-    const { data: result } = await apiGetOwnStudentLeave(baseQuery)
+    const { data: result } = await apiGetOwnStudentLeave(query)
     if (result.code !== 200) {
       console.error(result)
       notify({ type: 'error', title: '错误', text: result.message })
@@ -76,7 +81,6 @@ const selectedItem = ref<StudentLeaveItem>({
   leaderId: '',
   leaderHandleTime: '',
   leaderHandleState: '审核中',
-  revoked: false,
   evidences: []
 })
 const setSelectItem = (item: StudentLeaveItem) => {
@@ -119,7 +123,7 @@ const getResultState = (item: StudentLeaveItem): AuditState => {
   if (totalDay <= 7) return item.counselorHandleState
   if (item.counselorHandleState === '审核中') return '审核中'
   if (item.counselorHandleState === '拒绝') return '拒绝'
-  return item.leaderHandleState === null ? '审核中' : item.leaderHandleState
+  return item.leaderHandleState
 }
 
 const getLastTime = (item: StudentLeaveItem): string => {
@@ -193,6 +197,44 @@ onMounted(() => {
     <DestoryLeaveDialog v-model="destoryDialog" @destory="destoryLeave(selectedItem)" />
 
     <section class="menu">
+      <span class="w-10">
+        <ItemSelect
+          v-model="query.type"
+          :items="leaveTypes"
+          label="请假类型"
+          variant="underlined"
+        />
+      </span>
+      <span class="w-10">
+        <ItemSelect
+          v-model="query.state"
+          :items="auditStates"
+          label="审批状态"
+          variant="underlined"
+        />
+      </span>
+      <span class="w-10">
+        <TrueOrFalseSelect
+          v-model="query.needLeader as boolean"
+          label="请假时间"
+          variant="underlined"
+          :items="[
+            { key: '≤7天', value: true },
+            { key: '＞7天', value: false }
+          ]"
+        />
+      </span>
+      <span class="w-10">
+        <TrueOrFalseSelect
+          v-model="query.destroyed"
+          label="是否销假"
+          variant="underlined"
+          :items="[
+            { key: '是', value: true },
+            { key: '否', value: false }
+          ]"
+        />
+      </span>
       <v-btn
         v-if="has('student_leave:select:student') && has('student_leave_audit:select:student')"
         prepend-icon="mdi-refresh"
@@ -295,8 +337,8 @@ onMounted(() => {
               padding: 8px;
               font-size: 14px;
             "
-            :current-page="baseQuery.pageNo"
-            :page-size="baseQuery.pageSize"
+            :current-page="query.pageNo"
+            :page-size="query.pageSize"
             :page-sizes="[25, 50, 100, 200, 500, 1000]"
             :background="true"
             layout="total, sizes, prev, pager, next"
@@ -314,12 +356,15 @@ onMounted(() => {
 .menu {
   width: 100%;
   display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
   align-items: center;
+  justify-content: start;
   padding: 1rem 1rem 0 1rem;
 }
 
-.menu > * {
-  margin-right: 0.5rem;
+.checkbox {
+  transform: translateY(1px);
 }
 
 .file {
@@ -327,8 +372,8 @@ onMounted(() => {
   width: 26%;
 }
 
-.w-20 {
-  width: 15% !important;
+.w-10 {
+  width: 10% !important;
 }
 
 .container {

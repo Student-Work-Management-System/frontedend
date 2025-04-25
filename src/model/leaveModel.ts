@@ -1,6 +1,15 @@
 import type { AuditState } from "./index"
 
-export interface LeaveQuery {
+export interface StudentLeaveQuery {
+    type: string | null
+    state: string | null
+    needLeader: boolean | null
+    destroyed: boolean
+    pageNo: number
+    pageSize: number
+}
+
+export interface AuditLeaveQuery {
     search: string
     gradeId: string | null
     majorId: string | null
@@ -8,7 +17,6 @@ export interface LeaveQuery {
     counselorHandleState: string | null
     leaderHandleState: string | null
     destroyed: boolean | null
-    revoked: boolean | null
     pageNo: number
     pageSize: number
 }
@@ -56,7 +64,6 @@ export interface StudentLeaveAudit {
     leaderId: string
     leaderHandleTime: string
     leaderHandleState: AuditState
-    revoked: boolean
 }
 
 export interface StudentLeaveEvidence {
@@ -86,6 +93,5 @@ export interface StudentLeaveItem {
     leaderId: string
     leaderHandleTime: string
     leaderHandleState: AuditState
-    revoked: boolean
     evidences: string[]
 }

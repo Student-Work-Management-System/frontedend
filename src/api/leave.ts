@@ -1,17 +1,20 @@
 import http from '.'
 import type { AxiosResponse } from 'axios'
-import type { Result, RecordsPage, BaseQuery } from '.'
-import type { StudentLeaveRequest, StudentLeaveItem, LeaveQuery, AuditOperator } from '@/model/leaveModel'
+import type { Result, RecordsPage } from '.'
+import type { StudentLeaveRequest, StudentLeaveItem, AuditLeaveQuery, AuditOperator, StudentLeaveQuery } from '@/model/leaveModel'
+
+export const leaveTypes = ["事假", "病假"]
+export const auditStates = ["审核中", "通过", "拒绝"]
 
 export async function apiAddStudentLeave(request: StudentLeaveRequest): Promise<AxiosResponse<Result<null>>> {
     return http.post('/leave/student/add', request)
 }
 
-export async function apiGetOwnStudentLeave(query: BaseQuery): Promise<AxiosResponse<Result<RecordsPage<StudentLeaveItem>>>> {
+export async function apiGetOwnStudentLeave(query: StudentLeaveQuery): Promise<AxiosResponse<Result<RecordsPage<StudentLeaveItem>>>> {
     return http.post('/leave/student', query)
 }
 
-export async function apiGetAuditRecord(query: LeaveQuery): Promise<AxiosResponse<Result<RecordsPage<StudentLeaveItem>>>> {
+export async function apiGetAuditRecord(query: AuditLeaveQuery): Promise<AxiosResponse<Result<RecordsPage<StudentLeaveItem>>>> {
     return http.post('/leave/gets', query)
 }
 
