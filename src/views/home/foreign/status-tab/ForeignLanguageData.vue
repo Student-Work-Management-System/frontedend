@@ -209,12 +209,7 @@ onMounted(() => {
       </span>
       <v-btn
         prepend-icon="mdi-refresh"
-        v-if="
-          has('student:select') &&
-          has('student_cadre:select') &&
-          has('cadre:select') &&
-          has('major:select')
-        "
+        v-if="has('foreign:select')"
         text="刷新"
         @click="fetchForeignLanguageLogic"
       />

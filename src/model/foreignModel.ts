@@ -46,7 +46,14 @@ export interface ForeignLanguageStatQuery {
     languageId: string | null
 }
 
-export interface ForeignLanguageStatItem {
+export interface LanguageStatItem {
+    languageName: string
+    passNumber: string
+    totalNumber: string
+}
 
+export interface ForeignLanguageStatItem {
+    majorName: string
+    languageStatItems: LanguageStatItem[]
 }
 
