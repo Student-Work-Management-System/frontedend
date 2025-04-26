@@ -41,6 +41,7 @@ const updateInfoLogic = async () => {
             <v-form v-model="form" class="px-8 form">
               <v-text-field
                 label="语言名称"
+                class="text-indigo"
                 v-model="modifyInfo.languageName"
                 required
                 :rules="[() => !!modifyInfo.languageName || '该选项必填！']"
@@ -52,6 +53,7 @@ const updateInfoLogic = async () => {
               <v-text-field
                 label="语言类型"
                 v-model="modifyInfo.type"
+                class="text-indigo"
                 required
                 :rules="[() => !!modifyInfo.type || '该选项必填！']"
               >
@@ -62,6 +64,7 @@ const updateInfoLogic = async () => {
               <v-text-field
                 label="满分"
                 v-model="modifyInfo.total"
+                class="text-indigo"
                 required
                 :rules="[() => !!modifyInfo.total || '该选项必填！']"
               >

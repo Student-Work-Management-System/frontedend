@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import ForeignLanguageData from './status-tab/ForeignLanguageData.vue'
-import ForeignLanguageStatus from './status-tab/ForeignLanguageStatus.vue'
+import ForeignLanguageStat from './status-tab/ForeignLanguageStat.vue'
 const tab = ref<number>(1)
 </script>
 
@@ -16,7 +16,7 @@ const tab = ref<number>(1)
         <ForeignLanguageData />
       </v-window-item>
       <v-window-item :value="2">
-        <ForeignLanguageStatus />
+        <ForeignLanguageStat />
       </v-window-item>
     </v-window>
   </v-card>

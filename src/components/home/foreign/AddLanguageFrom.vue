@@ -46,6 +46,7 @@ const clearLanguageInfo = () => {
             <v-form v-model="form" class="px-8 form">
               <v-text-field
                 label="语言名称"
+                class="text-indigo"
                 v-model="newLanguage.languageName"
                 required
                 :rules="[() => !!newLanguage.languageName || '该选项必填！']"
@@ -56,6 +57,7 @@ const clearLanguageInfo = () => {
               </v-text-field>
               <v-text-field
                 label="语言类型"
+                class="text-indigo"
                 v-model="newLanguage.type"
                 required
                 :rules="[() => !!newLanguage.type || '该选项必填！']"
@@ -66,6 +68,7 @@ const clearLanguageInfo = () => {
               </v-text-field>
               <v-text-field
                 label="满分"
+                class="text-indigo"
                 v-model="newLanguage.total"
                 required
                 :rules="[() => !!newLanguage.total || '该选项必填！']"

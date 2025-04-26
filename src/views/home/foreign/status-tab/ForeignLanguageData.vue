@@ -204,7 +204,7 @@ onMounted(() => {
           hide-details
           density="compact"
         >
-          <v-tooltip activator="parent" location="top">以学号/姓名/证书编号搜索</v-tooltip>
+          <v-tooltip activator="parent" location="top" text="以 学号 / 姓名 / 证书编号 搜索" />
         </v-text-field>
       </span>
       <v-btn

@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Language, ForeignLanguage, ForeignLanguageItem, ForeignLanguageQuery } from '@/model/foreignModel'
+import type { Language, ForeignLanguage, ForeignLanguageItem, ForeignLanguageQuery, ForeignLanguageStatQuery, ForeignLanguageStatItem } from '@/model/foreignModel'
 
 export async function apiGetLanguages(): Promise<AxiosResponse<Result<Language[]>>> {
     return http.get('/language/gets')
@@ -33,6 +33,10 @@ export async function apiUpdateForeignLanguage(foreignLanguage: ForeignLanguage)
 
 export async function apiDeleteForeignLanguage(foreignLanguageId: string): Promise<AxiosResponse<Result<null>>> {
     return http.delete(`/language/student/delete/${foreignLanguageId}`)
+}
+
+export async function apiGetForeignLanguageStat(query: ForeignLanguageStatQuery): Promise<AxiosResponse<Result<ForeignLanguageStatItem[]>>> {
+    return http.post("/language/student/stat", query)
 }
 
 

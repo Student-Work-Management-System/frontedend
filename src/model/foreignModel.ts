@@ -40,11 +40,13 @@ export interface ForeignLanguageQuery {
     pageSize: number
 }
 
-export interface ForeignLanguageStatusQuery {
-
+export interface ForeignLanguageStatQuery {
+    gradeId: string | null
+    majorId: string | null
+    languageId: string | null
 }
 
-export interface ForeignLanguageStatusItem {
+export interface ForeignLanguageStatItem {
 
 }
 

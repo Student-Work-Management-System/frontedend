@@ -75,7 +75,7 @@ const updateInfoLogic = async () => {
             density="comfortable"
           >
             <template v-slot:prepend>
-              <v-icon size="smaller" icon="mdi-asterisk" />
+              <v-icon size="smaller" icon="" />
             </template>
           </v-text-field>
 
@@ -89,7 +89,7 @@ const updateInfoLogic = async () => {
             density="comfortable"
           >
             <template v-slot:prepend>
-              <v-icon size="smaller" icon="mdi-asterisk" />
+              <v-icon size="smaller" icon="" />
             </template>
           </v-text-field>
         </v-form>
