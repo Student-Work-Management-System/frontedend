@@ -166,9 +166,6 @@ onMounted(() => {
 
     <section class="menu">
       <span class="w-10">
-        <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
-      </span>
-      <span class="w-10">
         <GradeSelect
           v-model="query.gradeId"
           :chargeGrades="chargeGrades"
@@ -179,10 +176,13 @@ onMounted(() => {
       <span class="w-10">
         <DegreeSelect v-model="query.degreeId" variant="underlined" density="compact" />
       </span>
-      <span class="w-10">
+      <span class="w-15">
+        <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
+      </span>
+      <span class="w-15">
         <LanguageSelect v-model="query.languageId" variant="underlined" density="compact" />
       </span>
-      <span class="w-10">
+      <span class="w-15">
         <SemesterSelect
           v-model="query.date"
           variant="underlined"

@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <section class="menu">
-      <span class="w-10">
+      <span class="w-15">
         <GradeSelect
           v-model="query.gradeId"
           :chargeGrades="chargeGrades"
@@ -59,10 +59,10 @@ onMounted(() => {
           density="compact"
         />
       </span>
-      <span class="w-10">
+      <span class="w-15">
         <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
       </span>
-      <span class="w-10">
+      <span class="w-15">
         <LanguageSelect v-model="query.languageId" variant="underlined" density="compact" />
       </span>
     </section>
