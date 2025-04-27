@@ -2,11 +2,7 @@
 import { apiGetForeignLanguageStat } from '@/api/foreign'
 import LanguageSelect from '@/components/home/foreign/LanguageSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import type {
-  ForeignLanguageStatItem,
-  ForeignLanguageStatQuery,
-  ForeignLanguageStatGrouped
-} from '@/model'
+import type { ForeignLanguageStatQuery, ForeignLanguageStatGrouped } from '@/model'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
