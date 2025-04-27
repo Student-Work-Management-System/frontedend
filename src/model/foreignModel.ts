@@ -44,6 +44,7 @@ export interface ForeignLanguageStatQuery {
     gradeId: string | null
     majorId: string | null
     languageId: string | null
+    term: string | null
 }
 
 export interface LanguageStatItem {
@@ -55,5 +56,10 @@ export interface LanguageStatItem {
 export interface ForeignLanguageStatItem {
     majorName: string
     languageStatItems: LanguageStatItem[]
+}
+
+export interface ForeignLanguageStatGrouped {
+    gradeName: string
+    foreignLanguageStatItems: ForeignLanguageStatItem[]
 }
 

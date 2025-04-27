@@ -2,7 +2,11 @@
 import { apiGetForeignLanguageStat } from '@/api/foreign'
 import LanguageSelect from '@/components/home/foreign/LanguageSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import type { ForeignLanguageStatItem, ForeignLanguageStatQuery } from '@/model'
+import type {
+  ForeignLanguageStatItem,
+  ForeignLanguageStatQuery,
+  ForeignLanguageStatGrouped
+} from '@/model'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
@@ -15,11 +19,12 @@ const chargeGrades = store.user.chargeGrades
 const query = reactive<ForeignLanguageStatQuery>({
   gradeId: null,
   majorId: null,
-  languageId: null
+  languageId: null,
+  term: null
 })
 const loading = ref<boolean>(false)
-const items = ref<ForeignLanguageStatItem[]>([])
-const selected = ref<ForeignLanguageStatItem[]>([])
+const items = ref<ForeignLanguageStatGrouped[]>([])
+const selected = ref<ForeignLanguageStatGrouped[]>([])
 
 const getForeignLanguageStat = async () => {
   try {
@@ -41,24 +46,25 @@ const getForeignLanguageStat = async () => {
 onMounted(getForeignLanguageStat)
 
 // 计算所有出现过的语言名称
-const allLanguages = computed(() => {
+const getLanguagesByGrade = (gradeName: string) => {
   const set = new Set<string>()
-  items.value.forEach((item) => {
-    item.languageStatItems.forEach((lang) => {
+  const group = items.value.find((item) => item.gradeName === gradeName)
+  group?.foreignLanguageStatItems.forEach((statItem) => {
+    statItem.languageStatItems.forEach((lang) => {
       set.add(lang.languageName)
     })
   })
   return Array.from(set)
-})
+}
 
-// 转换扁平表格数据
-const tableData = computed(() => {
-  return items.value.map((item) => {
+const generateTableData = (group: ForeignLanguageStatGrouped) => {
+  const languages = getLanguagesByGrade(group.gradeName)
+  return group.foreignLanguageStatItems.map((it) => {
     const row: any = {
-      majorName: item.majorName
+      majorName: it.majorName
     }
-    allLanguages.value.forEach((language) => {
-      const found = item.languageStatItems.find((l) => l.languageName === language)
+    languages.forEach((language) => {
+      const found = it.languageStatItems.find((l) => l.languageName === language)
       if (found) {
         const pass = Number(found.passNumber)
         const total = Number(found.totalNumber)
@@ -74,7 +80,7 @@ const tableData = computed(() => {
     })
     return row
   })
-})
+}
 
 // 高度计算相关
 const containerHeight = ref(0)
@@ -111,7 +117,7 @@ onMounted(() => {
 
 <template>
   <v-card elevation="10" height="100%" width="100%" class="card-container">
-    <section class="menu">
+    <section class="menu mb-2">
       <span class="w-15">
         <GradeSelect
           v-model="query.gradeId"
@@ -133,32 +139,32 @@ onMounted(() => {
         @click="getForeignLanguageStat"
       />
     </section>
-    <section class="pa-4 w-100">
-      <v-card>
-        <el-table :data="tableData" :height="tableHeight" border>
+    <section class="pa-2 w-100" :style="{ height: `${tableHeight}px`, overflowY: 'auto' }">
+      <v-card v-for="group in items" :key="group.gradeName" class="mb-2 pa-1">
+        <v-card-title align="center">{{ group.gradeName }}</v-card-title>
+        <el-table :data="generateTableData(group)" border class="table">
           <el-table-column prop="majorName" label="专业名称" width="150" align="center" fixed />
-          <!-- 动态外语分组列 -->
-          <template v-for="lang in allLanguages" :key="lang">
-            <el-table-column :label="lang" width="250" align="center">
-              <!-- 子列：通过人数 -->
+          <template v-for="lang in getLanguagesByGrade(group.gradeName)" :key="lang">
+            <el-table-column :label="lang" align="center">
               <el-table-column
                 :prop="`${lang}_passNumber`"
                 label="通过人数"
-                width="125"
+                width="100"
                 align="center"
               />
-              <!-- 子列：总人数 -->
               <el-table-column
                 :prop="`${lang}_totalNumber`"
                 label="总人数"
-                width="125"
+                width="100"
                 align="center"
               />
-              <!-- 子列：通过率 -->
-              <el-table-column :prop="`${lang}_rate`" label="通过率" width="125" align="center" />
+              <el-table-column :prop="`${lang}_rate`" label="通过率" width="100" align="center" />
             </el-table-column>
           </template>
         </el-table>
+      </v-card>
+      <v-card v-if="items.length === 0" class="" style="height: 100%">
+        <v-card-title align="center"> 暂无数据 </v-card-title>
       </v-card>
     </section>
   </v-card>
