@@ -32,7 +32,6 @@ const getStudentCadreStat = async () => {
       return
     }
     items.value = result.data
-    console.log(items.value)
   } catch (error) {
     console.error(error)
   } finally {
