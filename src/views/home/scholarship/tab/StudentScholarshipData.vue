@@ -171,7 +171,7 @@ onMounted(() => {
 
       <span class="w-10">
         <v-select
-          label="职位等级"
+          label="奖学金级别"
           v-model="query.scholarshipLevel"
           :items="scholarshipLevels"
           class="text-indigo"

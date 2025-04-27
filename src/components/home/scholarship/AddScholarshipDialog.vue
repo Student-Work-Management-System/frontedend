@@ -48,6 +48,7 @@ const clear = () => {
             <v-form v-model="form" class="px-8 form">
               <v-text-field
                 label="奖学金名称"
+                class="text-indigo"
                 v-model="newScholarship.scholarshipName"
                 :counter="20"
                 required
@@ -59,6 +60,7 @@ const clear = () => {
               </v-text-field>
               <v-select
                 label="奖学金等级"
+                class="text-indigo"
                 v-model="newScholarship.scholarshipLevel"
                 :items="scholarshipLevels"
                 :rules="[() => !!newScholarship.scholarshipLevel || '该选项必填！']"

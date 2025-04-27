@@ -8,6 +8,7 @@ import { notify } from '@kyvg/vue3-notification'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import { scholarshipTableHeaders } from '@/misc/table/scholarship-import-header'
 import AddScholarshipDialog from '@/components/home/scholarship/AddScholarshipDialog.vue'
+import EditScholarshipDialog from '@/components/home/scholarship/EditScholarshipDialog.vue'
 
 const selected = ref<Scholarship[]>([])
 const scholarshipStore = useScholarshipStore()
@@ -84,6 +85,8 @@ const onEdit = (item: Scholarship) => {
 onMounted(() => {
   if (scholarshipStore.getScholarshipList().length <= 0) {
     fetchScholarship()
+  } else {
+    data.value = scholarshipStore.getScholarshipList()
   }
 })
 
@@ -121,7 +124,7 @@ onMounted(() => {
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <AddScholarshipDialog v-model="addDialog" @on-closed="afterScholar" />
     <DeleteDialog v-model="deleteDialog" :length="selected.length" @delete="deleteScholarship" />
-
+    <EditScholarshipDialog v-model="editDialog" :info="editInfo" @on-closed="afterScholar" />
     <section class="menu">
       <v-btn
         v-if="has('scholarship:select')"

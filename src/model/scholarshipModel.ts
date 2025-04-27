@@ -32,3 +32,26 @@ export interface StudentScholarshipItem {
     scholarshipLevel: string
     awardYear: string
 }
+
+export interface ScholarshipStatQuery {
+    gradeId: string
+    majorId: string
+    level: string
+    time: string
+}
+
+export interface StudentScholarshipStatGroup {
+    gradeName: string
+    studentScholarshipStatItems: StudentScholarshipStatItem[]
+}
+
+export interface StudentScholarshipStatItem {
+    majorName: string
+    scholarshipStatItems: ScholarshipStatItem[]
+}
+
+export interface ScholarshipStatItem {
+    scholarshipName: string
+    scholarshipLevel: string
+    total: string
+}

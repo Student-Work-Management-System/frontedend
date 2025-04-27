@@ -49,6 +49,7 @@ declare module 'vue' {
     EditForeignLanguageFrom: typeof import('./src/components/home/foreign/EditForeignLanguageFrom.vue')['default']
     EditLanguageForm: typeof import('./src/components/home/foreign/EditLanguageForm.vue')['default']
     EditPovertyForm: typeof import('./src/components/home/poverty/EditPovertyForm.vue')['default']
+    EditScholarshipDialog: typeof import('./src/components/home/scholarship/EditScholarshipDialog.vue')['default']
     EditStatusForm: typeof import('./src/components/home/status/EditStatusForm.vue')['default']
     EditStudentCadre: typeof import('./src/components/home/cadre/EditStudentCadre.vue')['default']
     EditStudentEmploymentDialog: typeof import('./src/components/home/employment/EditStudentEmploymentDialog.vue')['default']

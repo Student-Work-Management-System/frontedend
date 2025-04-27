@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
 import type { Result, RecordsPage } from ".";
-import type { Scholarship, StudentScholarship, StudentScholarshipItem, ScholarshipQuery } from "@/model/scholarshipModel"
+import type { Scholarship, StudentScholarship, StudentScholarshipItem, ScholarshipQuery, StudentScholarshipStatGroup, ScholarshipStatQuery } from "@/model/scholarshipModel"
 import http from ".";
 
 export const scholarshipLevels = ["院级", "校级", "区级", "省级", "国家级"]
@@ -36,4 +36,8 @@ export async function apiUpdateStudentScholarships(studentScholarship: StudentSc
 
 export async function apiDeleteStudentScholarships(studentScholarshipId: string): Promise<AxiosResponse<Result<void>>> {
     return http.delete(`/scholarship/student/delete/${studentScholarshipId}`)
+}
+
+export async function apiGetStudentScholarshipStat(query: ScholarshipStatQuery): Promise<AxiosResponse<Result<StudentScholarshipStatGroup[]>>> {
+    return http.post("/scholarship/stat", query)
 }
