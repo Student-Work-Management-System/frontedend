@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import StudentCadreData from './tab/StudentCadreData.vue'
-import StudentCadreStatus from './tab/StudentCadreStatus.vue'
+import StudentCadreStat from './tab/StudentCadreStat.vue'
 const tab = ref<number>(1)
 </script>
 
@@ -16,7 +16,7 @@ const tab = ref<number>(1)
         <StudentCadreData />
       </v-window-item>
       <v-window-item :value="2">
-        <StudentCadreStatus />
+        <StudentCadreStat />
       </v-window-item>
     </v-window>
   </v-card>

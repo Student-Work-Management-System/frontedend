@@ -41,10 +41,27 @@ export interface CadreQuery {
     pageSize: number
 }
 
-export interface StudentCadreStatusItem {
 
+export interface CadreStatQuery {
+    gradeId: string | null
+    majorId: string | null
+    cadreLevel: string | null
+    startTerm: string | null
+    endTerm: string | null
 }
 
-export interface CadreStatusQuery {
+export interface StudentCadreStatGroup {
+    gradeName: string
+    studentCadreStatItems: StudentCadreStatItem[]
+}
 
+export interface StudentCadreStatItem {
+    majorName: string
+    cadreStatItems: CadreStatItem[]
+}
+
+export interface CadreStatItem {
+    cadreLevel: string
+    cadreBelong: string
+    total: string
 }

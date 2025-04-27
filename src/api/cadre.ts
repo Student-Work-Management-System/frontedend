@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Cadre, StudentCadre, StudentCadreItem, CadreQuery, CadreStatusQuery, StudentCadreStatusItem } from '@/model/cadreModel'
+import type { Cadre, StudentCadre, StudentCadreItem, CadreQuery, CadreStatQuery, StudentCadreStatGroup } from '@/model/cadreModel'
 
 // 职位等级
 export function getCadreLevers(): string[] {
@@ -44,7 +44,7 @@ export async function apiDeleteStudentCadre(studentCadreId: string): Promise<Axi
   return http.delete(`/student_cadre/delete/${studentCadreId}`)
 }
 
-export async function apiGetCadreStatus(query: CadreStatusQuery): Promise<AxiosResponse<Result<StudentCadreStatusItem[]>>> {
-  return http.post('/student_cadre/status', query)
+export async function apiGetCadreStat(query: CadreStatQuery): Promise<AxiosResponse<Result<StudentCadreStatGroup[]>>> {
+  return http.post('/student_cadre/stat', query)
 }
 

@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { apiGetForeignLanguageStat } from '@/api/foreign'
-import LanguageSelect from '@/components/home/foreign/LanguageSelect.vue'
+import { apiGetCadreStat, getCadreLevers } from '@/api/cadre'
+import ItemSelect from '@/components/home/ItemSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import type {
-  ForeignLanguageStatItem,
-  ForeignLanguageStatQuery,
-  ForeignLanguageStatGrouped
-} from '@/model'
+import type { CadreStatQuery, StudentCadreStatGroup } from '@/model/cadreModel'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
@@ -16,65 +12,60 @@ const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
 const chargeGrades = store.user.chargeGrades
-const query = reactive<ForeignLanguageStatQuery>({
+const query = reactive<CadreStatQuery>({
   gradeId: null,
   majorId: null,
-  languageId: null,
-  term: null
+  cadreLevel: null,
+  startTerm: null,
+  endTerm: null
 })
 const loading = ref<boolean>(false)
-const items = ref<ForeignLanguageStatGrouped[]>([])
+const items = ref<StudentCadreStatGroup[]>([])
 
-const getForeignLanguageStat = async () => {
+const getStudentCadreStat = async () => {
   try {
     loading.value = true
-    const { data: result } = await apiGetForeignLanguageStat(query)
+    const { data: result } = await apiGetCadreStat(query)
     if (result.code !== 200) {
       console.error(result.message)
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
     items.value = result.data
+    console.log(items.value)
   } catch (error) {
     console.error(error)
   } finally {
     loading.value = false
   }
 }
-onMounted(getForeignLanguageStat)
+onMounted(getStudentCadreStat)
 
-// 计算所有出现过的语言名称
-const getLanguagesByGrade = (gradeName: string) => {
+const getCadreBelong = (gradeName: string) => {
   const set = new Set<string>()
   const group = items.value.find((item) => item.gradeName === gradeName)
-  group?.foreignLanguageStatItems.forEach((statItem) => {
-    statItem.languageStatItems.forEach((lang) => {
-      set.add(lang.languageName)
+  group?.studentCadreStatItems.forEach((statItem) => {
+    statItem.cadreStatItems.forEach((cadre) => {
+      set.add(cadre.cadreBelong)
     })
   })
   return Array.from(set)
 }
 
-const generateTableData = (group: ForeignLanguageStatGrouped) => {
-  const languages = getLanguagesByGrade(group.gradeName)
-  return group.foreignLanguageStatItems.map((it) => {
+const generateTableData = (group: StudentCadreStatGroup) => {
+  const belongs = getCadreBelong(group.gradeName)
+  return group.studentCadreStatItems.map((it) => {
     const row: any = {
       majorName: it.majorName
     }
-    languages.forEach((language) => {
-      const found = it.languageStatItems.find((l) => l.languageName === language)
-      if (found) {
-        const pass = Number(found.passNumber)
-        const total = Number(found.totalNumber)
-        const percent = total > 0 ? ((pass / total) * 100).toFixed(2) + '%' : '-'
-        row[`${language}_passNumber`] = found.passNumber
-        row[`${language}_totalNumber`] = found.totalNumber
-        row[`${language}_rate`] = percent
-      } else {
-        row[`${language}_passNumber`] = '-'
-        row[`${language}_totalNumber`] = '-'
-        row[`${language}_rate`] = '-'
-      }
+    belongs.forEach((belong) => {
+      const cadreItems = it.cadreStatItems.filter((cadre) => cadre.cadreBelong === belong)
+
+      const schoolCadre = cadreItems.find((cadre) => cadre.cadreLevel === '校级')
+      const collegeCadre = cadreItems.find((cadre) => cadre.cadreLevel === '院级')
+
+      row[`${belong}_校级`] = schoolCadre ? schoolCadre.total : '-'
+      row[`${belong}_院级`] = collegeCadre ? collegeCadre.total : '-'
     })
     return row
   })
@@ -128,13 +119,37 @@ onMounted(() => {
         <MajorSelect v-model="query.majorId" variant="underlined" density="compact" />
       </span>
       <span class="w-15">
-        <LanguageSelect v-model="query.languageId" variant="underlined" density="compact" />
+        <ItemSelect
+          v-model="query.cadreLevel"
+          label="职位等级"
+          :items="getCadreLevers()"
+          variant="underlined"
+          density="compact"
+        />
+      </span>
+      <span class="w-15">
+        <SemesterSelect
+          v-model="query.startTerm"
+          color="indigo"
+          label="任职开始学期"
+          variant="underlined"
+          density="compact"
+        />
+      </span>
+      <span class="w-15">
+        <SemesterSelect
+          v-model="query.endTerm"
+          color="indigo"
+          label="任职开始学期"
+          variant="underlined"
+          density="compact"
+        />
       </span>
       <v-btn
         prepend-icon="mdi-refresh"
         v-if="has('foreign:select')"
         text="刷新"
-        @click="getForeignLanguageStat"
+        @click="getStudentCadreStat"
       />
     </section>
     <section
@@ -151,21 +166,20 @@ onMounted(() => {
           <v-card-title align="center">{{ group.gradeName }}</v-card-title>
           <el-table :data="generateTableData(group)" border>
             <el-table-column prop="majorName" label="专业名称" width="150" align="center" fixed />
-            <template v-for="lang in getLanguagesByGrade(group.gradeName)" :key="lang">
-              <el-table-column :label="lang" align="center">
+            <template v-for="belong in getCadreBelong(group.gradeName)" :key="belong">
+              <el-table-column :label="belong" align="center" width="150">
                 <el-table-column
-                  :prop="`${lang}_passNumber`"
-                  label="通过人数"
-                  width="100"
+                  :label="'校级'"
+                  :prop="`${belong}_校级`"
+                  width="125"
                   align="center"
                 />
                 <el-table-column
-                  :prop="`${lang}_totalNumber`"
-                  label="总人数"
-                  width="100"
+                  :label="'院级'"
+                  :prop="`${belong}_院级`"
+                  width="125"
                   align="center"
                 />
-                <el-table-column :prop="`${lang}_rate`" label="通过率" width="100" align="center" />
               </el-table-column>
             </template>
           </el-table>
