@@ -34,10 +34,10 @@ export interface StudentScholarshipItem {
 }
 
 export interface ScholarshipStatQuery {
-    gradeId: string
-    majorId: string
-    level: string
-    time: string
+    gradeId: string | null
+    majorId: string | null
+    level: string | null
+    time: string | null
 }
 
 export interface StudentScholarshipStatGroup {
