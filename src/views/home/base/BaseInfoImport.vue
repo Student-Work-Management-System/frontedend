@@ -432,7 +432,7 @@ onMounted(async () => {
         text="解析文件"
       />
       <v-btn
-        v-if="has('raw:insert')"
+        v-if="has('student:insert')"
         prepend-icon="mdi-upload"
         color="primary"
         @click="uploadDialog = true"
