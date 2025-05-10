@@ -75,7 +75,7 @@ const containerHeight = ref(0)
 const selectMenuHeight = ref(0)
 const tabsHeight = ref(0)
 const tableHeight = computed(() => {
-  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 60
+  return containerHeight.value - selectMenuHeight.value - tabsHeight.value - 61
 })
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
@@ -152,7 +152,7 @@ onMounted(() => {
       />
     </section>
     <section
-      class="pa-2 w-100"
+      class="w-100"
       :style="{
         height: `${tableHeight}px`,
         overflowY: 'auto',

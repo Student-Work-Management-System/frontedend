@@ -34,8 +34,8 @@ export interface StudentPunishmentItem {
 }
 
 export interface StudentPunishmentStatQuery {
-    gradeId: string
-    majorId: string
+    gradeId: string | null
+    majorId: string | null
 }
 
 export interface StudentPunishmentStatGroup {

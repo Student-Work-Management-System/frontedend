@@ -16,7 +16,6 @@ const chargeGrades = store.user.chargeGrades
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
 }
-
 const loading = ref(false)
 const selected = ref<StudentPunishmentItem[]>([])
 const deleteDialog = ref(false)
@@ -34,7 +33,6 @@ const modifyInfo = ref<StudentPunishmentItem>({
   reason: '',
   date: ''
 })
-
 const query = reactive<StudentPunishmentQuery>({
   search: '',
   majorId: null,
