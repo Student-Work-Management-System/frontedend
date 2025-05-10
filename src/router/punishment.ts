@@ -30,6 +30,17 @@ export default {
         hasPage: true,
         auth: 'student_punishment:select'
       }
+    },
+    {
+      path: '/punishment/manage',
+      name: 'punishment-manage',
+      component: () => import('@/views/home/punishment/PunishmentManage.vue'),
+      meta: {
+        icon: 'mdi-cog',
+        title: '处分信息管理',
+        hasPage: true,
+        auth: 'punishment:select'
+      }
     }
   ]
 }

@@ -13,12 +13,12 @@ import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { onMounted } from 'vue'
 import { reactive } from 'vue'
-import type { StudentPovertyAssistanceRecord, PovertyAssistanceQuery } from '@/model/povertyModel'
+import type { StudentPovertyAssistanceItem, PovertyAssistanceQuery } from '@/model/povertyModel'
 import { studentPovertyTableHeaders } from '@/misc/table/poverty-import-header'
 
 const loading = ref(false)
 const selected = ref<any[]>([])
-const data = ref<StudentPovertyAssistanceRecord[]>([])
+const data = ref<StudentPovertyAssistanceItem[]>([])
 const povertyLevels = ref<String[]>(getPovertyLevels())
 const dataLength = ref<number>(0)
 const deleteDialog = ref(false)
@@ -36,7 +36,7 @@ const query = reactive<PovertyAssistanceQuery>({
 })
 const store = useUserStore()
 const chargeGrades = store.getUserData.chargeGrades
-const editInfo = ref<StudentPovertyAssistanceRecord>({
+const editInfo = ref<StudentPovertyAssistanceItem>({
   studentPovertyAssistanceId: '',
   studentId: '',
   povertyAssistanceId: '',
@@ -105,7 +105,7 @@ const onClose = () => {
   fetchStudentPovertyLogic()
 }
 
-const onEdit = (item: StudentPovertyAssistanceRecord) => {
+const onEdit = (item: StudentPovertyAssistanceItem) => {
   editInfo.value = item
   editStudentPovertyFormDialog.value = true
 }

@@ -15,7 +15,7 @@ import { type UserRecord } from '@/model/systemModel'
 
 const headers = [
   {
-    title: '用户ID',
+    title: 'UID',
     align: 'start',
     sortable: true,
     key: 'uid'

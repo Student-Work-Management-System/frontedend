@@ -1,11 +1,6 @@
 <script lang="ts" setup>
-import {
-  apiUpdateStudentPovertyAssistance,
-  apiGetPovertyAssistanceList,
-  type StudentPovertyAssistanceRecord,
-  type PovertyAssistance
-} from '@/api/poverty'
-
+import { apiUpdateStudentPovertyAssistance, apiGetPovertyAssistanceList } from '@/api/poverty'
+import type { StudentPovertyAssistanceItem, PovertyAssistance } from '@/model/povertyModel'
 import { watchEffect } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { ref, onMounted } from 'vue'
@@ -14,7 +9,7 @@ import { reactive } from 'vue'
 const model = defineModel<boolean>()
 const emits = defineEmits(['onClosed'])
 const form = ref(false)
-const props = defineProps<{ info: StudentPovertyAssistanceRecord }>()
+const props = defineProps<{ info: StudentPovertyAssistanceItem }>()
 const loading = ref(false)
 const povertys = ref<PovertyAssistance[]>([])
 const studentPovertyInfo = reactive({
@@ -55,7 +50,6 @@ const fetchPovertyList = async () => {
     return
   }
   povertys.value = result.data
-  
 }
 
 watchEffect(() => {
@@ -66,7 +60,6 @@ watchEffect(() => {
   studentPovertyInfo.povertyType = props.info.povertyType
   studentPovertyInfo.assistanceYear = props.info.assistanceYear
   sname.value = props.info.name
-
 })
 
 onMounted(() => {

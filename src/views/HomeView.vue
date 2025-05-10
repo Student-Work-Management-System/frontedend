@@ -38,7 +38,8 @@ const logoutHandler = () => {
     realName: '',
     token: '',
     authorities: [],
-    counselors: []
+    isStudent: false,
+    chargeGrades: []
   })
   setAuthorizationToken('')
   localStorage.clear()

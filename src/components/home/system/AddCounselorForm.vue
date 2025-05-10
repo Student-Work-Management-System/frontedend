@@ -79,18 +79,22 @@ onMounted(async () => {
               <v-select
                 v-model="newCounselor.uid"
                 label="可选教师"
-                class="text-indigo mb-4"
+                class="text-indigo"
                 color="indigo"
                 :items="optionalUser"
                 item-title="title"
                 item-value="uid"
                 :rules="[(v) => v.length > 0 || '至少选择一名教师']"
                 required
-              />
+              >
+                <template v-slot:prepend>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </template>
+              </v-select>
               <v-select
                 v-model="newCounselor.chargeGrade"
                 label="负责年级"
-                class="text-indigo mb-4"
+                class="text-indigo"
                 color="indigo"
                 :items="items"
                 item-title="gradeName"
@@ -99,7 +103,11 @@ onMounted(async () => {
                 chips
                 :rules="[(v) => v.length > 0 || '请至少选择一个年级']"
                 required
-              />
+              >
+                <template v-slot:prepend>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+                </template>
+              </v-select>
             </v-form>
           </v-container>
           <v-divider></v-divider>

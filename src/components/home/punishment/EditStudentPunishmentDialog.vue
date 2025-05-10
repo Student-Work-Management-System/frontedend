@@ -4,6 +4,7 @@ import { apiUpdateStudentPunishment } from '@/api/punishment'
 import type { StudentPunishment, StudentPunishmentItem } from '@/model/punishmentModel'
 import { notify } from '@kyvg/vue3-notification'
 import { ref, watchEffect } from 'vue'
+import PunishtmentSelect from '@/components/home/punishment/PunishtmentSelect.vue'
 
 const model = defineModel<boolean>()
 const info = defineModel<StudentPunishmentItem>('info')
@@ -43,17 +44,9 @@ const updateInfoLogic = async () => {
     <v-card width="auto" prepend-icon="mdi-account-alert" :title="localInfo!.name + '处分信息'">
       <v-container>
         <v-form v-model="form" class="px-8">
-          <v-select
-            class="mt-2"
-            label="处分等级"
-            v-model="localInfo!.level"
-            :items="['警告', '严重警告', '记过', '留校察看', '开除']"
-            :rules="[() => !!localInfo!.level || '该项必填']"
-          >
-            <template v-slot:prepend>
-              <v-icon size="smaller" color="error" icon="mdi-asterisk" />
-            </template>
-          </v-select>
+          <PunishtmentSelect v-model="localInfo!.punishmentId">
+            <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+          </PunishtmentSelect>
 
           <v-text-field
             class="text-indigo mt-4"

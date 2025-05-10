@@ -50,13 +50,14 @@ const loginHandler = async () => {
       localStorage.setItem('user-cache', JSON.stringify(result.data))
       localStorage.setItem('user-cache-expired-at', (Date.now() + 7 * 24 * 60 * 60).toString())
     }
-    loadingForm.value = false
     notify({ title: '提示', text: '登录成功！', type: 'success' })
     router.push({ name: 'home' })
   } catch (error) {
     console.log(error)
   } finally {
-    loadingForm.value = true
+    loadingForm.value = false
+    userForm.username = ''
+    userForm.password = ''
   }
 }
 

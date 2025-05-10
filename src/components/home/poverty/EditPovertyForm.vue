@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { apiUpdatePovertyAssistance, getPovertyLevels, type PovertyAssistance } from '@/api/poverty'
+import { apiUpdatePovertyAssistance, getPovertyLevels } from '@/api/poverty'
+import type { PovertyAssistance } from '@/model/povertyModel'
 import { watchEffect } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import { ref } from 'vue'
@@ -32,7 +33,7 @@ const updateInfoLogic = async () => {
 }
 
 watchEffect(() => {
-  povertyInfo.povertyAssistanceId = props.info.povertyAssistanceId
+  povertyInfo.povertyAssistanceId = props.info.povertyAssistanceId!!
   povertyInfo.povertyLevel = props.info.povertyLevel
   povertyInfo.povertyType = props.info.povertyType
   povertyInfo.povertyAssistanceStandard = props.info.povertyAssistanceStandard
@@ -50,6 +51,7 @@ watchEffect(() => {
                 label="贫困类型"
                 v-model="povertyInfo.povertyType"
                 :counter="20"
+                class="text-indigo"
                 required
                 :rules="[() => !!povertyInfo.povertyType || '该选项必填！']"
               >
@@ -59,6 +61,7 @@ watchEffect(() => {
               </v-text-field>
               <v-select
                 label="贫困等级"
+                class="text-indigo"
                 v-model="povertyInfo.povertyLevel"
                 :items="povertyLevels"
                 :rules="[() => !!povertyInfo.povertyLevel || '该选项必填！']"
@@ -70,6 +73,7 @@ watchEffect(() => {
 
               <v-text-field
                 label="资助标准"
+                class="text-indigo"
                 v-model="povertyInfo.povertyAssistanceStandard"
                 :counter="20"
                 required

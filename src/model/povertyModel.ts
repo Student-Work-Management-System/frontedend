@@ -15,7 +15,7 @@ export interface StudentPovertyAssistance {
 }
 
 // 学生贫困资助认定列表相关数据
-export interface StudentPovertyAssistanceRecord {
+export interface StudentPovertyAssistanceItem {
     studentPovertyAssistanceId: string
     studentId: string
     povertyAssistanceId: string
@@ -38,9 +38,9 @@ export interface PovertyAssistanceQuery {
     pageSize: number
 }
 
-export interface PovertyAssistanceStatusQuery {
+export interface PovertyAssistanceStatQuery {
 }
 
-export interface PovertyAssistanceStatusItem {
+export interface PovertyAssistanceStatItem {
 
 }

@@ -9,12 +9,17 @@ const authorities = store.getUserData.authorities?.map((a) => a.authority)
 
 const items = computed(() =>
   routes
-    .filter((r) => (r.meta.auth === null ? true : authorities?.includes(r.meta.auth)))
+    .filter((r) => {
+      const auth = r.meta?.auth
+      return auth === null ? true : typeof auth === 'string' && authorities?.includes(auth)
+    })
     .map((r) => ({
       ...r,
-      children: r.children.filter((item) =>
-        item.meta.auth === null ? false : authorities?.includes(item.meta.auth)
-      )
+      children:
+        r.children?.filter((item) => {
+          const auth = item.meta?.auth
+          return typeof auth === 'string' && authorities?.includes(auth)
+        }) || []
     }))
 )
 </script>
@@ -35,14 +40,18 @@ const items = computed(() =>
         :value="item.name"
       >
         <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" :prepend-icon="item.meta.icon" :title="item.meta.title" />
+          <v-list-item
+            v-bind="props"
+            :prepend-icon="item.meta?.icon as string"
+            :title="item.meta?.title as string"
+          />
         </template>
         <v-list-item
           class="back"
           v-for="(chitem, chindex) in item.children"
           :key="index + '-' + chindex"
-          :prepend-icon="chitem.meta.icon"
-          :title="chitem.meta.title"
+          :prepend-icon="chitem.meta?.icon as string"
+          :title="chitem.meta?.title as string"
           :value="chitem.name"
           :to="chitem.path"
         />

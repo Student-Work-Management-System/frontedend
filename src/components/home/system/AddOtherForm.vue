@@ -67,6 +67,9 @@ const clearInput = () => {
     <v-card :title="title">
       <v-container class="px-8 text-indigo">
         <v-text-field label="名称" color="indigo" v-model="info!.name" clearable>
+          <template v-slot:prepend>
+            <v-icon size="smaller" color="error" icon="mdi-asterisk" />
+          </template>
           <v-tooltip activator="parent" location="top" :text="tip" />
         </v-text-field>
       </v-container>

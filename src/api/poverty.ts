@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { PovertyAssistance, PovertyAssistanceQuery, StudentPovertyAssistance, StudentPovertyAssistanceRecord } from '@/model/povertyModel'
+import type { PovertyAssistance, PovertyAssistanceQuery, StudentPovertyAssistance, StudentPovertyAssistanceItem } from '@/model/povertyModel'
 
 // 贫困等级
 export function getPovertyLevels(): string[] {
@@ -40,7 +40,7 @@ export async function apiUpdateStudentPovertyAssistance(studentPovertyAssistance
   return http.put('/student_poverty_assistance/update', studentPovertyAssistance)
 }
 
-export async function apiGetStudentPovertyAssistanceList(query: PovertyAssistanceQuery): Promise<AxiosResponse<Result<RecordsPage<StudentPovertyAssistanceRecord>>>> {
+export async function apiGetStudentPovertyAssistanceList(query: PovertyAssistanceQuery): Promise<AxiosResponse<Result<RecordsPage<StudentPovertyAssistanceItem>>>> {
   return http.post('/student_poverty_assistance/gets', query)
 }
 

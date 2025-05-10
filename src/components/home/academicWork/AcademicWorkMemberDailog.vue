@@ -34,7 +34,7 @@ watchEffect(() => {
           <v-list v-if="!loading && refMembers.length">
             <v-list-item
               v-for="member in refMembers"
-              :key="member.uid"
+              :key="member.username"
               :title="`${member.memberOrder} - ${member.username} - ${member.realName}`"
               :subtitle="member.isStudent ? `${member.majorName} - ${member.gradeName}` : ''"
             >

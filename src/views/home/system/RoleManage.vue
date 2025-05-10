@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { apiGetRoleList, apiDeleteRole } from '@/api/role'
-import { type Role } from '@/model/systemModel'
+import { type RoleItem } from '@/model/systemModel'
 import { notify } from '@kyvg/vue3-notification'
 import AddRoleForm from '@/components/home/system/AddRoleForm.vue'
 import SelectPermission from '@/components/home/system/SelectPermission.vue'
@@ -31,7 +31,7 @@ const headers = [
     key: 'roleDesc'
   }
 ]
-const selected = ref<Role[]>([])
+const selected = ref<RoleItem[]>([])
 const selectedIds = computed(() => selected.value.map((r) => r.rid))
 const selectedPermissions = computed(() => {
   if (selected.value.length === 0 || selected.value[0].permissionList[0] === null) {
@@ -45,7 +45,7 @@ const data = ref<any>([])
 const addRoleFormDialog = ref(false)
 const selectPermissionDialog = ref(false)
 const deleteDialog = ref(false)
-const editRoleInfo = reactive<Role>({
+const editRoleInfo = reactive<RoleItem>({
   rid: '',
   roleName: '',
   roleDesc: '',
@@ -84,7 +84,7 @@ const deleteRolerLogic = async () => {
   let reqs = selected.value.map((r) =>
     (async (r) => {
       const rid = r.rid
-      const { data: result } = await apiDeleteRole(rid)
+      const { data: result } = await apiDeleteRole(rid!!)
       if (result.code !== 200) {
         console.error(result)
         notify({ type: 'error', title: '错误', text: `角色:${rid}, ` + result.message })
@@ -144,7 +144,7 @@ onMounted(() => {
     <AddRoleForm v-model="addRoleFormDialog" :role-info="editRoleInfo" @on-closed="afterRole" />
     <SelectPermission
       v-model="selectPermissionDialog"
-      :rid-list="selectedIds"
+      :rid-list="selectedIds as string[]"
       :permissions="selectedPermissions"
       @on-closed="afterRole"
     />

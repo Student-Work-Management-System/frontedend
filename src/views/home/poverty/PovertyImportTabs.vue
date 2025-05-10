@@ -9,7 +9,7 @@ const tab = ref(null)
 
 <template>
   <v-card elevation="10" height="100%" width="100%">
-    <v-tabs v-model="tab" color="indigo" align-tabs="left">
+    <v-tabs v-model="tab" color="indigo" align-tabs="start">
       <v-tab :value="1">学生贫困记录录入</v-tab>
       <v-tab :value="2">贫困类型录入</v-tab>
     </v-tabs>

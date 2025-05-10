@@ -58,10 +58,12 @@ watchEffect(() => {
             label="邮箱"
             color="indigo"
             v-model="userInfo.email"
-            :counter="11"
             clearable
             required
-            :rules="[() => !!userInfo.email || '该选项必填！']"
+            :rules="[
+              (v) => !!v || '该选项必填！',
+              (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || '邮箱格式不正确'
+            ]"
           >
             <template v-slot:prepend>
               <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
@@ -74,7 +76,10 @@ watchEffect(() => {
             v-model="userInfo.phone"
             clearable
             required
-            :rules="[() => !!userInfo.phone || '该选项必填！']"
+            :rules="[
+              (v) => !!v || '该选项必填！',
+              (v) => /^1[3-9]\d{9}$/.test(v) || '手机号格式不正确'
+            ]"
           >
             <template v-slot:prepend>
               <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>

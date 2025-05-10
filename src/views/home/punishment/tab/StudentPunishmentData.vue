@@ -3,12 +3,13 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { notify } from '@kyvg/vue3-notification'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import MajorSelect from '@/components/home/MajorSelect.vue'
-import { apiGetStudentPunishment, apiDeleteStudentPunishment, levels } from '@/api/punishment'
+import { apiGetStudentPunishment, apiDeleteStudentPunishment } from '@/api/punishment'
 import type { StudentPunishmentItem, StudentPunishmentQuery } from '@/model/punishmentModel'
 import { studentPunishmentTableHeaders } from '@/misc/table'
 import { useUserStore } from '@/stores/userStore'
 import DeleteDialog from '@/components/home/DeleteDialog.vue'
 import EditStudentPunishmentDialog from '@/components/home/punishment/EditStudentPunishmentDialog.vue'
+import PunishtmentSelect from '@/components/home/punishment/PunishtmentSelect.vue'
 
 const store = useUserStore()
 const chargeGrades = store.user.chargeGrades
@@ -18,7 +19,6 @@ const has = (authority: string) => {
 
 const loading = ref(false)
 const selected = ref<StudentPunishmentItem[]>([])
-
 const deleteDialog = ref(false)
 const editDialog = ref(false)
 const dataLength = ref<number>(0)
@@ -29,15 +29,17 @@ const modifyInfo = ref<StudentPunishmentItem>({
   name: '',
   gradeName: '',
   majorName: '',
-  level: '',
+  punishmentId: '',
+  punishmentName: '',
   reason: '',
   date: ''
 })
+
 const query = reactive<StudentPunishmentQuery>({
   search: '',
   majorId: null,
   gradeId: null,
-  level: null,
+  punishmentId: null,
   pageNo: 1,
   pageSize: 10
 })
@@ -59,10 +61,6 @@ const fetchStudentPunishment = async () => {
     selected.value = []
     loading.value = false
   }
-}
-
-const loadItems = () => {
-  fetchStudentPunishment()
 }
 
 const deleteStudentPunishment = async () => {
@@ -100,6 +98,10 @@ const afterHandler = () => {
   selected.value = []
   fetchStudentPunishment()
 }
+
+onMounted(async () => {
+  await fetchStudentPunishment()
+})
 
 // 高度计算相关
 const containerHeight = ref(0)
@@ -163,17 +165,7 @@ onMounted(() => {
       </span>
 
       <span class="w-10">
-        <v-select
-          label="处分等级"
-          v-model="query.level"
-          :items="levels"
-          class="text-indigo"
-          color="indigo"
-          hide-details
-          clearable
-          variant="underlined"
-          density="compact"
-        />
+        <PunishtmentSelect v-model="query.punishmentId" variant="underlined" density="compact" />
       </span>
 
       <span class="w-15 text-indigo">
@@ -221,7 +213,7 @@ onMounted(() => {
           :loading="loading"
           v-model:page="query.pageNo"
           v-model:items-per-page="query.pageSize"
-          @update:options="loadItems"
+          @update:options="fetchStudentPunishment()"
           show-select
           return-object
         >

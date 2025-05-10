@@ -47,6 +47,7 @@ watch(selected, () => {
 const AddBtnHandler = () => {
   step.value++
 }
+
 const AddUserLogic = async () => {
   if (selected.value.length === 0) {
     notify({ type: 'warn', title: '错误', text: '请至少选择一个角色！' })
@@ -81,10 +82,25 @@ const fetchRoleList = async () => {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
-  items.value = result.data.map((r) => ({ rid: r.rid, text: r.roleName }))
+  items.value = result.data
+    .filter((r) => r.rid !== undefined)
+    .map((r) => ({
+      rid: r.rid!,
+      text: r.roleName
+    }))
   selected.value = []
 }
 onMounted(fetchRoleList)
+
+const clear = () => {
+  newUser.username = ''
+  newUser.password = ''
+  newUser.realName = ''
+  newUser.email = ''
+  newUser.phone = ''
+  selected.value = []
+  newUser.roles = []
+}
 </script>
 
 <template>
@@ -96,42 +112,47 @@ onMounted(fetchRoleList)
             <v-form v-model="form" class="form">
               <v-text-field
                 label="用户名"
+                class="text-indigo"
                 v-model="newUser.username"
                 prepend-inner-icon="mdi-account"
-                :counter="20"
                 clearable
                 required
                 :rules="[() => !!newUser.username || '该选项必填！']"
               >
+                <v-tooltip activator="parent" location="top" text="一般为学号或工号" />
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
               <v-text-field
                 label="密码"
+                type="password"
+                class="text-indigo"
                 prepend-inner-icon="mdi-lock"
                 v-model="newUser.password"
-                :counter="18"
                 clearable
                 required
-                :rules="[() => !!newUser.password || '该选项必填！']"
+                :rules="[
+                  (v) => !!v || '该选项必填！',
+                  (v) => (v.length >= 6 && v.length <= 20) || '密码长度应在6到20之间'
+                ]"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
 
               <v-text-field
                 label="真实姓名"
+                class="text-indigo"
                 v-model="newUser.realName"
                 prepend-inner-icon="mdi-human-greeting"
-                :counter="20"
                 clearable
                 required
                 :rules="[() => !!newUser.realName || '该选项必填！']"
               >
                 <template v-slot:prepend>
-                  <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
+                  <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
 
@@ -139,10 +160,13 @@ onMounted(fetchRoleList)
                 prepend-inner-icon="mdi-email"
                 label="邮箱"
                 v-model="newUser.email"
-                :counter="11"
+                class="text-indigo"
                 clearable
                 required
-                :rules="[() => !!newUser.email || '该选项必填！']"
+                :rules="[
+                  (v) => !!v || '该选项必填！',
+                  (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || '邮箱格式不正确'
+                ]"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
@@ -152,11 +176,14 @@ onMounted(fetchRoleList)
               <v-text-field
                 prepend-inner-icon="mdi-phone"
                 label="手机号"
+                class="text-indigo"
                 v-model="newUser.phone"
-                :counter="11"
                 clearable
                 required
-                :rules="[() => !!newUser.phone || '该选项必填！']"
+                :rules="[
+                  (v) => !!v || '该选项必填！',
+                  (v) => /^1[3-9]\d{9}$/.test(v) || '手机号格式不正确'
+                ]"
               >
                 <template v-slot:prepend>
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
@@ -175,7 +202,7 @@ onMounted(fetchRoleList)
               variant="plain"
               @click="AddBtnHandler"
             ></v-btn>
-            <v-btn text="取消" variant="plain" @click="model = false"></v-btn>
+            <v-btn text="取消" variant="plain" @click="(model = false), clear()"></v-btn>
           </v-container>
         </v-card>
       </v-window-item>
@@ -230,6 +257,13 @@ onMounted(fetchRoleList)
               <v-spacer></v-spacer>
 
               <v-btn
+                variant="text"
+                text="上一步"
+                color="indigo"
+                @click="(step = 1), (selected = [])"
+              />
+
+              <v-btn
                 :disabled="!selected.length"
                 :loading="loading"
                 color="indigo"
@@ -244,6 +278,7 @@ onMounted(fetchRoleList)
                   () => {
                     model = false
                     step = 1
+                    clear()
                   }
                 "
               >
