@@ -21,7 +21,7 @@ const editInfo = ref<Competition>({
   competitionName: '',
   competitionNature: '',
   competitionType: '',
-  comment: ''
+  subCompetitionName: ''
 })
 const query = ref<CompetitionQuery>({
   search: '',

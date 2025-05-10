@@ -5,9 +5,9 @@ export const competitionNatureOptions = ["团队", "单人"]
 export interface Competition {
     competitionId?: string
     competitionName: string
+    subCompetitionName: string
     competitionNature: string
     competitionType: string
-    comment: string
 }
 
 export interface StudentCompetition {

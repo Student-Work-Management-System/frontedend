@@ -12,9 +12,9 @@ const modifyInfo = computed(() => {
   return {
     competitionId: info.value!.competitionId,
     competitionName: info.value!.competitionName,
+    subCompetitionName: info.value!.subCompetitionName,
     competitionNature: info.value!.competitionNature,
-    competitionType: info.value!.competitionType,
-    comment: info.value!.comment
+    competitionType: info.value!.competitionType
   }
 })
 const loading = ref(false)
@@ -50,13 +50,17 @@ const updateInfoLogic = async () => {
                   <v-icon size="smaller" color="error" icon="mdi-asterisk" />
                 </template>
               </v-text-field>
+              <v-text-field
+                label="竞赛子名称"
+                class="text-indigo"
+                v-model="modifyInfo.subCompetitionName"
+              />
               <CompetitionNatureSelect class="mb-6" v-model="modifyInfo.competitionNature">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk" />
               </CompetitionNatureSelect>
               <CompetitionTypeSelect class="mb-6" v-model="modifyInfo.competitionType">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk" />
               </CompetitionTypeSelect>
-              <v-text-field label="备注" class="text-indigo" v-model="modifyInfo.comment" />
             </v-form>
           </v-container>
           <v-divider></v-divider>

@@ -16,7 +16,7 @@ const newCompetition = reactive<Competition>({
   competitionName: '',
   competitionNature: '',
   competitionType: '',
-  comment: ''
+  subCompetitionName: ''
 })
 
 const AddCompetitionLogic = async () => {
@@ -38,7 +38,6 @@ const clearCompetitionInfo = () => {
   newCompetition.competitionName = ''
   newCompetition.competitionNature = ''
   newCompetition.competitionType = ''
-  newCompetition.comment = ''
 }
 </script>
 
@@ -61,18 +60,18 @@ const clearCompetitionInfo = () => {
                   <v-icon size="smaller" color="error" icon="mdi-asterisk"></v-icon>
                 </template>
               </v-text-field>
+              <v-text-field
+                label="竞赛子名称"
+                v-model="newCompetition.subCompetitionName"
+                class="text-indigo"
+                color="indigo"
+              />
               <CompetitionNatureSelect class="mb-6" v-model="newCompetition.competitionNature">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk" />
               </CompetitionNatureSelect>
               <CompetitionTypeSelect class="mb-6" v-model="newCompetition.competitionType">
                 <v-icon size="smaller" color="error" icon="mdi-asterisk" />
               </CompetitionTypeSelect>
-              <v-text-field
-                label="备注"
-                v-model="newCompetition.comment"
-                class="text-indigo"
-                color="indigo"
-              />
             </v-form>
           </v-container>
           <v-divider></v-divider>
