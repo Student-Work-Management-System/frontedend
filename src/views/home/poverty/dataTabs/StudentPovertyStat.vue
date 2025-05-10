@@ -1,62 +1,58 @@
 <script setup lang="ts">
-import { apiGetStat } from '@/api/employment'
+import { apiGetStudentPovertyAssistanceStat } from '@/api/poverty'
 import MajorSelect from '@/components/home/MajorSelect.vue'
 import GradeSelect from '@/components/home/GradeSelect.vue'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import type { EmploymentStatGroup, EmploymentStatQuery } from '@/model/employmentModel'
+import type { PovertyAssistanceStatGroup, PovertyAssistanceStatQuery } from '@/model/povertyModel'
 
 const store = useUserStore()
 const chargeGrades = store.user.chargeGrades
 const has = (authority: string) => store.hasAuthorized(authority)
 
-const query = reactive<EmploymentStatQuery>({
+const query = reactive<PovertyAssistanceStatQuery>({
   gradeId: null,
   majorId: null
 })
 
 const loading = ref(false)
-const items = ref<EmploymentStatGroup[]>([])
+const items = ref<PovertyAssistanceStatGroup[]>([])
 
-const getEmploymentStat = async () => {
+const getPovertyStat = async () => {
   try {
     loading.value = true
-    const { data: result } = await apiGetStat(query)
+    const { data: result } = await apiGetStudentPovertyAssistanceStat(query)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
       return
     }
     items.value = result.data
+    console.log(result.data)
   } catch (error) {
     console.error(error)
   } finally {
     loading.value = false
   }
 }
-onMounted(getEmploymentStat)
+onMounted(getPovertyStat)
 
-const employmentTypes = (group: EmploymentStatGroup) => {
+const getPovertyLevels = (group: PovertyAssistanceStatGroup) => {
   const set = new Set<string>()
-  group.majors.forEach((major) => {
-    major.employments.forEach((employment) => {
-      set.add(employment.whereabouts)
-    })
+  group.majors.forEach((m) => {
+    m.povertyLevels.forEach((p) => set.add(p.povertyLevel))
   })
   return Array.from(set)
 }
 
-const generateTableData = (group: EmploymentStatGroup) => {
-  // 获取所有就业类型
-  const types = employmentTypes(group)
-
+const generateTableData = (group: PovertyAssistanceStatGroup) => {
+  const levels = getPovertyLevels(group)
   return group.majors.map((major) => {
     const row: Record<string, any> = { majorName: major.majorName }
-    types.forEach((type) => {
-      const employment = major.employments.find((e) => e.whereabouts === type)
-      row[type] = employment ? employment.number : '-'
+    levels.forEach((lv) => {
+      const item = major.povertyLevels.find((p) => p.povertyLevel === lv)
+      row[lv] = item ? item.number : '-'
     })
-
     return row
   })
 }
@@ -102,9 +98,9 @@ onMounted(() => {
       </span>
       <v-btn
         prepend-icon="mdi-refresh"
-        v-if="has('student_employment:select')"
+        v-if="has('poverty_assistance:select')"
         text="刷新"
-        @click="getEmploymentStat"
+        @click="getPovertyStat"
       />
     </section>
 
@@ -122,8 +118,8 @@ onMounted(() => {
           <v-card-title align="center">{{ group.gradeName }}</v-card-title>
           <el-table :data="generateTableData(group)" border>
             <el-table-column prop="majorName" label="专业名称" width="150" align="center" fixed />
-            <template v-for="type in employmentTypes(group)" :key="type">
-              <el-table-column :label="type" :prop="type" width="150" align="center" />
+            <template v-for="level in getPovertyLevels(group)" :key="level">
+              <el-table-column :label="level" :prop="level" width="150" align="center" />
             </template>
           </el-table>
         </v-card>
@@ -142,9 +138,11 @@ onMounted(() => {
   align-items: center;
   padding: 1rem 1rem 0 1rem;
 }
+
 .menu > * {
   margin-right: 0.5rem;
 }
+
 .w-15 {
   width: 15% !important;
 }

@@ -39,8 +39,21 @@ export interface PovertyAssistanceQuery {
 }
 
 export interface PovertyAssistanceStatQuery {
+    gradeId: string | null
+    majorId: string | null
 }
 
-export interface PovertyAssistanceStatItem {
+export interface PovertyAssistanceStatGroup {
+    gradeName: string;
+    majors: MajorGroup[];
+}
 
+export interface MajorGroup {
+    majorName: string;
+    povertyLevels: LevelGroup[];
+}
+
+export interface LevelGroup {
+    povertyLevel: string;
+    number: string;
 }

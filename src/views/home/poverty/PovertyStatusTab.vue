@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import StudentPovertyList from './status-tabs/StudentPovertyList.vue'
-import StudentPovertyStatus from './status-tabs/PovertyStatus.vue'
+import StudentPovertyData from './dataTabs/StudentPovertyData.vue'
+import StudentPovertyStat from './dataTabs/StudentPovertyStat.vue'
 const tab = ref<number>(1)
 </script>
 
@@ -13,10 +13,10 @@ const tab = ref<number>(1)
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="1">
-        <StudentPovertyList />
+        <StudentPovertyData />
       </v-window-item>
       <v-window-item :value="2">
-        <StudentPovertyStatus />
+        <StudentPovertyStat />
       </v-window-item>
     </v-window>
   </v-card>

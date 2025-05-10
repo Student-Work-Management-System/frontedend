@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { StudentEmployment, StudentEmploymentItem, EmploymentQuery } from '@/model/employmentModel'
+import type { StudentEmployment, StudentEmploymentItem, EmploymentQuery, EmploymentStatQuery, EmploymentStatGroup } from '@/model/employmentModel'
 
 export const stateOption: string[] = [
   "本届毕业", "毕业", "结业", "休学", "续读"
@@ -31,23 +31,6 @@ export function apiDeleteEmploy(employId: string): Promise<AxiosResponse<Result<
   return http.delete(`/employment/delete/${employId}`,)
 }
 
-export interface EmployStats {
-  graduationStatus: any
-  jobIndustry: any
-  jobLocation: any
-  salary: string
-}
-
-export function apiStatsEmploy(query: {
-  graduationYears: string[] | null
-  majorIds: string[] | null
-}): Promise<AxiosResponse<Result<{ [key: string]: EmployStats }>>> {
+export function apiGetStat(query: EmploymentStatQuery): Promise<AxiosResponse<Result<EmploymentStatGroup[]>>> {
   return http.post('/employment/stat', query)
-}
-
-export function apiDownloadStatsEmploy(query: {
-  graduationYears: string[]
-  majorIds: string[]
-}): Promise<AxiosResponse<Blob>> {
-  return http.post('/employment/download', query, { responseType: 'blob' })
 }

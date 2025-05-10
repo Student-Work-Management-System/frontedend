@@ -62,3 +62,24 @@ export interface StudentEmploymentItem {
     state: string
     comment: string
 }
+
+export interface EmploymentStatQuery {
+    gradeId: string | null
+    majorId: string | null
+}
+
+export interface EmploymentStatGroup {
+    gradeName: string
+    majors: MajorGroup[]
+}
+
+export interface MajorGroup {
+    majorName: string
+    employments: StudentEmploymentGroup[]
+}
+
+export interface StudentEmploymentGroup {
+    whereabouts: string
+    number: number | string
+}
+
