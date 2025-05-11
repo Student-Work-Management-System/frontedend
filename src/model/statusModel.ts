@@ -31,3 +31,23 @@ export interface StudentStatusItem {
     log: string
     modifiedTime: string
 }
+
+export interface StudentStatusStatQuery {
+    gradeId: string | null
+    majorId: string | null
+}
+
+export interface StudentStatusStatGroup {
+    gradeName: string
+    majors: MajorGroup[]
+}
+
+export interface MajorGroup {
+    majorName: string
+    status: StatusGroup[]
+}
+
+export interface StatusGroup {
+    statusName: string
+    number: string
+}

@@ -2,7 +2,7 @@ import http from '.'
 import { type Result, type RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
 import { type Status, type StudentStatus } from "@/model/statusModel"
-import type { StudentStatusItem, StudentStatusQuery } from '@/model/statusModel';
+import type { StudentStatusItem, StudentStatusQuery, StudentStatusStatGroup, StudentStatusStatQuery } from '@/model/statusModel';
 
 export async function apiGetAllStatus(): Promise<AxiosResponse<Result<Status[]>>> {
     return http.get('/status/gets');
@@ -38,4 +38,8 @@ export async function apiUpdateStudentStatus(studentStatus: StudentStatus): Prom
 
 export async function apiGetStudentStatusDetail(studentId: string): Promise<AxiosResponse<Result<StudentStatusItem[]>>> {
     return http.get(`/status/student/detail/${studentId}`)
+}
+
+export async function apiGetStat(query: StudentStatusStatQuery): Promise<AxiosResponse<Result<StudentStatusStatGroup[]>>> {
+    return http.post("/status/student/stat", query)
 }

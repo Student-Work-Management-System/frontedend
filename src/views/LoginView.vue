@@ -56,8 +56,6 @@ const loginHandler = async () => {
     console.log(error)
   } finally {
     loadingForm.value = false
-    userForm.username = ''
-    userForm.password = ''
   }
 }
 
