@@ -124,3 +124,24 @@ export interface AcademicWorkUser {
     username: string
     realName: string
 }
+
+export interface PaperStat {
+    meetingNumber: string
+    chineseCoreNumber: string
+    ei_Number: string
+}
+
+export interface PatentStat {
+    number: string
+    totalNumber: string
+}
+
+export interface SoftStat {
+    number: string
+}
+
+export interface AcademicWorkStatGroup {
+    paperStat: PaperStat
+    patentStat: PatentStat
+    softStat: SoftStat
+}

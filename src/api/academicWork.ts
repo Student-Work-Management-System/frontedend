@@ -1,4 +1,4 @@
-import type { AcademicWorkQuery, AcademicWorkRequest, StudentAcademicWorkAudit, StudentAcademicWorkItem, AcademicWorkUser } from "@/model/academicWorkModel";
+import type { AcademicWorkQuery, AcademicWorkRequest, StudentAcademicWorkAudit, StudentAcademicWorkItem, AcademicWorkUser, AcademicWorkStatGroup } from "@/model/academicWorkModel";
 import http from ".";
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
@@ -20,25 +20,29 @@ export const academicWorkTypes = [
 ]
 
 export async function apiGetStudentOwn(studentId: string): Promise<AxiosResponse<Result<StudentAcademicWorkItem[]>>> {
-    return http.get(`/academic_work/get/${studentId}`)
+    return http.get(`/academicWork/get/${studentId}`)
 }
 
 export async function apiGetAllStudentAcademicWork(query: AcademicWorkQuery): Promise<AxiosResponse<Result<RecordsPage<StudentAcademicWorkItem>>>> {
-    return http.post('/academic_work/gets', query)
+    return http.post('/academicWork/gets', query)
 }
 
 export async function apiAddStudentAcademicWork(request: AcademicWorkRequest): Promise<AxiosResponse<Result<void>>> {
-    return http.post('/academic_work/add', request)
+    return http.post('/academicWork/add', request)
 }
 
 export async function apiUpdateStudentAcademicWorkAudit(audits: StudentAcademicWorkAudit[]): Promise<AxiosResponse<Result<void>>> {
-    return http.put('/academic_work/update', audits)
+    return http.put('/academicWork/update', audits)
 }
 
 export async function apiDeleteStudentAcademicWork(studentAcademicWorkId: string): Promise<AxiosResponse<Result<void>>> {
-    return http.delete(`/academic_work/delete/${studentAcademicWorkId}`)
+    return http.delete(`/academicWork/delete/${studentAcademicWorkId}`)
 }
 
 export async function apiGetOptionalUser(username: string): Promise<AxiosResponse<Result<AcademicWorkUser[]>>> {
-    return http.get(`/academic_work/user/${username}`)
+    return http.get(`/academicWork/user/${username}`)
+}
+
+export async function apiGetStat(): Promise<AxiosResponse<Result<AcademicWorkStatGroup>>> {
+    return http.get("/academicWork/stat")
 }
