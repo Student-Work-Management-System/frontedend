@@ -14,6 +14,12 @@ export const competitionTableHeaders = [
     key: 'competitionName'
   },
   {
+    title: '详细名',
+    align: 'start',
+    sortable: true,
+    key: 'subCompetitionName'
+  },
+  {
     title: '竞赛性质',
     align: 'start',
     sortable: true,
@@ -24,12 +30,6 @@ export const competitionTableHeaders = [
     align: 'start',
     sortable: true,
     key: 'competitionType'
-  },
-  {
-    title: '备注',
-    align: 'start',
-    sortable: true,
-    key: 'comment'
   },
   {
     title: '操作',
@@ -45,6 +45,12 @@ export const studentCompetitionTableHeaders = [
     align: 'start',
     sortable: true,
     key: 'competitionName'
+  },
+  {
+    title: '详细名',
+    align: 'start',
+    sortable: true,
+    key: 'subCompetitionName'
   },
   {
     title: '竞赛性质',

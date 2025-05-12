@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import CompetitionImport from './manage-tabs/CompetitionImport.vue'
-import CompetitionData from './manage-tabs/CompetitionData.vue'
+import CompetitionImport from './manageTabs/CompetitionImport.vue'
+import CompetitionData from './manageTabs/CompetitionData.vue'
 
 const tab = ref(null)
 </script>

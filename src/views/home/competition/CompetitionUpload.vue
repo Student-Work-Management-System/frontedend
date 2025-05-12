@@ -182,7 +182,7 @@ onMounted(() => {
 
     <section class="menu">
       <v-btn
-        v-if="has('student_competition:select')"
+        v-if="has('student_competition:select:own')"
         prepend-icon="mdi-refresh"
         @click="fetchStudentCompetitionLogic"
         text="刷新"

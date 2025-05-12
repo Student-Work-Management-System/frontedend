@@ -1,7 +1,7 @@
 import http from '.'
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
-import type { Competition, CompetitionQuery, StudentCompetitionAudit, StudentCompetitionItem, StudentCompetitionQuery, StudentCompetitionWithMember, } from '@/model/competitionModel'
+import type { Competition, CompetitionQuery, StudentCompetitionAudit, StudentCompetitionItem, StudentCompetitionQuery, StudentCompetitionWithMember, CompetitionStatQuery, CompetitionStatGroup } from '@/model/competitionModel'
 
 export async function apiGetCompetitions(query: CompetitionQuery): Promise<AxiosResponse<Result<RecordsPage<Competition>>>> {
   return http.post('/competition/gets', query)
@@ -41,4 +41,8 @@ export async function apiUpdateStudentCompetition(studentCompetitionAudits: Stud
 
 export async function apiGetStudentCompetitions(query: StudentCompetitionQuery): Promise<AxiosResponse<Result<RecordsPage<StudentCompetitionItem>>>> {
   return http.post('/competition/student/gets', query)
+}
+
+export async function apiGetStat(query: CompetitionStatQuery): Promise<AxiosResponse<Result<CompetitionStatGroup[]>>> {
+  return http.post("/competition/student/stat", query)
 }

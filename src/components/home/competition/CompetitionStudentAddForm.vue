@@ -28,7 +28,6 @@ const newItem = reactive<StudentCompetitionWithMember>({
   date: moment(new Date()).format('YYYY-MM-DD'),
   studentIds: [userStore.getUserData.username]
 })
-
 const checkCompetitionIsSolo = computed(() => {
   return competitionStore.checkCompetitionIsSolo(newItem.competitionId)
 })
@@ -41,25 +40,40 @@ const nextStepHandler = () => {
 }
 const submitHandler = async () => {
   loading.value = true
-  // const { data: uploadFileResult } = await apiUploadFile('competition', files.value[0])
-  // if (uploadFileResult.code !== 200) {
-  //   notify({ type: 'error', title: '错误', text: uploadFileResult.message })
-  //   loading.value = false
-  //   return
-  // }
-  // newItem.evidence = uploadFileResult.data
-  newItem.evidence = 'www.baidu.com'
-  newItem.date = moment(new Date(newItem.date)).format('YYYY-MM-DD')
-  const { data: result } = await apiAddStudentCompetition(newItem)
-  if (result.code !== 200) {
-    notify({ type: 'error', title: '错误', text: result.message })
+  try {
+    // const { data: uploadFileResult } = await apiUploadFile('competition', files.value[0])
+    // if (uploadFileResult.code !== 200) {
+    //   notify({ type: 'error', title: '错误', text: uploadFileResult.message })
+    //   loading.value = false
+    //   return
+    // }
+    // newItem.evidence = uploadFileResult.data
+    newItem.evidence = 'www.baidu.com'
+    newItem.date = moment(new Date(newItem.date)).format('YYYY-MM-DD')
+    const { data: result } = await apiAddStudentCompetition(newItem)
+    if (result.code !== 200) {
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
     loading.value = false
-    return
+    step.value = 1
+    notify({ type: 'success', title: '成功', text: '获奖记录添加成功！' })
+  } catch (error) {
+    console.error(error)
+  } finally {
+    clear()
+    emits('onClosed')
+    loading.value = false
   }
-  loading.value = false
-  step.value = 1
-  notify({ type: 'success', title: '成功', text: '获奖记录添加成功！' })
-  emits('onClosed')
+}
+const clear = () => {
+  newItem.competitionId = ''
+  newItem.date = ''
+  newItem.evidence = ''
+  newItem.level = ''
+  newItem.studentIds = [userStore.getUserData.username]
+  files.value = []
 }
 </script>
 
@@ -76,6 +90,7 @@ const submitHandler = async () => {
                 v-model="newItem!.headerId"
                 prepend-inner-icon="mdi-head"
                 readonly
+                disabled
                 hide-details
               >
                 <template v-slot:prepend>
@@ -109,7 +124,7 @@ const submitHandler = async () => {
               variant="plain"
               @click="nextStepHandler"
             />
-            <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false)" />
+            <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false), clear()" />
           </v-container>
         </v-window-item>
         <v-window-item :value="2">
@@ -137,7 +152,7 @@ const submitHandler = async () => {
               variant="plain"
               @click="submitHandler"
             />
-            <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false)" />
+            <v-btn text="取消" variant="plain" @click="(step = 1), (dialog = false), clear()" />
           </v-container>
         </v-window-item>
       </v-window>

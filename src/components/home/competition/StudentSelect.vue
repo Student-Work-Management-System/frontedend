@@ -58,12 +58,11 @@ const onSearch = async (text: string) => {
     </template>
 
     <!-- 自定义选项显示 -->
-    <template v-slot:item="{ props: itemProps, item }">
+    <template v-slot:item="{ props: itemProps }">
       <v-list-item v-bind="itemProps">
         <template v-slot:prepend>
           <v-icon icon="mdi-account" />
         </template>
-        <v-list-item-title>{{ item.raw.title }}</v-list-item-title>
       </v-list-item>
     </template>
 

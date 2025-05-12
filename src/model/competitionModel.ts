@@ -88,3 +88,32 @@ export interface TeamItem {
     degreeName: string
 }
 
+export interface CompetitionStatQuery {
+    gradeId: string | null
+    majorId: string | null
+}
+
+export interface CompetitionStatGroup {
+    gradeName: string;
+    majors: MajorGroup[];
+}
+
+export interface MajorGroup {
+    majorId: string;
+    types: TypeGroup[];
+}
+
+export interface TypeGroup {
+    type: string;
+    competitions: CompetitionGroup[];
+}
+
+export interface CompetitionGroup {
+    competitionTotalName: string;
+    levels: LevelGroup[];
+}
+
+export interface LevelGroup {
+    level: string;
+    count: string;
+}

@@ -19,7 +19,13 @@ const competitionStore = useCompetitionStore()
 const competitionOptions = computed(() => {
   return competitionStore.getCompetitionList().map((item) => ({
     competitionTitle:
-      item.competitionName + ' - ' + item.competitionType + ' - ' + item.competitionNature,
+      item.competitionName +
+      ' - ' +
+      item.subCompetitionName +
+      ' - ' +
+      item.competitionType +
+      ' - ' +
+      item.competitionNature,
     competitionId: item.competitionId
   }))
 })
