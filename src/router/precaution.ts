@@ -5,41 +5,30 @@ export default {
   meta: {
     icon: 'mdi-shield-alert-outline',
     hasPage: false,
-    auth: 'student_school_precaution:select',
+    auth: 'student_precaution:select',
     title: '学业预警信息'
   },
   children: [
     {
       path: '/precaution/import',
       name: 'precaution-import',
-      component: () => import('@/views/home/base/BaseInfoImport.vue'),
+      component: () => import('@/views/home/precaution/PrecautionImport.vue'),
       meta: {
         icon: 'mdi-plus-box-multiple',
         title: '预警信息录入',
         hasPage: true,
-        auth: 'student_school_precaution:insert'
+        auth: 'student_precaution:insert'
       }
     },
     {
       path: '/precaution/list',
       name: 'precaution-list',
-      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
+      component: () => import('@/views/home/precaution/PrecautionTabs.vue'),
       meta: {
         icon: 'mdi-chart-bar',
         title: '预警信息统计',
         hasPage: true,
-        auth: 'student_school_precaution:select'
-      }
-    },
-    {
-      path: '/precaution/manage',
-      name: 'precaution-manage',
-      component: () => import('@/views/home/base/tab/BaseInfoData.vue'),
-      meta: {
-        icon: 'mdi-cog',
-        title: '预警信息管理',
-        hasPage: true,
-        auth: 'student_school_precaution:update'
+        auth: 'student_precaution:select'
       }
     }
   ]

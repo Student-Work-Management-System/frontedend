@@ -12,6 +12,7 @@ export * from "./scholarship-import-header"
 export * from "./punishment-import-headers"
 export * from "./academicWork-import-header"
 export * from "./leave-import-header"
+export * from "./precaution-import-header"
 
 export interface TableHeader {
   type: string
