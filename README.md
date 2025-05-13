@@ -32,7 +32,10 @@ yarn build
 
 ## 项目地址
 
-项目地址：[CodeBerg-SWMS](https://codeberg.org/SWMS/swms-web)
+项目地址:
+
+1. [CodeBerg-SWMS](https://codeberg.org/SWMS/swms-web)
+2. [GitCode-SWMS](https://gitcode.com/SWMS/swms-frontend)(`这里`)
 
 联系方式：
 
