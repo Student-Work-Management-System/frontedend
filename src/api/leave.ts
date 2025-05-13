@@ -1,7 +1,7 @@
 import http from '.'
 import type { AxiosResponse } from 'axios'
 import type { Result, RecordsPage } from '.'
-import type { StudentLeaveRequest, StudentLeaveItem, AuditLeaveQuery, AuditOperator, StudentLeaveQuery } from '@/model/leaveModel'
+import type { StudentLeaveRequest, StudentLeaveItem, AuditLeaveQuery, AuditOperator, StudentLeaveQuery, LeaveStatQuery, StudentLeaveStatGroup } from '@/model/leaveModel'
 
 export const leaveTypes = ["事假", "病假"]
 export const auditStates = ["审核中", "通过", "拒绝"]
@@ -32,4 +32,8 @@ export async function apiCounselorAudit(operator: AuditOperator): Promise<AxiosR
 
 export async function apiLeaderAudit(operator: AuditOperator): Promise<AxiosResponse<Result<null>>> {
     return http.put('/leave/leader/audit', operator)
+}
+
+export async function apiGetStat(query: LeaveStatQuery): Promise<AxiosResponse<Result<StudentLeaveStatGroup[]>>> {
+    return http.post("/leave/stat", query)
 }

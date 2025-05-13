@@ -96,3 +96,25 @@ export interface StudentLeaveItem {
     leaderHandleState: AuditState
     evidences: string[]
 }
+
+export interface LeaveStatQuery {
+    gradeId: string | null
+    majorId: string | null
+}
+
+export interface StudentLeaveStatGroup {
+    gradeName: string;
+    majors: MajorGroup[];
+}
+
+export interface MajorGroup {
+    majorName: string;
+    studentLeaves: StudentLeaveStat[];
+}
+
+export interface StudentLeaveStat {
+    type: string;
+    destroyedNumber: string;
+    internshipNumber: string;
+    totalNumber: string;
+}
