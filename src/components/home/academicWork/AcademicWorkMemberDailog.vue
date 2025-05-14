@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import type { StudentAcademicWorkMemberItem } from '@/model/academicWorkModel'
+import type { AcademicWorkMemberItem } from '@/model/academicWorkModel'
 import { ref, watchEffect } from 'vue'
 const model = defineModel<boolean>()
 const props = defineProps<{
-  members: StudentAcademicWorkMemberItem[]
+  members: AcademicWorkMemberItem[]
 }>()
 
 const loading = ref(false)
-const refMembers = ref<StudentAcademicWorkMemberItem[]>([])
+const refMembers = ref<AcademicWorkMemberItem[]>([])
 const emit = defineEmits(['on-close'])
 
 const closeDialog = () => {

@@ -18,6 +18,8 @@ import { notify } from '@kyvg/vue3-notification'
 import AcademicWorkTypeSelect from '@/components/home/academicWork/AcademicWorkTypeSelect.vue'
 import StateSelect from '@/components/home/competition/StateSelect.vue'
 import AuditAcademicWorkDialog from '@/components/home/academicWork/AuditAcademicWorkDialog.vue'
+import AcademicWorkMemberDailog from '@/components/home/academicWork/AcademicWorkMemberDailog.vue'
+import AcademicWorkDialog from '@/components/home/academicWork/AcademicWorkDialog.vue'
 
 const loading = ref(false)
 const data = ref<AcademicWorkItem[]>([])

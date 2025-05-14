@@ -96,7 +96,7 @@ export interface AcademicWorkQuery {
 
 export interface AcademicWorkMemberItem {
     memberOrder: string
-    is: boolean
+    isStudent: boolean
     username: string
     realName: string
     majorName: string

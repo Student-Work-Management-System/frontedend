@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import type {
-  StudentAcademicWorkItem,
-  StudentPaper,
-  StudentSoft,
-  StudentPatent
+  AcademicWorkItem,
+  AcademicWorkPaper,
+  AcademicWorkSoft,
+  AcademicWorkPatent
 } from '@/model/academicWorkModel'
-import { isStudentPaper, isStudentPatent, isStudentSoft } from '@/model/academicWorkModel'
+import { isPaper, isPatent, isSoft } from '@/model/academicWorkModel'
 import { onMounted } from 'vue'
 const model = defineModel<boolean>()
 const props = defineProps<{
-  item: StudentAcademicWorkItem
+  item: AcademicWorkItem
 }>()
 onMounted(() => {})
 </script>
@@ -25,63 +25,66 @@ onMounted(() => {})
 
         <v-card-text>
           <!-- 论文 -->
-          <div v-if="isStudentPaper(props.item.academicWork)">
+          <div v-if="isPaper(props.item.academicWork)">
             <p>
               <strong>期刊名称: </strong>
-              {{ (props.item.academicWork as StudentPaper).periodicalName }}
+              {{ (props.item.academicWork as AcademicWorkPaper).periodicalName }}
             </p>
             <p>
-              <strong>JRC分区: </strong>{{ (props.item.academicWork as StudentPaper).jrcPartition }}
+              <strong>JRC分区: </strong
+              >{{ (props.item.academicWork as AcademicWorkPaper).jrcPartition }}
             </p>
             <p>
-              <strong>CAS分区: </strong>{{ (props.item.academicWork as StudentPaper).casPartition }}
+              <strong>CAS分区: </strong
+              >{{ (props.item.academicWork as AcademicWorkPaper).casPartition }}
             </p>
             <p>
               <strong>收录时间: </strong>
-              {{ (props.item.academicWork as StudentPaper).recordedTime }}
+              {{ (props.item.academicWork as AcademicWorkPaper).recordedTime }}
             </p>
             <p>
               <strong>检索时间: </strong>
-              {{ (props.item.academicWork as StudentPaper).searchedTime }}
+              {{ (props.item.academicWork as AcademicWorkPaper).searchedTime }}
             </p>
             <p>
               <strong>是否EI文章: </strong>
-              {{ (props.item.academicWork as StudentPaper).isEI ? '是' : '否' }}
+              {{ (props.item.academicWork as AcademicWorkPaper).isEI ? '是' : '否' }}
             </p>
             <p>
               <strong>是否EI收录: </strong>
-              {{ (props.item.academicWork as StudentPaper).isEIRecorded ? '是' : '否' }}
+              {{ (props.item.academicWork as AcademicWorkPaper).isEIRecorded ? '是' : '否' }}
             </p>
             <p>
               <strong>是否中文核心: </strong>
-              {{ (props.item.academicWork as StudentPaper).isChineseCore ? '是' : '否' }}
+              {{ (props.item.academicWork as AcademicWorkPaper).isChineseCore ? '是' : '否' }}
             </p>
             <p>
               <strong>是否会议文章: </strong>
-              {{ (props.item.academicWork as StudentPaper).isMeeting ? '是' : '否' }}
+              {{ (props.item.academicWork as AcademicWorkPaper).isMeeting ? '是' : '否' }}
             </p>
           </div>
 
           <!-- 软著 -->
-          <div v-else-if="isStudentSoft(props.item.academicWork)">
+          <div v-else-if="isSoft(props.item.academicWork)">
             <p>
               <strong>发布机构：</strong>
-              {{ (props.item.academicWork as StudentSoft).publishInstitution }}
+              {{ (props.item.academicWork as AcademicWorkSoft).publishInstitution }}
             </p>
             <p>
-              <strong>发布日期：</strong>{{ (props.item.academicWork as StudentSoft).publishDate }}
+              <strong>发布日期：</strong
+              >{{ (props.item.academicWork as AcademicWorkSoft).publishDate }}
             </p>
           </div>
 
           <!-- 专利 -->
-          <div v-else-if="isStudentPatent(props.item.academicWork)">
+          <div v-else-if="isPatent(props.item.academicWork)">
             <p>
               <strong>授权状态： </strong>
-              {{ (props.item.academicWork as StudentPatent).publishState }}
+              {{ (props.item.academicWork as AcademicWorkPatent).publishState }}
             </p>
             <p>
               <strong>授权日期：</strong>
-              {{ (props.item.academicWork as StudentPatent).authorizationDate }}
+              {{ (props.item.academicWork as AcademicWorkPatent).authorizationDate }}
             </p>
           </div>
 

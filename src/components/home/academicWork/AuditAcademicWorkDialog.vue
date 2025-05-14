@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import CompetitionAuditSelect from '@/components/home/competition/StateSelect.vue'
+import StateSelect from '@/components/home/competition/StateSelect.vue'
 
 const model = defineModel<boolean>()
 const selectedLength = defineModel<number>('length')
@@ -45,7 +45,7 @@ const auditHandler = () => {
         <v-card prepend-icon="mdi-eye" title="多选审核">
           <v-container class="w-100 d-flex justify-space-evenly">
             <section class="w-100 px-8">
-              <CompetitionAuditSelect v-model="state" :show-waiting="false" />
+              <StateSelect v-model="state" :show-waiting="false" />
               <v-textarea
                 v-model="reason"
                 color="indigo"
