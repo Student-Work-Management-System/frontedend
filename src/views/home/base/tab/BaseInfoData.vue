@@ -587,28 +587,31 @@ onMounted(fetchStudentLogic)
             width="150"
             show-overflow-tooltip
           />
-          <el-table-column label="操作" align="center" fixed="right" width="150">
+          <el-table-column label="操作" align="center" fixed="right" width="325">
             <template #default="{ row }">
-              <el-button
+              <v-btn
                 v-if="has('student:update')"
-                :icon="Edit"
-                type="primary"
-                circle
+                color="primary"
+                prepend-icon="mdi-pencil"
+                text="编辑"
                 @click="editStudent(row)"
+                class="me-2"
               />
-              <el-button
+              <v-btn
                 v-if="has('student:select')"
-                :icon="Document"
-                type="success"
+                color="success"
+                prepend-icon="mdi-file-document"
                 @click="getStudentArchive(row.studentId)"
-                circle
+                text="档案"
+                class="me-2"
               />
-              <el-button
+              <v-btn
                 v-if="has('student:update') && !row.enabled"
-                :icon="RefreshRight"
-                type="warning"
-                circle
+                color="warning"
+                prepend-icon="mdi-undo"
                 @click="recoverStudent(row.studentId)"
+                text="恢复"
+                class="me-2"
               />
             </template>
           </el-table-column>
