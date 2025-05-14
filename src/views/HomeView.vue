@@ -83,8 +83,7 @@ onMounted(finishLoading)
                     :icon="drawer ? 'mdi-menu-open' : 'mdi-menu'"
                     variant="text"
                     @click="drawer = !drawer"
-                  >
-                  </v-icon>
+                  />
                 </RouterBreadcrumb>
               </span>
               <span>
@@ -96,9 +95,8 @@ onMounted(finishLoading)
                   :loading="loading"
                   prepend-icon="mdi-login-variant"
                   @click="dialog = true"
-                >
-                  登出
-                </v-btn>
+                  text="登出"
+                />
               </span>
             </v-card-title>
           </v-card>

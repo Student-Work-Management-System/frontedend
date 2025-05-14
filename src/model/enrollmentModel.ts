@@ -226,10 +226,8 @@ export interface EnrollmentItem {
     studentLoans: boolean;    // 助学贷款
     disability: boolean;      // 残疾
     religiousBeliefs: string; // 宗教信仰
-
     /** 备注 */
     otherNotes: string; // 备注
-
     /** 启用状态 */
     enabled: boolean;
 }

@@ -8,11 +8,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AcademicInfoView: typeof import('./src/components/home/base/archive/AcademicInfoView.vue')['default']
     AcademicWorkDialog: typeof import('./src/components/home/academicWork/AcademicWorkDialog.vue')['default']
     AcademicWorkMemberDailog: typeof import('./src/components/home/academicWork/AcademicWorkMemberDailog.vue')['default']
     AcademicWorkMemberDialog: typeof import('./src/components/home/academicWork/AcademicWorkMemberDialog.vue')['default']
     AcademicWorkTypeSelect: typeof import('./src/components/home/academicWork/AcademicWorkTypeSelect.vue')['default']
+    AcademicWorkView: typeof import('./src/components/home/base/archive/AcademicWorkView.vue')['default']
     AcademicYearSelect: typeof import('./src/components/home/poverty/AcademicYearSelect.vue')['default']
+    AchievementView: typeof import('./src/components/home/base/archive/AchievementView.vue')['default']
     AddAcademicWorkDialog: typeof import('./src/components/home/academicWork/AddAcademicWorkDialog.vue')['default']
     AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
     AddCompetitionDialog: typeof import('./src/components/home/competition/AddCompetitionDialog.vue')['default']
@@ -63,6 +66,7 @@ declare module 'vue' {
     EditStudentStatusDialog: typeof import('./src/components/home/status/EditStudentStatusDialog.vue')['default']
     EditUserInfoForm: typeof import('./src/components/home/system/EditUserInfoForm.vue')['default']
     EditUserRoleForm: typeof import('./src/components/home/system/EditUserRoleForm.vue')['default']
+    EnrollmentView: typeof import('./src/components/home/base/archive/EnrollmentView.vue')['default']
     ExcelTable: typeof import('./src/components/home/ExcelTable.vue')['default']
     ForgetPasswordForm: typeof import('./src/components/login/ForgetPasswordForm.vue')['default']
     GradeSelect: typeof import('./src/components/home/GradeSelect.vue')['default']
@@ -75,20 +79,27 @@ declare module 'vue' {
     MajorSelect: typeof import('./src/components/home/MajorSelect.vue')['default']
     MultiInputUserChips: typeof import('./src/components/home/MultiInputUserChips.vue')['default']
     PoliticSelect: typeof import('./src/components/home/PoliticSelect.vue')['default']
+    PovertyAssistanceView: typeof import('./src/components/home/base/archive/PovertyAssistanceView.vue')['default']
     PunishtmentSelect: typeof import('./src/components/home/punishment/PunishtmentSelect.vue')['default']
     RouterBreadcrumb: typeof import('./src/components/home/RouterBreadcrumb.vue')['default']
     RouterContainer: typeof import('./src/components/basic/RouterContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterSideMenu: typeof import('./src/components/home/RouterSideMenu.vue')['default']
     RouterView: typeof import('vue-router')['RouterView']
+    ScholarshipPunishmentView: typeof import('./src/components/home/base/archive/ScholarshipPunishmentView.vue')['default']
     ScholarshipSelect: typeof import('./src/components/home/scholarship/ScholarshipSelect.vue')['default']
     SelectPermission: typeof import('./src/components/home/system/SelectPermission.vue')['default']
     SemesterSelect: typeof import('./src/components/home/SemesterSelect.vue')['default']
     StateSelect: typeof import('./src/components/home/competition/StateSelect.vue')['default']
     StatusSelect: typeof import('./src/components/home/StatusSelect.vue')['default']
+    StatusView: typeof import('./src/components/home/base/archive/StatusView.vue')['default']
+    StudentArchiveDialog: typeof import('./src/components/home/base/StudentArchiveDialog.vue')['default']
     StudentSelect: typeof import('./src/components/home/competition/StudentSelect.vue')['default']
     StudentStatusDetailDialog: typeof import('./src/components/home/status/StudentStatusDetailDialog.vue')['default']
     TrueOrFalseSelect: typeof import('./src/components/home/TrueOrFalseSelect.vue')['default']
     UploadDialog: typeof import('./src/components/home/UploadDialog.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vMode: typeof import('vue-devui/mode/index.es.js')['ModeDirective']
   }
 }

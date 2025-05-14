@@ -54,4 +54,5 @@ watch(route, updateCrumbs, { immediate: true })
 .last {
   color: #3f51b5;
   border-bottom: #3f51b5 1px solid;
-}</style>
+}
+</style>
