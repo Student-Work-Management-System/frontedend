@@ -7,8 +7,8 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import type { AcademicWorkItem, AcademicWorkMemberItem } from '@/model/academicWorkModel'
 import { studentAcademicWorkTableHeader } from '@/misc/table'
 import AcademicWorkDialog from '@/components/home/academicWork/AcademicWorkDialog.vue'
-import AcademicWorkMemberDailog from '@/components/home/academicWork/AcademicWorkMemberDailog.vue'
-import AddStudentAcademicWorkDialog from '@/components/home/academicWork/AddStudentAcademicWorkDialog.vue'
+import AcademicWorkMemberDailog from '@/components/home/academicWork/AcademicWorkMemberDialog.vue'
+import AddStudentAcademicWorkDialog from '@/components/home/academicWork/AddAcademicWorkDialog.vue'
 
 const loading = ref(false)
 const selected = ref<AcademicWorkItem[]>([])

@@ -1,23 +1,23 @@
 export type AcademicWorkType = 'paper' | 'soft' | 'patent'
 export type AcademicWorkState = '审核中' | '通过' | '拒绝'
 
-export function isPaper(work: AcademicWork): work is AcademicWorkPaper {
+export function isPaper(work: AbstractAcademicWork): work is AcademicWorkPaper {
     return (work as AcademicWorkPaper).paperId !== undefined
 }
 
-export function isSoft(work: AcademicWork): work is AcademicWorkSoft {
+export function isSoft(work: AbstractAcademicWork): work is AcademicWorkSoft {
     return (work as AcademicWorkSoft).softId !== undefined
 }
 
-export function isPatent(work: AcademicWork): work is AcademicWorkPatent {
+export function isPatent(work: AbstractAcademicWork): work is AcademicWorkPatent {
     return (work as AcademicWorkPatent).patentId !== undefined
 }
 
-export interface AcademicWork {
+export interface AbstractAcademicWork {
 
 }
 
-export interface AcademicWorkPaper extends AcademicWork {
+export interface AcademicWorkPaper extends AbstractAcademicWork {
     paperId?: string
     periodicalName: string
     jrcPartition: string
@@ -47,7 +47,7 @@ export interface AcademicWorkPatent extends AbstractAcademicWork {
     type: AcademicWorkType
 }
 
-export interface AbstractAcademicWork {
+export interface AcademicWork {
     academicWorkId?: string
     username: string
     workName: string
@@ -83,7 +83,7 @@ export interface AcademicWorkRequest {
     type: AcademicWorkType
     team: AcademicWorkMemberRequest[]
     evidence: string
-    academicWork: AcademicWork | null;
+    academicWork: AbstractAcademicWork | null;
 }
 
 export interface AcademicWorkQuery {
@@ -111,7 +111,7 @@ export interface AcademicWorkItem {
     workName: string
     type: AcademicWorkType
     referenceId: string
-    academicWork: AcademicWork
+    academicWork: AbstractAcademicWork
     team: AcademicWorkMemberItem[]
     operatorId: string
     operatorTime: string

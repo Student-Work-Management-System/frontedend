@@ -10,8 +10,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     AcademicWorkDialog: typeof import('./src/components/home/academicWork/AcademicWorkDialog.vue')['default']
     AcademicWorkMemberDailog: typeof import('./src/components/home/academicWork/AcademicWorkMemberDailog.vue')['default']
+    AcademicWorkMemberDialog: typeof import('./src/components/home/academicWork/AcademicWorkMemberDialog.vue')['default']
     AcademicWorkTypeSelect: typeof import('./src/components/home/academicWork/AcademicWorkTypeSelect.vue')['default']
     AcademicYearSelect: typeof import('./src/components/home/poverty/AcademicYearSelect.vue')['default']
+    AddAcademicWorkDialog: typeof import('./src/components/home/academicWork/AddAcademicWorkDialog.vue')['default']
     AddCadreForm: typeof import('./src/components/home/cadre/AddCadreForm.vue')['default']
     AddCompetitionDialog: typeof import('./src/components/home/competition/AddCompetitionDialog.vue')['default']
     AddCounselorForm: typeof import('./src/components/home/system/AddCounselorForm.vue')['default']

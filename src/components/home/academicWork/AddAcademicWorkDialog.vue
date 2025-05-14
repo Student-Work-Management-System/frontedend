@@ -2,17 +2,13 @@
 import type {
   AcademicWorkRequest,
   AcademicWorkUser,
-  StudentPaper,
-  StudentPatent,
-  StudentSoft
+  AcademicWorkPaper,
+  AcademicWorkPatent,
+  AcademicWorkSoft
 } from '@/model/academicWorkModel'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { apiUploadFile } from '@/api/file'
-import {
-  academicWorkTypes,
-  apiAddStudentAcademicWork,
-  apiGetOptionalUser
-} from '@/api/academicWork'
+import { academicWorkTypes, apiAddAcademicWork, apiGetOptionalUser } from '@/api/academicWork'
 import DateSelect from '../DateSelect.vue'
 import KeyValueSelect from '../KeyValueSelect.vue'
 import { notify } from '@kyvg/vue3-notification'
@@ -47,10 +43,10 @@ const work = reactive<AcademicWorkRequest>({
   type: 'paper',
   team: [],
   evidence: '',
-  academicWork: targetAcademicWork
+  academicWork: null
 })
 
-const paper = ref<StudentPaper>({
+const paper = ref<AcademicWorkPaper>({
   periodicalName: '',
   jrcPartition: '',
   casPartition: '',
@@ -63,18 +59,18 @@ const paper = ref<StudentPaper>({
   type: 'paper'
 })
 
-const soft = ref<StudentSoft>({
-  publishInstitution: '',
-  publishDate: '',
-  type: 'soft'
-})
-
-const patent = ref<StudentPatent>({
+const patent = ref<AcademicWorkPatent>({
   publishState: '',
   publishDate: '',
   acceptDate: '',
   authorizationDate: '',
   type: 'patent'
+})
+
+const soft = ref<AcademicWorkSoft>({
+  publishInstitution: '',
+  publishDate: '',
+  type: 'soft'
 })
 
 const isPaper = (type: string) => {
@@ -88,6 +84,7 @@ const isSoft = (type: string) => {
 const isPatent = (type: string) => {
   return type === 'patent'
 }
+
 const fetchUsers = async (val: string) => {
   if (!val || val.length <= 0) return
   searchLoading.value = true
@@ -190,7 +187,7 @@ const addStudentAcademicWork = async () => {
     // work.evidence = uploadFileResult.data
     work.evidence = 'www.baidu.com'
     work.academicWork = targetAcademicWork.value
-    const { data: result } = await apiAddStudentAcademicWork(work)
+    const { data: result } = await apiAddAcademicWork(work)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
       loading.value = false
@@ -323,7 +320,7 @@ onMounted(initWork)
           <v-divider></v-divider>
 
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn text="上一步" @click="stepTwoBack" />
+            <v-btn variant="plain" text="上一步" @click="stepTwoBack" />
 
             <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
             <v-btn text="下一步" color="indigo" variant="plain" @click="stepTwoNext()" />
@@ -447,7 +444,7 @@ onMounted(initWork)
           <v-divider></v-divider>
 
           <v-container class="w-100 d-flex justify-space-evenly">
-            <v-btn text="上一步" @click="stepThreeBack()" />
+            <v-btn variant="plain" text="上一步" @click="stepThreeBack()" />
             <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
             <v-btn
               :disabled="disabled"
@@ -475,7 +472,7 @@ onMounted(initWork)
             <v-divider></v-divider>
 
             <v-container class="w-100 d-flex justify-space-evenly">
-              <v-btn text="上一步" @click="step--, (work.evidence = '')" />
+              <v-btn variant="plain" text="上一步" @click="step--, (work.evidence = '')" />
               <v-btn text="取消" variant="plain" @click="(step = 1), (model = false), initWork()" />
               <v-btn text="提交" color="indigo" variant="plain" @click="addStudentAcademicWork" />
             </v-container>
