@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { EnrollmentBase } from '@/model/studentModel'
+import { ref } from 'vue'
 
 const enrollment = defineModel<EnrollmentBase>()
+const panel = ref(['0', '1', '2', '3', '4', '5'])
 </script>
 
 <template>
   <v-container>
-    <v-expansion-panels multiple>
+    <v-expansion-panels v-model="panel" multiple>
       <!-- 个人信息 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="0">
         <v-expansion-panel-title>个人信息</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
@@ -30,7 +32,7 @@ const enrollment = defineModel<EnrollmentBase>()
       </v-expansion-panel>
 
       <!-- 在校信息 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="1">
         <v-expansion-panel-title>在校信息</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
@@ -47,7 +49,7 @@ const enrollment = defineModel<EnrollmentBase>()
       </v-expansion-panel>
 
       <!-- 高考信息 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="2">
         <v-expansion-panel-title>高考信息</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
@@ -90,7 +92,7 @@ const enrollment = defineModel<EnrollmentBase>()
       </v-expansion-panel>
 
       <!-- 户口信息 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="3">
         <v-expansion-panel-title>户口信息</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
@@ -115,7 +117,7 @@ const enrollment = defineModel<EnrollmentBase>()
       </v-expansion-panel>
 
       <!-- 其他 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="4">
         <v-expansion-panel-title>其他</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
@@ -127,7 +129,7 @@ const enrollment = defineModel<EnrollmentBase>()
       </v-expansion-panel>
 
       <!-- 备注 -->
-      <v-expansion-panel>
+      <v-expansion-panel value="5">
         <v-expansion-panel-title>备注</v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row>
