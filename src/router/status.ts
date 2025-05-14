@@ -6,7 +6,7 @@ export default {
     icon: 'mdi-school',
     hasPage: false,
     auth: 'student_status:select',
-    title: '学生学籍变动'
+    title: '学籍变动'
   },
   children: [
     {

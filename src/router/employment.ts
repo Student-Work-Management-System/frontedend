@@ -4,7 +4,7 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-briefcase',
-    title: '学生就业统计',
+    title: '就业信息',
     hasPage: false,
     auth: 'student_employment:select'
   },

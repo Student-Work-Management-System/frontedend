@@ -1,4 +1,4 @@
-import type { AcademicWorkQuery, AcademicWorkRequest, StudentAcademicWorkAudit, StudentAcademicWorkItem, AcademicWorkUser, AcademicWorkStatGroup } from "@/model/academicWorkModel";
+import type { AcademicWorkQuery, AcademicWorkRequest, AcademicWorkAudit, AcademicWorkItem, AcademicWorkUser, AcademicWorkStatGroup } from "@/model/academicWorkModel";
 import http from ".";
 import type { Result, RecordsPage } from '.'
 import { type AxiosResponse } from 'axios'
@@ -19,24 +19,24 @@ export const academicWorkTypes = [
     }
 ]
 
-export async function apiGetStudentOwn(studentId: string): Promise<AxiosResponse<Result<StudentAcademicWorkItem[]>>> {
-    return http.get(`/academicWork/get/${studentId}`)
+export async function apiGetOwn(Id: string): Promise<AxiosResponse<Result<AcademicWorkItem[]>>> {
+    return http.get(`/academicWork/get/${Id}`)
 }
 
-export async function apiGetAllStudentAcademicWork(query: AcademicWorkQuery): Promise<AxiosResponse<Result<RecordsPage<StudentAcademicWorkItem>>>> {
+export async function apiGetAllAcademicWork(query: AcademicWorkQuery): Promise<AxiosResponse<Result<RecordsPage<AcademicWorkItem>>>> {
     return http.post('/academicWork/gets', query)
 }
 
-export async function apiAddStudentAcademicWork(request: AcademicWorkRequest): Promise<AxiosResponse<Result<void>>> {
+export async function apiAddAcademicWork(request: AcademicWorkRequest): Promise<AxiosResponse<Result<void>>> {
     return http.post('/academicWork/add', request)
 }
 
-export async function apiUpdateStudentAcademicWorkAudit(audits: StudentAcademicWorkAudit[]): Promise<AxiosResponse<Result<void>>> {
+export async function apiUpdateAcademicWorkAudit(audits: AcademicWorkAudit[]): Promise<AxiosResponse<Result<void>>> {
     return http.put('/academicWork/update', audits)
 }
 
-export async function apiDeleteStudentAcademicWork(studentAcademicWorkId: string): Promise<AxiosResponse<Result<void>>> {
-    return http.delete(`/academicWork/delete/${studentAcademicWorkId}`)
+export async function apiDeleteAcademicWork(AcademicWorkId: string): Promise<AxiosResponse<Result<void>>> {
+    return http.delete(`/academicWork/delete/${AcademicWorkId}`)
 }
 
 export async function apiGetOptionalUser(username: string): Promise<AxiosResponse<Result<AcademicWorkUser[]>>> {

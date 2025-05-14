@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {
   academicWorkTypes,
-  apiGetAllStudentAcademicWork,
-  apiUpdateStudentAcademicWorkAudit
+  apiGetAllAcademicWork,
+  apiUpdateAcademicWorkAudit
 } from '@/api/academicWork'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import type {
   AcademicWorkQuery,
   AcademicWorkState,
-  StudentAcademicWorkItem,
-  StudentAcademicWorkMemberItem
+  AcademicWorkItem,
+  AcademicWorkMemberItem
 } from '@/model/academicWorkModel'
 import { studentAcademicWorkTableHeader } from '@/misc/table'
 import { useUserStore } from '@/stores/userStore'
@@ -20,8 +20,8 @@ import StateSelect from '@/components/home/competition/StateSelect.vue'
 import AuditAcademicWorkDialog from '@/components/home/academicWork/AuditAcademicWorkDialog.vue'
 
 const loading = ref(false)
-const data = ref<StudentAcademicWorkItem[]>([])
-const selected = ref<StudentAcademicWorkItem[]>([])
+const data = ref<AcademicWorkItem[]>([])
+const selected = ref<AcademicWorkItem[]>([])
 const auditDialog = ref(false)
 
 const query = reactive<AcademicWorkQuery>({
@@ -41,7 +41,7 @@ const fetchStudentAcademicWork = async () => {
   loading.value = true
   try {
     if (query.pageSize === -1) query.pageSize = 9999
-    const { data: result } = await apiGetAllStudentAcademicWork(query)
+    const { data: result } = await apiGetAllAcademicWork(query)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
       return
@@ -66,7 +66,7 @@ const auditHandler = async (state: AcademicWorkState, reason: string) => {
   try {
     if (state === '通过') reason = ''
     const audits = createStudentAcademicWorkAudit(state, reason, selected.value)
-    const { data: result } = await apiUpdateStudentAcademicWorkAudit(audits)
+    const { data: result } = await apiUpdateAcademicWorkAudit(audits)
     if (result.code !== 200) {
       notify({ type: 'error', title: '错误', text: result.message })
       return
@@ -89,10 +89,10 @@ const auditHandler = async (state: AcademicWorkState, reason: string) => {
 const createStudentAcademicWorkAudit = (
   state: AcademicWorkState,
   reason: string,
-  items: StudentAcademicWorkItem[]
+  items: AcademicWorkItem[]
 ) => {
   return items.map((item) => ({
-    studentAcademicWorkId: item.studentAcademicWorkId,
+    academicWorkId: item.academicWorkId,
     state: state,
     rejectReason: reason,
     operatorId: store.getUserData.uid
@@ -100,16 +100,16 @@ const createStudentAcademicWorkAudit = (
 }
 
 const membersDialog = ref(false)
-const membersDialogInfo = ref<StudentAcademicWorkMemberItem[]>([])
+const membersDialogInfo = ref<AcademicWorkMemberItem[]>([])
 const workDialog = ref(false)
-const workDialogInfo = ref<StudentAcademicWorkItem>()
+const workDialogInfo = ref<AcademicWorkItem>()
 
-const viewMembers = (item: StudentAcademicWorkMemberItem[]) => {
+const viewMembers = (item: AcademicWorkMemberItem[]) => {
   membersDialogInfo.value = item
   membersDialog.value = true
 }
 
-const viewWork = (item: StudentAcademicWorkItem) => {
+const viewWork = (item: AcademicWorkItem) => {
   workDialog.value = true
   workDialogInfo.value = item
 }

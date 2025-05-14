@@ -4,7 +4,7 @@ export default {
   component: () => import('@/components/basic/RouterContainer.vue'),
   meta: {
     icon: 'mdi-book-open',
-    title: '学生学术成果',
+    title: '学术成果',
     hasPage: false,
     auth: 'student_academic_work:select'
   },
@@ -15,7 +15,7 @@ export default {
       component: () => import('@/views/home/academicWork/AcademicWorkUpload.vue'),
       meta: {
         icon: 'mdi-cloud-upload',
-        title: '学生成果上报',
+        title: '学术成果上报',
         hasPage: true,
         auth: 'student_academic_work:insert'
       }

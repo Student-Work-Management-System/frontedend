@@ -1,27 +1,24 @@
 <script setup lang="ts">
-import { academicWorkTypes, apiGetStudentOwn } from '@/api/academicWork'
+import { academicWorkTypes, apiGetOwn } from '@/api/academicWork'
 import { apiDownloadFile } from '@/api/file'
 import { useUserStore } from '@/stores/userStore'
 import { notify } from '@kyvg/vue3-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
-import type {
-  StudentAcademicWorkItem,
-  StudentAcademicWorkMemberItem
-} from '@/model/academicWorkModel'
+import type { AcademicWorkItem, AcademicWorkMemberItem } from '@/model/academicWorkModel'
 import { studentAcademicWorkTableHeader } from '@/misc/table'
 import AcademicWorkDialog from '@/components/home/academicWork/AcademicWorkDialog.vue'
 import AcademicWorkMemberDailog from '@/components/home/academicWork/AcademicWorkMemberDailog.vue'
 import AddStudentAcademicWorkDialog from '@/components/home/academicWork/AddStudentAcademicWorkDialog.vue'
 
 const loading = ref(false)
-const selected = ref<StudentAcademicWorkItem[]>([])
-const data = ref<StudentAcademicWorkItem[]>([])
+const selected = ref<AcademicWorkItem[]>([])
+const data = ref<AcademicWorkItem[]>([])
 const addDialog = ref(false)
 const store = useUserStore()
 const membersDialog = ref(false)
-const membersDialogInfo = ref<StudentAcademicWorkMemberItem[]>([])
+const membersDialogInfo = ref<AcademicWorkMemberItem[]>([])
 const workDialog = ref(false)
-const workDialogInfo = ref<StudentAcademicWorkItem>()
+const workDialogInfo = ref<AcademicWorkItem>()
 
 const has = (authority: string) => {
   return store.hasAuthorized(authority)
@@ -34,7 +31,7 @@ const pageOptions = reactive({
 const fetchStudentOwnAcademic = async () => {
   try {
     if (pageOptions.pageSize === -1) pageOptions.pageSize = 9999
-    const { data: result } = await apiGetStudentOwn(store.getUserData.username)
+    const { data: result } = await apiGetOwn(store.getUserData.username)
     if (result.code !== 200) {
       console.error(result)
       notify({ type: 'error', title: '错误', text: result.message })
@@ -50,12 +47,12 @@ const fetchStudentOwnAcademic = async () => {
 }
 onMounted(fetchStudentOwnAcademic)
 
-const viewMembers = (item: StudentAcademicWorkMemberItem[]) => {
+const viewMembers = (item: AcademicWorkMemberItem[]) => {
   membersDialogInfo.value = item
   membersDialog.value = true
 }
 
-const viewWork = (item: StudentAcademicWorkItem) => {
+const viewWork = (item: AcademicWorkItem) => {
   workDialog.value = true
   workDialogInfo.value = item
 }

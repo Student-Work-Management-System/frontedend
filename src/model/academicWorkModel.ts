@@ -1,24 +1,24 @@
 export type AcademicWorkType = 'paper' | 'soft' | 'patent'
 export type AcademicWorkState = '审核中' | '通过' | '拒绝'
 
-export function isStudentPaper(work: AcademicWork): work is StudentPaper {
-    return (work as StudentPaper).studentPaperId !== undefined
+export function isPaper(work: AcademicWork): work is AcademicWorkPaper {
+    return (work as AcademicWorkPaper).paperId !== undefined
 }
 
-export function isStudentSoft(work: AcademicWork): work is StudentSoft {
-    return (work as StudentSoft).studentSoftId !== undefined
+export function isSoft(work: AcademicWork): work is AcademicWorkSoft {
+    return (work as AcademicWorkSoft).softId !== undefined
 }
 
-export function isStudentPatent(work: AcademicWork): work is StudentPatent {
-    return (work as StudentPatent).studentPatentId !== undefined
+export function isPatent(work: AcademicWork): work is AcademicWorkPatent {
+    return (work as AcademicWorkPatent).patentId !== undefined
 }
 
 export interface AcademicWork {
 
 }
 
-export interface StudentPaper extends AcademicWork {
-    studentPaperId?: string
+export interface AcademicWorkPaper extends AcademicWork {
+    paperId?: string
     periodicalName: string
     jrcPartition: string
     casPartition: string
@@ -31,15 +31,15 @@ export interface StudentPaper extends AcademicWork {
     type: AcademicWorkType
 }
 
-export interface StudentSoft extends AcademicWork {
-    studentSoftId?: string
+export interface AcademicWorkSoft extends AbstractAcademicWork {
+    softId?: string
     publishInstitution: string
     publishDate: string
     type: AcademicWorkType
 }
 
-export interface StudentPatent extends AcademicWork {
-    studentPatentId?: string
+export interface AcademicWorkPatent extends AbstractAcademicWork {
+    patentId?: string
     publishState: string
     publishDate: string
     acceptDate: string
@@ -47,8 +47,8 @@ export interface StudentPatent extends AcademicWork {
     type: AcademicWorkType
 }
 
-export interface StudentAcademicWork {
-    studentAcademicWorkId?: string
+export interface AbstractAcademicWork {
+    academicWorkId?: string
     username: string
     workName: string
     type: string
@@ -56,32 +56,32 @@ export interface StudentAcademicWork {
     evidence: string
 }
 
-export interface StudentAcademicWorkAudit {
-    studentAcademicWorkId: string
+export interface AcademicWorkAudit {
+    academicWorkId: string
     state: AcademicWorkState
     rejectReason: string | null
     operatorId: string | null
 }
 
-export interface StudentAcademicWorkMember {
+export interface AcademicWorkMember {
     memberId?: string
-    studentAcademicWorkId: string
+    academicWorkId: string
     memberOrder: string
     username: string
 }
 
-export interface AcademicWorkMember {
+export interface AcademicWorkMemberRequest {
     memberOrder: string
     username: string
 }
 
 export interface AcademicWorkRequest {
-    studentAcademicWorkId?: string
+    academicWorkId?: string
     username: string
     workName: string
     state?: AcademicWorkState
     type: AcademicWorkType
-    team: AcademicWorkMember[]
+    team: AcademicWorkMemberRequest[]
     evidence: string
     academicWork: AcademicWork | null;
 }
@@ -94,9 +94,9 @@ export interface AcademicWorkQuery {
     pageSize: number
 }
 
-export interface StudentAcademicWorkMemberItem {
+export interface AcademicWorkMemberItem {
     memberOrder: string
-    isStudent: boolean
+    is: boolean
     username: string
     realName: string
     majorName: string
@@ -104,15 +104,15 @@ export interface StudentAcademicWorkMemberItem {
     degreeName: string
 }
 
-export interface StudentAcademicWorkItem {
-    studentAcademicWorkId: string
+export interface AcademicWorkItem {
+    academicWorkId: string
     username: string
     realName: string
     workName: string
     type: AcademicWorkType
     referenceId: string
     academicWork: AcademicWork
-    team: StudentAcademicWorkMemberItem[]
+    team: AcademicWorkMemberItem[]
     operatorId: string
     operatorTime: string
     evidence: string
