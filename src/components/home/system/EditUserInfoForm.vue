@@ -14,16 +14,22 @@ const form = ref(false)
 const userInfo = reactive({ uid: '', realName: '', email: '', phone: '', password: '' })
 const updateInfoLogic = async () => {
   loading.value = true
-  const { data: result } = await apiUpdateUserInfo({
-    ...userInfo
-  })
-  if (result.code !== 200) {
-    notify({ type: 'error', title: '错误', text: result.message })
-    return
+  try {
+    const { data: result } = await apiUpdateUserInfo({
+      ...userInfo
+    })
+    if (result.code !== 200) {
+      notify({ type: 'error', title: '错误', text: result.message })
+      return
+    }
+    notify({ type: 'success', title: '成功', text: '更新成功！' })
+  } catch (error) {
+    notify({ type: 'error', title: '错误', text: '网络异常，请稍后再试！' })
+  } finally {
+    loading.value = false
+    userInfo.password = ''
+    emits('onClosed')
   }
-  loading.value = false
-  notify({ type: 'success', title: '成功', text: '更新成功！' })
-  emits('onClosed')
 }
 
 watchEffect(() => {

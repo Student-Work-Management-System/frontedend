@@ -24,7 +24,11 @@ const selections = computed(() => {
 const categories = computed(() => {
   const searchWord = search.value
   if (!searchWord) return items.value
-  return items.value.filter((item) => item.roleName.indexOf(searchWord) > -1)
+  return items.value.filter((item) => {
+    if (item.rid === '5') return false
+    if (!searchWord) return true
+    return item.roleName.includes(searchWord)
+  })
 })
 
 watch(selected, () => {
@@ -80,7 +84,7 @@ const fetchRoleList = async () => {
     notify({ type: 'error', title: '错误', text: result.message })
     return
   }
-  items.value = result.data
+  items.value = result.data.filter((item: RoleItem) => item.rid !== '5')
   selected.value = []
 }
 

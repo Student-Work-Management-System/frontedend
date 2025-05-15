@@ -56,7 +56,6 @@ const NextBtnHandler = () => {
 }
 
 const AddRoleLogic = async () => {
-  loading.value = true
   const nodes: IInnerTreeNode[] = treeRef.value!.treeFactory.getCheckedNodes()
   const permissions = nodes
     .filter((n) => n.isLeaf)
@@ -66,17 +65,32 @@ const AddRoleLogic = async () => {
     roleDesc: newRole.roleDesc,
     permissionList: permissions
   }
-  const { data: result } = await apiAddRole(data)
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
-    loading.value = false
+  loading.value = true
+  try {
+    const { data: result } = await apiAddRole(data)
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
+    notify({ type: 'success', title: '成功', text: '添加成功！' })
+  } catch (error) {
+    console.error(error)
     return
+  } finally {
+    loading.value = false
+    step.value = 1
+    clear()
+    emits('onClosed')
   }
-  notify({ type: 'success', title: '成功', text: '添加成功！' })
-  loading.value = false
-  emits('onClosed')
-  step.value = 1
+}
+
+const clear = () => {
+  newRole.roleName = ''
+  newRole.roleDesc = ''
+  treeRef.value = null
+  treeRef.value = null
 }
 
 const permissionIntoNode = (permission: PermissionTree): ITreeNode => {
@@ -99,16 +113,20 @@ const updateDataTree = (permissions: PermissionTree[]) => {
 
 const fetchPermissionLogic = async () => {
   loading.value = true
-  const { data: result } = await apiGetPermissionTree()
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
+  try {
+    const { data: result } = await apiGetPermissionTree()
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
+    updateDataTree(result.data)
+  } catch (error) {
+    console.error(error)
+  } finally {
     loading.value = false
-    return
   }
-  updateDataTree(result.data)
-
-  loading.value = false
 }
 onMounted(fetchPermissionLogic)
 </script>
@@ -122,6 +140,7 @@ onMounted(fetchPermissionLogic)
             <v-form v-model="form" class="px-8 form">
               <v-text-field
                 label="角色名称"
+                class="text-indigo"
                 v-model="newRole.roleName"
                 :counter="20"
                 required
@@ -133,6 +152,7 @@ onMounted(fetchPermissionLogic)
               </v-text-field>
               <v-textarea
                 label="角色描述"
+                class="text-indigo"
                 v-model="newRole.roleDesc"
                 :counter="255"
                 required

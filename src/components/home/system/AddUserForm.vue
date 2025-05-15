@@ -59,20 +59,27 @@ const AddUserLogic = async () => {
     return
   }
   loading.value = true
-  const { data: result } = await apiAddUser({
-    ...newUser,
-    roles: selected.value.map((r) => r.rid)
-  })
-  if (result.code !== 200) {
-    console.error(result)
-    notify({ type: 'error', title: '错误', text: result.message })
-    loading.value = false
+  try {
+    const { data: result } = await apiAddUser({
+      ...newUser,
+      roles: selected.value.map((r) => r.rid)
+    })
+    if (result.code !== 200) {
+      console.error(result)
+      notify({ type: 'error', title: '错误', text: result.message })
+      loading.value = false
+      return
+    }
+    notify({ type: 'success', title: '成功', text: '添加成功！' })
+  } catch (e) {
+    console.error(e)
     return
+  } finally {
+    loading.value = false
+    step.value = 1
+    clear()
+    emit('onClosed')
   }
-  notify({ type: 'success', title: '成功', text: '添加成功！' })
-  loading.value = false
-  step.value = 1
-  emit('onClosed')
 }
 
 const fetchRoleList = async () => {
@@ -83,7 +90,7 @@ const fetchRoleList = async () => {
     return
   }
   items.value = result.data
-    .filter((r) => r.rid !== undefined)
+    .filter((r) => r.rid !== undefined && r.rid !== '5' && r.roleName !== '学生')
     .map((r) => ({
       rid: r.rid!,
       text: r.roleName
