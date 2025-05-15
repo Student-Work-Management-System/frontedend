@@ -11,6 +11,8 @@ import type { AuditState } from '@/model'
 import ItemSelect from '@/components/home/ItemSelect.vue'
 import TrueOrFalseSelect from '@/components/home/TrueOrFalseSelect.vue'
 import LeaveAuditDialog from '@/components/home/leave/LeaveAuditDialog.vue'
+import GradeSelect from '@/components/home/GradeSelect.vue'
+import MajorSelect from '@/components/home/MajorSelect.vue'
 
 const loading = ref(false)
 const auditDialog = ref(false)
@@ -182,7 +184,9 @@ onMounted(() => {
   <v-card elevation="10" height="100%" width="100%" class="card-container">
     <LeaveAuditDialog
       v-model="auditDialog"
-      :is-leader="has('student_leave_audit:update:leader')"
+      :is-leader="
+        has('student_leave_audit:update:leader') || has('student_leave_audit:update:counselor')
+      "
       :total-day="totalDay"
       :audit-id="selectRow.auditId"
       @on-closed="getAuditRecords"

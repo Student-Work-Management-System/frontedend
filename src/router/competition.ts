@@ -6,7 +6,7 @@ export default {
     icon: 'mdi-horse-variant',
     title: '学科竞赛记录',
     hasPage: false,
-    auth: null
+    auth: "student_competition:select"
   },
   children: [
     {
